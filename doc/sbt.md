@@ -1,0 +1,2 @@
+
+put all your code to scala if you only need to support 2.11. If you need your code to compile on both 2.10 and 2.11, put incompatible things to their respective directories (scala-2.11 and scala-2.10) and compatible things (i.e. those which can be shared between versions) to scala
