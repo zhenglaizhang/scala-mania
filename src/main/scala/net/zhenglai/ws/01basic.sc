@@ -1,4 +1,5 @@
-
+import scala.annotation.tailrec
+import scala.concurrent.{ExecutionContext, Future}
 
 val bi = BigInt("111111111111111111111111111111")
 
@@ -63,3 +64,58 @@ m2(100){i => s"$i + $i"}
 
 
 // use last argument list for implicit arguments
+
+
+import scala.concurrent.ExecutionContext.Implicits.global
+val f = Future {
+  12
+}
+
+f onSuccess {
+  case answer: Int => println(s"Success $answer")
+}
+
+f onFailure {
+  case th: Throwable => println(th)
+}
+
+Thread.sleep(10000)
+
+object MeowFuture {
+  def apply[T](body: () => T)(implicit executor: ExecutionContext): Future[T] = {
+    Future {
+      body()
+    }
+  }
+}
+
+def factorial(i: Int): Long = {
+  @tailrec
+  def fac(i: Int, accumulator: Int): Long = {
+    if (i <= 1) accumulator
+    else
+      fac(i - 1, accumulator *i)
+  }
+  fac(i, 1)
+}
+
+(0 to 5).foreach {
+  i => println(factorial(i))
+}
+
+// Unit () returned
+
+
+println(12)
+
+// closure capture
+
+var i = 12
+def closure() = {
+  println(i)
+}
+
+closure()
+
+i = 13
+closure()
