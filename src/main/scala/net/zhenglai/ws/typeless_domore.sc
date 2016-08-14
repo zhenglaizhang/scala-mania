@@ -93,3 +93,39 @@ val hello = "hello"
     // unreachable code
   case Hello => "Got Hello"
 }
+
+
+// You put the cursor on a variable definition, hit Alt+Enter and IntelliJ will offer you to add a type annotation to the declaration
+
+
+def isEven(n: Int) = (n % 2) == 0
+
+List(1, 2, 3, 4) filter isEven foreach println
+List(1, 2, 3, 4).filter(isEven).foreach(println)
+
+
+val configFile = new java.io.File("somefile.txt")
+val configFilePath = if (configFile.exists()) {
+  configFile.getAbsolutePath
+} else {
+  configFile.createNewFile()
+  configFile.getAbsolutePath
+}
+
+
+val xs = List("hello", "scala", "fighting")
+
+for (x <- xs  // generator expression
+  if x.contains("l")  // && !x.startsWith("s")
+  if !x.contains("s")
+) { // guard as filter
+  println(x)
+}
+
+java.util.Calendar.getInstance()
+
+var count = 10
+while (count < 0) {
+  println(s"count is $count, less than 10")
+  count = count - 1
+}
