@@ -1,9 +1,9 @@
 package net.zhenglai.dsl
 
+
 /**
   * Created by zhenglai on 8/15/16.
   */
-
 
 object Implicits {
 
@@ -11,6 +11,9 @@ object Implicits {
     def ->[B](y: B): Tuple2[A, B] = Tuple2(self, y)
   }
 
+
+  implicit class jsonForStringContext(val sc: StringContext) {
+  }
 }
 
 
