@@ -34,4 +34,11 @@ object StringWrapper {
   }
 
   reverseSeqToString(Seq(1, 2, 3, 4))
+
+  // sliding is lazy
+  // size of last window might be less than 3
+  (1 to 20).sliding(3, 2).toList
+
+  (1 to 20).sliding(3, 2).toList.filter(_.size == 3)
+  Seq(1, 2, 3, 4).sliding(3, 2).toList
 }
