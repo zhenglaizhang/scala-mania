@@ -7,10 +7,10 @@ import scala.annotation.tailrec
   */
 object Factorial {
 
-  def factorial(i: Int): Long = {
+  def factorial(i: BigInt): BigInt = {
 
     @tailrec
-    def fac(i: Int, accumulator: Long): Long = {
+    def fac(i: BigInt, accumulator: BigInt): BigInt = {
       if (i <= 1) accumulator
       else
         fac(i - 1, i * accumulator)
@@ -18,5 +18,4 @@ object Factorial {
 
     fac(i, 1)
   }
-
 }
