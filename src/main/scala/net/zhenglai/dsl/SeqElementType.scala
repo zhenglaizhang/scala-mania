@@ -17,3 +17,17 @@ object SeqElementType {
 
 }
 
+object OverloadViaImplicit {
+  implicit object IntMarker
+  implicit object StringMarker
+
+
+  def apply(seq: Seq[Int])(implicit i: IntMarker.type) = "Int"
+
+  def apply(seq: Seq[String])(implicit s: StringMarker.type ) = "String"
+
+
+  apply(Seq(1, 2))
+  apply(Seq("1"))
+}
+
