@@ -130,3 +130,9 @@ while (count < 0) {
   count -= 1
 }
 
+
+
+val head1 +: head2 +: tail = Vector(1, 2, 3, 4)
+head1
+head2
+tail
