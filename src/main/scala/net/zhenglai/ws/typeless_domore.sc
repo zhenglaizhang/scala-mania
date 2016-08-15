@@ -127,5 +127,6 @@ java.util.Calendar.getInstance()
 var count = 10
 while (count < 0) {
   println(s"count is $count, less than 10")
-  count = count - 1
+  count -= 1
 }
+
