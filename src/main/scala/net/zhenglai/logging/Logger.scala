@@ -5,7 +5,6 @@ package net.zhenglai.logging
   */
 object Logger {
 
-
   // In Scala, curried functions are defined with multiple argument lists, each with a single argument
   def log(level: String)(msg: String) = {
     println(s"$level => $msg")

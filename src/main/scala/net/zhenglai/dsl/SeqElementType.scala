@@ -27,7 +27,7 @@ object OverloadViaImplicit {
   def apply(seq: Seq[String])(implicit s: StringMarker.type ) = "String"
 
 
-  apply(Seq(1, 2))
-  apply(Seq("1"))
+//  apply(Seq(1, 2))
+//  apply(Seq("1"))
 }
 
