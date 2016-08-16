@@ -5,4 +5,10 @@ package net.zhenglai.entity
   */
 trait PersonState {
 
+  val name: String
+
+  val age: Option[Int]
+
+  val address: Option[Address]
+
 }

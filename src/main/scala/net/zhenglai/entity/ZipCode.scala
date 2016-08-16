@@ -9,7 +9,7 @@ case class ZipCode(zip: Int, extension: Option[Int] = None) {
 
   //
   override def toString = //
-  if (extension != None) s"$zip-${extension.get}" else zip.toString
+  if (extension.isDefined) s"$zip-${extension.get}" else zip.toString
 
   protected def valid(z: Int, e: Option[Int]): Boolean = {
     if (0 < z && z <= 99999) e match {
