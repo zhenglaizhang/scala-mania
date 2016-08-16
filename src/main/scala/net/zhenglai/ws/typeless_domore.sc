@@ -148,7 +148,20 @@ d.foldRight(List.empty[Int]) {
 
 d.foldLeft(List.empty[Int]) {
   (list, x) => {
-    println(s"checking list: [$list]\t x: [$x]")
+    println(s"checking list: [$list]\t x: [${x * 2}]")
     list :+ x * 2
   }
+}
+
+d.foldLeft(List.empty[Int]) {
+  (list, x) => {
+    println(s"checking list: [$list]\t x: [${x * 2}]")
+    x * 2 +: list
+  }
+}
+
+
+trait Foo {
+  val x: Int
+  def x(i: Int): Int
 }

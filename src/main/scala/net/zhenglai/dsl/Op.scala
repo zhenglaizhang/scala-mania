@@ -20,7 +20,7 @@ import Op._
 
 // WHERE x op value
 //  op: =, !=, <>, <, <=, > or >=
-case class WhereOp[T](columnName: String, op: Op, value; T)
+case class WhereOp[T](columnName: String, op: Op, value: T)
 
 // WHERE x IN (a, b, c, ...)
 case class WhereIn[T](columnName: String, val1: T, vals: T*)

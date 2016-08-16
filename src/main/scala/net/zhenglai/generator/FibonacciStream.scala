@@ -11,6 +11,11 @@ A Stream is evaluated on an as-needed basis and only up to the point that you ne
 object FibonacciStream {
 
 
+  /*
+  Scala does infer types but we're defining a recursive value here and Scala needs to understand that the recursive call is a recursive call on a Stream
+  Methods ending in : are right associative
+
+   */
   lazy val fibs: Stream[BigInt] =
       BigInt(0) #::
       BigInt(1) #::
