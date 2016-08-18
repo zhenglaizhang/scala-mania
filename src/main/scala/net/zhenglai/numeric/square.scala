@@ -9,14 +9,12 @@ object square {
 
   Seq(None, Some(12)) map {
     case Some(x) => x
-    case None    => _
+    case None =>
   }
 
   // not recommended
-  Seq(None, Some(12)) map { item =>
-    item match {
-      case Some(x) => x
-      case None    => _
-    }
+  Seq(None, Some(12)) map {
+    case Some(x) => x
+    case None =>
   }
 }

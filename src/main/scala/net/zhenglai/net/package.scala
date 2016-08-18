@@ -9,6 +9,7 @@ package object net {
   type aliases are not new types — they are equivalent to the syntactically substituting the aliased name for its type.
    */
 
+  // Type aliases are bound to toplevel names by using package objects:
   type SocketFactory = SocketAddress => Socket
 
   val addrToInet  : SocketAddress => Long = ???
