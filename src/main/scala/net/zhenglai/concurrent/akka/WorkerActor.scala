@@ -19,17 +19,17 @@ class WorkerActor extends Actor with ActorLogging {
       dataStore += key -> value
       sender ! Response(Success(s"$key -> $value added"))
 
-    case Read(key) =>
+    case Read(key)          =>
       sender ! Response(Try(s"${dataStore(key)} found for key = $key"))
     case Update(key, value) =>
       dataStore += key -> value
       sender ! Response(Success(s"$key -> $value updated"))
-    case Delete(key) =>
+    case Delete(key)        =>
       dataStore -= key
       sender ! Response(Success(s"$key deleted"))
-    case Crash(_) =>
+    case Crash(_)           =>
       throw WorkerActor.CrashException
-    case DumpAll =>
+    case DumpAll            =>
       sender ! Response(Success(s"${self.path}: dataStore = $dataStore"))
   }
 }

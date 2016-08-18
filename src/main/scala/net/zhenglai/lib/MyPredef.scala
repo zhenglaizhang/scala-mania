@@ -6,8 +6,10 @@ package net.zhenglai.lib
 object MyPredef {
 
 
-  implicit def value2Tuple1[A](x: A): Tuple1[A] = Tuple1(x)
+  type IntMaker = () => Int
+  // type alias: () => Int
 
+  implicit def value2Tuple1[A](x: A): Tuple1[A] = Tuple1(x)
 
   class Parent(val value: Int) {
     override def toString: String = {
@@ -21,12 +23,16 @@ object MyPredef {
     def getOrElse(default: A) = if (value != null) value else default
   }
 
-
-
   class Upper
+
   class Middle1 extends Upper
+
   class Middle2 extends Middle1
+
   class Lower extends Middle2
+
+  //  case class C2[A <: Upper >: Lower](a: A) // Does not compile
+
   case class C[A >: Lower <: Upper](a: A)
-//  case class C2[A <: Upper >: Lower](a: A) // Does not compile
+
 }
