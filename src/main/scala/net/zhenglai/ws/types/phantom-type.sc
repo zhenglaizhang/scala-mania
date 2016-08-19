@@ -1,5 +1,7 @@
 /*
 Phantom Types are very true to it’s name even if it’s a weird one, and can be explained as "Types that are not instantiate, ever". Instead of using them directly, we use them to even more strictly enforce some logic, using our types.
+
+We have shown that phantom types can be used to encode type constraints.
  */
 
 /*
