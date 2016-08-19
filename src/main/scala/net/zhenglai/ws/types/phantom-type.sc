@@ -91,3 +91,37 @@ Hacker.caffeinated.hackOn.drinkCoffee.hackOn
 
 
 
+
+
+
+// Door open and close demo
+
+trait Status
+trait Opened extends Status
+trait Closed extends Status
+
+class Door[State <: Status] {
+}
+
+object Door {
+  def apply[State <: Status] = new Door[State]
+
+  def open[State <: Closed](d: Door[State]) = {
+    println("Opening...")
+    new Door[Opened]
+  }
+
+  def close[State <: Opened](d: Door[State]) = {
+    println("Closing...")
+    new Door[Closed]
+  }
+}
+
+
+val closed = Door[Closed]
+val opened = Door[Opened]
+Door.open(closed)
+Door.close(opened)
+//Door.close(closed)
+
+
