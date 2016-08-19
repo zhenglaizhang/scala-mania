@@ -50,3 +50,26 @@ object Jabłuszko extends Apple
 /*
 	You could get the same type-safety using more fancy tricks, like path dependent types or implicit parameters and type classes. But the simplest thing that does-the-job here would be this.
  */
+
+
+/*
+F-Bounded Type Polymorphism
+ */
+
+trait Account[T <: Account[T]] {
+  def addFunds(amount: BigDecimal): T
+}
+
+class BrokerageAccount(total: BigDecimal) extends Account[BrokerageAccount] {
+  def addFunds(amount: BigDecimal) = new BrokerageAccount(total + amount)
+}
+class SavingsAccount(total: BigDecimal) extends Account[SavingsAccount] {
+  def addFunds(amount: BigDecimal) = new SavingsAccount(total + amount)
+}
+
+/*
+This sort of self-referential type constraint is known formally as F-bounded type polymorphism and is usually attempted when someone is
+trying to solve a common problem of abstraction in object-oriented languages; how to define a polymorphic
+function that, though defined in terms of a supertype, will when passed a value of some subtype will always
+return a value of the same subtype as its argument.
+ */
