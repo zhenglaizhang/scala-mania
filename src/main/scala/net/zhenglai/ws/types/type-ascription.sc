@@ -6,11 +6,12 @@ This being explicit about the type of something, is called a Type Ascription (so
 
 
 trait Thing
+def getThing = new Thing { }
 
-def getThing = new Thing{}
+// without Type Ascription, the type is infered to be `Thing`
+val infered = getThing
 
-val inferred = getThing
-
+// with Type Ascription
 val thing: Thing = getThing
 /*
 In these situations, leaving out the Type Ascription is OK. Although you may decide to always ascribe return types of public methods (that’s very good idea!) in order to make the code more self-documenting.
