@@ -1,3 +1,5 @@
+import scala.annotation.implicitNotFound
+
 /*
  We replace the respective type bounds with an implicit parameter of type S =:= State.Caffeinated or S =:= State.Decaffeinated:
  */
@@ -20,20 +22,29 @@ Note that making the ServiceState trait sealed assures that no-one can suddenly 
 }
 
 
+
+
 /*
 As you see, Phantom Types are yet another great facility to make our code even more type-safe (or shall I say "state-safe"!?).
  */
 class Service[State <: Service.ServiceState] private() {
   import Service._
+
+  @implicitNotFound("The service is already stopped")
+  type IsStopped[State] = State =:= Service.Stopped
+  @implicitNotFound("The service is already started")
+  type IsStarted[State] = State =:= Service.Started
+
   /*
   This makes the compiler look for an implicit value of type =:= parameterized with the proper types.
    */
-  def start(msg: String)(implicit ev: State =:= Stopped): Service[Started]= {
+//  def start(msg: String)(implicit ev: State =:= Stopped): Service[Started]= {
+  def start(msg: String)(implicit ev: IsStopped[State]): Service[Started]= {
     println(s"Starting $msg ...")
     this.asInstanceOf[Service[Started]]
   }
 
-  def stop(implicit ev: State =:= Started) = {
+  def stop(implicit ev: IsStarted[State]) = {
     println("Stopping ...")
     this.asInstanceOf[Service[Stopped]]
   }
