@@ -157,8 +157,73 @@ It’s a good idea, if you want to do functional programming in Scala, to use ca
 think about how you would implement and use a URLExtractor that takes String representations of URLs.
  */
 
+object extractingSequence {
+  val xs = 3 :: 6 :: 12 :: Nil
+
+  def app = {
+    val r = xs match {
+      case List(a, b) => a * b
+      case List(a, b, c) => a + b + c
+      case _ => 0
+    }
+    println(r)
+
+    val r1 = xs match {
+      case List(a, b, _*) => a * b
+      case _ => 0
+    }
+    println(r1)
 
 
+    println(greetWithFirstName("Zhenglai"))
+    println(greetWithFirstName("Zhenglai Zhang"))
+    println(greetWithFirstName(""))
+    println("-" * 20)
+    println(greet(""))
+    println(greet("Zhenglai"))
+    println(greet("Zhenglai Zhang"))
+    println(greet("Zhenglai Midname Zhang"))
+  }
+
+
+  /*
+  implement and use extractors that return variable-length sequences of extracted values. Extractors are a pretty powerful mechanism. They can often be re-used in flexible ways and provide a powerful way to extend the kinds of patterns you can match against.
+   */
+  object GivenNames {
+    def unapplySeq(name: String): Option[Seq[String]] = {
+      val names = name.trim.split(" ")
+      if (names.forall(_.isEmpty)) None else Some(names)
+    }
+  }
+
+  def greetWithFirstName(name: String) = name match {
+    case GivenNames(firstName, _*) => s"Good morning, $firstName!"
+    case _ => "Welcom! please make sure to fill in your name!"
+  }
+
+  def greet(fullName: String) = fullName match {
+    case Names(first, last, _*) => s"Good morning, $first $last!"
+    case _ => "Welcome! please make sure to fill in your name!"
+  }
+
+  /*
+  unapplySeq can also return an Option of a TupleN, where the last element of the tuple must be the sequence containing the variable parts of the extracted values.
+   */
+  object Names {
+    def unapplySeq(name: String): Option[(String, String, Seq[String])] = {
+      val names = name.trim.split(" ").toSeq
+      if (names.size < 2) None
+      else Some((names.last, names.head, names.drop(1).dropRight(1)))
+    }
+  }
+}
+
+extractingSequence.app
+
+
+/*
+def unapplySeq(object: S): Option[Seq[T]]
+ */
 
 
 
