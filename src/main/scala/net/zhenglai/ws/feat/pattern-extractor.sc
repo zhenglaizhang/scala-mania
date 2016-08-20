@@ -212,7 +212,7 @@ object extractingSequence {
   unapplySeq can also return an Option of a TupleN, where the last element of the tuple must be the sequence containing the variable parts of the extracted values.
    */
   object Names {
-    def unapplySeq(name: String): Option[(String, String, Seq[String])] = {
+    def unapplySeq(name: Names): Option[(String, String, Seq[String])] = {
       val names = name.trim.split(" ").toSeq
       if (names.size < 2) None
       else Some((names.last, names.head, names.drop(1).dropRight(1)))
