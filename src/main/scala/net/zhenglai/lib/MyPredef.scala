@@ -11,6 +11,9 @@ object MyPredef {
 
   implicit def value2Tuple1[A](x: A): Tuple1[A] = Tuple1(x)
 
+  /*
+  I would suggest aiming for clarity first and then worrying about efficiency only when you have concrete evidence that that's an issue in your program.
+   */
   def repeatChar(char: Char)(n: Int) = List.fill(n)(char).mkString
 
   def repeatString(str: String)(n: Int) = List.fill(n)(str).mkString
