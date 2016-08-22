@@ -172,3 +172,21 @@ def mhm(n: Int = 3, s: String) = s * n
 val zz = mhm _
 
 //mhm(42) _
+
+
+
+
+// Way to automatically convert class method to function taking explicit class argument in Scala?
+
+case class A(x: Int) {
+  def f(y: Int) = x * y
+}
+
+val ains = A(4)
+val af = (_: A).f _
+af(ains)(4)
+
+// import ains._
+
+// val af = ains.f _
+// val af = A(4).f _

@@ -27,3 +27,7 @@ libraryDependencies += "com.typesafe.akka" %% "akka-persistence" % "2.4.9-RC2"
 libraryDependencies += "org.iq80.leveldb"            % "leveldb"          % "0.7"
 
 libraryDependencies += "org.fusesource.leveldbjni"   % "leveldbjni-all"   % "1.8"
+
+libraryDependencies += "joda-time" % "joda-time" % "2.9.4"
+
+libraryDependencies += "org.joda" % "joda-convert" % "1.8"
