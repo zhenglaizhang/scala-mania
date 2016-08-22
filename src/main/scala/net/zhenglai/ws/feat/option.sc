@@ -13,6 +13,32 @@ Option[A] is a container for an optional value of type A. If the value of type A
 By stating that a value may or may not be present on the TYPE LEVEL, you and any other developers who work with your code are forced by the compiler to deal with this possibility. There is no way you may accidentally rely on the presence of a value that is really optional.
 
 Option is mandatory! Do not use null to denote that an optional value is absent.
+
+NPE looks a lot like "NoPE.
+
+Due to another feature of Scala, optional laziness,
+
+Option can also be chained with other Option returning expressions using orElse.
+
+val o=s1.getMartian.orElse(s2.getMartian.orElse(s3.getMartian))
+
+Again, laziness ensures that we only keep looking for Martians until we find one.
+
+Finally, in Scala, Option is a monad.
+
+. Because Option is a Monad in Scala the code looks like this
+
+for (
+  m <- spaceship getMartian;
+  r <- m getRayGun;
+  t <- r getTarget
+) t duck
+
+you have to admit the code is eminently readable. Far more readable than the Java/C# alternatives.
+
+In Haskell, the Option monad is called Maybe. 4
+
+Haskell and OCaml don't have these holes since they have neither null nor casting.
  */
 
 val greeting: Option[String] = Some("Hello world")
@@ -151,4 +177,9 @@ case class Resource(content: String)
 val resourceFromConfigDir: Option[Resource] = None
 val resourceFromClasspath: Option[Resource] = Some(Resource("I was found on the classpath"))
 val resource = resourceFromConfigDir orElse resourceFromClasspath getOrElse Resource("default resource")
+
+
+/*
+Still, the Scala libraries use Option whenever a "null" could be used and Scala projects are following that pattern. As long as you never ever create a cast or a null, you'll only have to worry about NoPE when dealing with existing Java or .Net code.
+ */
 
