@@ -184,6 +184,8 @@ Type classes, one of the prominent features of the Haskell language, despite the
 A type class C defines some behaviour in the form of operations that must be supported by a type T for it to be a member of type class C. Whether the type T is a member of the type class C is not inherent in the type. Rather, any developer can declare that a type is a member of a type class simply by providing implementations of the operations the type must support. Now, once T is made a member of the type class C, functions that have constrained one or more of their parameters to be members of C can be called with arguments of type T.
 
 As such, type classes allow ad-hoc and retroactive polymorphism. Code that relies on type classes is open to extension without the need to create adapter objects.
+
+type classes – a pattern that allows you to design your programs to be open for extension without giving up important information about concrete types.
  */
 
 
@@ -239,6 +241,8 @@ object Math {
 }
 
 import Math._
+
+import scala.annotation.implicitNotFound
 val numbers = Vector[Double](13, 23.0, 42, 45, 61, 73, 96, 100, 199, 420, 900, 3839)
 println(Statistics.mean(numbers))
 
@@ -293,12 +297,63 @@ object JodaImplicits {
 }
 
 
-import JodaImplicits._
-import Math.Statistics._
-import org.joda.time.Duration._
+//import JodaImplicits._
+//import Math.Statistics._
+//import org.joda.time.Duration._
+//
+//val durations = Vector(standardSeconds(20), standardSeconds(57), standardMinutes(2),
+//  standardMinutes(17), standardMinutes(30), standardMinutes(58), standardHours(2),
+//  standardHours(5), standardHours(8), standardHours(17), standardDays(1),
+//  standardDays(4))
+//println(mean(durations).getStandardHours)
 
-val durations = Vector(standardSeconds(20), standardSeconds(57), standardMinutes(2),
-  standardMinutes(17), standardMinutes(30), standardMinutes(58), standardHours(2),
-  standardHours(5), standardHours(8), standardHours(17), standardDays(1),
-  standardDays(4))
-println(mean(durations).getStandardHours)
+case class Song(name: String, artist: String)
+case class Address(street: String, number: Int)
+
+@implicitNotFound(s"No member of type class LabelMarker exists in scope for {T}")
+trait LabelMarker[T] {
+  def output(t: T): String
+}
+
+object LabelMarker {
+  implicit object addressLabelMarker extends LabelMarker[Address] {
+    override def output(address: Address): String = {
+      s"${address.number} ${address.street} street"
+    }
+  }
+
+  implicit object songLabelMarker extends LabelMarker[Song] {
+    override def output(song: Song): String = {
+      s"${song.artist} - ${song.name}"
+    }
+  }
+
+  def label[T: LabelMarker](t: T) = implicitly[LabelMarker[T]].output(t)
+}
+
+
+import LabelMarker._
+val l1 = label(Song("Hey ya", "Outkast"))
+val l2 = label(Address("Something", 273))
+
+
+/*
+Typeclasses capture the notion of retroactive extensibility. With static method overloads, you have to define them all at once in one place, but with typeclasses you can define new instances anytime you want for any new types in any modules.
+ */
+
+
+object SomeModule {
+  case class Car(title: String)
+  implicit object carLabelMaker extends LabelMarker[Car] {
+    override def output(car: Car): String = {
+      s"Great car ${car.title}"
+    }
+  }
+}
+import SomeModule._
+val void = println(label(Car("Mustang")))
+//val void2 = println(label(12))
+
+/*
+Once class is written, to make it inherited from some class or trait, you have to touch its definition, which may be unavailable to you (e.g. it's class from some library). With typeclasses you don't have to touch class definition to write instance for that class. That's one of aspects of mentioned retroactive extensibility. And no, rules for T type parameter are just the same as for regular generic classes.
+ */
