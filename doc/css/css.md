@@ -152,3 +152,54 @@ h2 strong {
 
 
 ### CSS 类选择器
+
+
+
+
+
+
+### a 
+
+```css
+a:link {color:#FF0000;}		/* 未被访问的链接 */
+a:visited {color:#00FF00;}	/* 已被访问的链接 */
+a:hover {color:#FF00FF;}	/* 鼠标指针移动到链接上 */
+a:active {color:#0000FF;}	/* 正在被点击的链接 */
+
+
+
+/*text-decoration 属性大多用于去掉链接中的下划线：*/
+a:link {text-decoration:none;}
+a:visited {text-decoration:none;}
+a:hover {text-decoration:underline;}
+a:active {text-decoration:underline;}
+
+
+/*background-color 属性规定链接的背景色：*/
+
+/*当为链接的不同状态设置样式时，请按照以下次序规则：*/
+/*a:hover 必须位于 a:link 和 a:visited 之后*/
+/*a:active 必须位于 a:hover 之后*/
+
+
+
+a:link,a:visited
+{
+    display:block;
+    font-weight:bold;
+    font-size:14px;
+    font-family:Verdana, Arial, Helvetica, sans-serif;
+    color:#FFFFFF;
+    background-color:#98bf21;
+    width:120px;
+    text-align:center;
+    padding:4px;
+    text-decoration:none;
+}
+
+a:hover,a:active
+{
+    background-color:#7A991A;
+}
+
+```
