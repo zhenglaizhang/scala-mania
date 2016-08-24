@@ -1,5 +1,7 @@
 
 /*
+Algebraic Datatypes – Enumerated Types
+
 What do you mean by "algebraic?"
 Let's do some counting.
   How many values of type Nothing?    => 0
