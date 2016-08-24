@@ -35,3 +35,24 @@ def dropWhile[A](xs: Seq[A])(p: A => Boolean): Seq[A] = xs match {
 }
 
 dropWhile(Seq(1, 2, 3))(_ < 3)
+
+
+
+def foldRight[A, B](xs: Seq[A], z: B)(f: (A, B) => B): B = xs match {
+  case Nil => z
+  case head +: tail => f(head, foldRight(tail, z)(f))
+}
+
+
+Seq(1, 2, 3).foldLeft(2)(_ + _)
+
+
+
+def map[A, B](xs: Seq[A])(f: A => B): Seq[B] = xs match {
+  case Nil => Nil
+  case head +: tail => f(head) +: map(tail)(f)
+}
+
+map(Seq(1, 2, 3, 4))(_ * 2)
+
+
