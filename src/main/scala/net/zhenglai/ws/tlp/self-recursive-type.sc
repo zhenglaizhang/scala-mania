@@ -4,6 +4,8 @@
 Self-recursive Types are referred to as F-Bounded Types in most literature
 
 the subtype constraint itself is parametrized by one of the binders occurring on the left-hand side
+
+recursive type
  */
 
 
