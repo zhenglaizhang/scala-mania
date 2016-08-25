@@ -109,7 +109,7 @@ val matchMe = "Foo"
 Use anonymous function with foreach
  */
 Seq("Hello", "Foo") foreach {
-  case `matchMe` => s"Do something special with $`matchMe`"
+  case `matchMe` => "Do something special with" + `matchMe`
   case nonSpecialKey => s"Do something with non special $nonSpecialKey"
 }
 
@@ -120,3 +120,35 @@ he expression { case (a, b) => a + b } is interpreted differently based on the e
  */
 val f1: ((Int, Int)) => Int = { case (a, b) => a + b }
 val f2: (Int, Int) => Int = { case (a, b) => a + b }
+
+
+
+/*
+纯函数是可以部分作用（partially apply）的：对一个多入参函数可以分多次每次作用（apply）一个参数
+
+通过函数partialApply可以把一个两个入参的函数f分分两次作用它的参数：引用partialApply是作用参数a，形成一个需要参数B的函数。
+
+两个参数作用（apply）了其中一个，所以称为部分作用。
+ */
+
+// 我们知道partialApply的结果是一个入参B返回C的函数。所以想办法从匹配类型款式上着手。可以直接用一个函数文本表达这个结果：给我一个B=b，我返回给你一个C=f(a,b)；一个典型的lambda表达式。
+def partialApply[A,B,C](a: A, f: (A, B) => C): B => C = (b: B) => f(a, b)
+def addTwoParams(a: Int, b: Int) = a + b
+addTwoParams(2, 5)
+val applyOnce = partialApply(2, addTwoParams)
+applyOnce(5)
+
+
+/*
+函数变形在泛函编程中是常用的技巧。下面的Curry function就是把一个N个输入参数的函数变成一个参数的N次作用：
+
+f(a,b,c,...n) = f(a)(b)(c)...(n) = a => b => c => ... => n
+ */
+
+def curryTwo[A, B, C](f: (A, B) => C): A => B => C = (a: A) => ((b: B) => f(a, b))
+val curriedFunction = curryTwo(addTwoParams)
+val curryOnce = curriedFunction(2)
+curryOnce(5)
+
+// 遇到这种函数变形的问题时通常会用函数文本尝试匹配函数的结果类型款式（type signature）。
+
