@@ -3,6 +3,7 @@ Methods in Scala are not values, but functions are. You can construct a function
 
 The definition I will be using here is that a method is something defined with def and a value is something you can assign to a val.
 
+方法不是函数但可以转化成函数；可以手工转换或者由编译器（compiler）在适当的情况下自动转换。反向转换则不然；函数是无法转换到方法的。
  */
 
 def m(xs: List[Int]): AnyRef = ???
@@ -190,3 +191,46 @@ af(ains)(4)
 
 // val af = ains.f _
 // val af = A(4).f _
+
+
+
+// aMethod 与 aFunction 在类型上是不同的。
+def aMethod(x: Int) = x + 10
+val aFunction = (x: Int) => x + 10
+
+aFunction
+/*
+aMethod
+
+Error:(178, 2) missing argument list for method aMethod in class A$A7
+Unapplied methods are only converted to functions when a function type is expected.
+You can make this conversion explicit by writing `aMethod _` or `aMethod(_)` instead of `aMethod`.
+aMethod;}
+
+引用方法必须提供完整的参数清单，引用函数则无须。把方法转换成函数呢？在参数位置用 _ 来进行转换
+*/
+val toFunction = aMethod(_)
+val toFunction1 = aMethod _
+
+/*
+aMethod转换成函数toFunctions后具备了函数的特性。
+
+我们称函数为“头等类值”（first class value），可以当作高阶函数的参数或返回值。但方法不是“头等类值”，不能当作参数。
+
+Scala的编译器能针对需要函数的地方把方法转换成函数!!!
+*/
+
+
+
+
+
+/*
+函数就是普通的对象
+ */
+
+(a: Int, b: Int) => a + b
+
+// compiler convert it to object below
+val addThem = new Function2[Int, Int, Int] {
+  override def apply(v1: Int, v2: Int): Int = v1 + v2
+}
