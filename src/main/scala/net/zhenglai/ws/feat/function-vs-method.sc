@@ -228,9 +228,62 @@ Scala的编译器能针对需要函数的地方把方法转换成函数!!!
 函数就是普通的对象
  */
 
-(a: Int, b: Int) => a + b
+val add = (a: Int, b: Int) => a + b
 
 // compiler convert it to object below
 val addThem = new Function2[Int, Int, Int] {
   override def apply(v1: Int, v2: Int): Int = v1 + v2
 }
+
+add(1, 2) == addThem.apply(1, 2)
+add(1, 2) == addThem(1, 2)
+
+
+
+// 多态函数
+def findFirstInt(arr: Array[Int], target: Int): Int = {
+  def loop(idx: Int): Int = idx match {
+    case l if (l > arr.length) => -1
+    case i if (arr(i) == target) => idx
+    case _ => loop(idx + 1)
+  }
+  loop(0)
+}
+
+findFirstInt((1 to 10).toArray, 3)
+findFirstInt((2 to 1000).toArray, 200)
+
+def findFirstString(arr: Array[String], target: String): Int = {
+  def loop(idx: Int): Int = idx match {
+    case l if (l >= arr.length) => -1        //indicate not found
+    case i if (arr(i) == target) => idx
+    case _ => loop(idx + 1)
+  }
+  loop(0)
+}                                               //> findFirstString: (arr: Array[String], target: String)Int
+findFirstString(Array("Hello","My","World"),"My")
+//> res55: Int = 1
+findFirstString(Array("Hello","My","World"),"Yours")
+//> res56: Int = -1
+
+
+// 可以通过多态函数把共通点抽象出来
+def findFirstA[A](arr: Array[A], target: A)(eq: (A,A) => Boolean): Int = {
+  def loop(idx: Int): Int = idx match {
+    case l if l >= arr.length => -1
+    case i if eq(arr(i), target) => idx
+    case _ => loop(idx + 1)
+  }
+
+  loop(0)
+}
+
+findFirstA[Int](Array(2,4,3,9,0),3)((x,y) => x == y)
+//> res57: Int = 2
+findFirstA[String](Array("Hello","My","World"),"My")((x,y) => x == y)
+//> res58: Int = 1
+
+/*
+findFirstA是个多态函数。A是一个类型变量。我们可以说findFirstA是个针对类型变量A的多态函数。注意我们在findFirstA增加了一个参数清单- (equ: (A,A) => Boolean)。这是因为我们还无法确定A的类型。那么我们必须提供A类型的对比函数。
+ */
+
