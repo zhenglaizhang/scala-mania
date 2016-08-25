@@ -152,3 +152,23 @@ curryOnce(5)
 
 // 遇到这种函数变形的问题时通常会用函数文本尝试匹配函数的结果类型款式（type signature）。
 
+def uncurry[A, B, C](f: A => (B => C)): (A, B) => C = (a: A, b: B) => (f(a)(b))
+var uncurriedFunction = uncurry(curriedFunction)
+uncurriedFunction(2, 5)
+
+def compose[A, B, C](f: B => C, g: A => B): A => C = (a: A) => f(g(a))
+
+val fadd = (x: Int) => x + 2
+val fmul = (x: Int) => x * 5
+val mulThenAdd = fadd compose fmul
+mulThenAdd(2)
+
+(fadd compose fmul)(2)
+(fmul compose fadd)(2)
+
+/*
+注意compose右边关联的（right hand associate)：fadd compose fmul 中先运算fmul把结果输入fadd进行运算。设计另一个左边关联函数andThen：
+ */
+def andThen[A, B, C](f: A => B, g: B => C): A => C = (a: A) => g(f(a))
+(fadd andThen fmul)(2)
+(fmul andThen fadd)(2)
