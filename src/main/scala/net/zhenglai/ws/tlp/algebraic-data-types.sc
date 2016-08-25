@@ -1,6 +1,19 @@
 
 /*
+An algebraic datatype reflects the idea, that a type is – loosely spoken – a set of certain (data) values.
+
+an algebraic datatype can be defined by giving an enumeration of all the individual data values for a given type
+
+let’s redefine that type as an algebraic datatype and call’em Bool. First of all, the single values of an algebraic datatype are only data – no behaviour at all – maybe that’s why they called datatypes
+
+data Bool = False | True
+
 Algebraic Datatypes – Enumerated Types
+
+After the equals sign starts the enumeration of all values. In fact they are called value constructors because they’ll construct the individual values of the given type. Bool is a nice example of a so called sum type, because it can be characterized as the sum of all individual and unique values, which we just enumerated.
+
+In Scala, you can define an equal algebraic datatype by using case classes.
+where we’ll going to destruct values of a given datatype, using pattern matching (in fact, the idea of pattern matching is deeply connected to the idea of algebraic datatypes)
 
 What do you mean by "algebraic?"
 Let's do some counting.
@@ -126,3 +139,22 @@ import util._ // it's scala.util.Try
 
 def safeDiv2(a: Int, b: Int): Try[Int] =
   Try(a / b)
+
+
+
+
+/*
+Because Scala is a hybrid OO – functional Language, it doesn’t support algebraic datatypes in a direct way (like in Haskell)
+
+Class Bool is only for introducing the type, not its values. All single values of that type are then defined by a single case object for each of them.
+ */
+sealed abstract class Bool
+case object True extends Bool
+case object False extends Bool
+
+val not: Bool => Bool = b => if (b eq True) False else True
+val and: (Bool, Bool) => Bool = (a: Bool, b: Bool) => if (a eq False) False else b
+val or: (Bool, Bool) => Bool = (a: Bool, b: Bool) => if (a eq True) True else b
+
+println(and(or(True, not(True)), not(False)))
+
