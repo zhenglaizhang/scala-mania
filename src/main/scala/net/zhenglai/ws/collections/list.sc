@@ -86,6 +86,67 @@ object h1 {
       case Nil => Nil
       case Cons(h, t) => if (f(h)) Cons(h, t.filter(f)) else t.filter(f)
     }
+
+    /*
+    折叠算法是List的典型算法。通过折叠算法可以实现众多函数组合（function composition）。所以折叠算法也是泛函编程里的基本组件（function combinator）。了解折叠算法的原理对了解泛函组合有着至关紧要的帮助。折叠算法又可分右折叠和左折叠。我们先从右折叠（foldRight）开始:
+
+对List(a,b,c)的右折叠算法：op(a,op(b,op(c,z))) 可以看出括号是从右开始的。计算方式如图二：op(a,sub), sub是重复子树，可以肯定要用递归算法。这里z代表了一个起始值。我们现在可以推算出foldRight的函数款式（function signature）了
+
+foldRight不是一个尾递归算法（tail recursive）
+
+// (List(x1,x2,x3...x{n-1}, xn) foldRight acc) op => x1 op (...(xn op acc)...)
+2  // foldRight(Cons(1,Cons(2,Cons(3,Nil))), 0) {_ + _}
+3  // 1 + foldRight(Cons(2,Cons(3,Nil)), 0) {_ + _}
+4  // 1 + (2 + foldRight(Cons(3,Nil), 0) {_ + _})
+5  // 1 + (2 + (3 + foldRight(Nil, 0) {_ + _}))
+6  // 1 + (2 + (3 + 0)) = 6
+     */
+    def foldRight[B](z: B)(op: (A, B) => B): B = this match {
+      case Nil => z
+      case Cons(h, t) => op(h, t.foldRight(z)(op))
+    }
+
+
+    /*
+左折叠算法就是所有List元素对z的操作op。从图二可见，op对z,a操作后op的结果再作为z与b再进行op操作，如此循环。看来又是一个递归算法，而z就是一个用op累积的值了：op(op(op(z,a),b),c)。左折叠算法的括号是从左边开始的。
+     */
+
+    def foldLeft[B](z: B)(op: (B, A) => B): B = {
+      @annotation.tailrec
+      def foldL[B](l: List[A], z: B)(op: (B, A) => B): B = l match {
+        case Nil => z
+        case Cons(h, t) => foldL(t, op(z, h))(op)
+      }
+
+      foldL(this, z)(op)
+    }
+
+    /*
+    除foldRight,foldLeft之外，折叠算法还包括了：reduceRight,reduceLeft,scanRight,scanLeft。
+
+    reduceLeft是以第一个，reduceRight是以最后一个List元素作为起始值的折叠算法，没有单独的起始值：
+     */
+    // notice the B >: A bounds!!
+    def reduceLeft[B >: A](op: (B, A) => B): B = this match {
+      case Nil => sys.error("Empty list")
+      case Cons(h, t) => t.foldLeft[B](h)(op)
+    }
+
+    def reduceRight[B >: A](op: (A, B) => B) : B = this match {
+      case Nil => throw new UnsupportedOperationException("empty.reduceLeft")
+      case Cons(h, Nil) => h
+      case Cons(h, t) => op(h, t.reduceRight(op))
+    }
+
+    /*
+    scanLeft, scanRight 分别把每次op的结果插入新产生的List作为返回结果。
+     */
+
+    // TODO
+//    def scanLeft[B >: A](z: B)(op: (B, A) => B): List[B] = this match {
+//      case Nil => Cons(z, Nil)
+//      case Cons(h, t) => Cons(z, t.scanLeft(op(z, h)(op)))
+//    }
   }
 
   case class Cons[+A](override val head: A, override val tail: List[A]) extends List[A]
@@ -171,3 +232,23 @@ List(1, 2, 3).init
 List(1, 2, 3).map(_ + 10)
 List(1, 2, 3).flatMap(x => List(x + 10))
 List(1, 2, 3).filter(_ != 2)
+
+
+List(1, 2, 3).foldRight(0)(_ + _)
+List(1, 2, 3).foldRight(1){_ * _}
+
+List(1, 2, 3).foldRight(Nil:List[Int]) { (a, z) => Cons(a + 10, z)}
+/*
+注意以上的起始值1和Nil:List[Int]。z的类型可以不是A，所以op的结果也有可能不是A类型，但在以上的加法和乘法的例子里z都是Int类型的。但在List重构例子里z是List[Int]类型，所以op的结果也是List[Int]类型的，这点要特别注意。
+ */
+List(1, 2, 3).foldLeft(0)(_ + _)
+List(1, 2, 3).foldLeft(1){_ * _}
+
+// res29: h1.List[Int] = Cons(13,Cons(12,Cons(11,Nil)))
+List(1, 2, 3).foldLeft(Nil:List[Int]) { (z, a) => Cons(a + 10, z)}
+
+
+collection.immutable.List(1, 2, 3).scanLeft(0)(_ + _)
+collection.immutable.List(1, 2, 3).scanRight(0)(_ + _)
+
+// http://www.cnblogs.com/tiger-xc/p/4330727.html

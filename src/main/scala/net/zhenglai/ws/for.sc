@@ -9,3 +9,5 @@ for {
 
 
 provinces.flatMap(_.toSeq.withFilter(_.isLower) map (c => s"$c - ${c.toUpper}"))
+
+
