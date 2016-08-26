@@ -69,6 +69,23 @@ object h1 {
       case Nil => 0
       case Cons(h, t) => 1 + t.length
     }
+
+
+    // map flatMap filter => for comprehension (Functor, Applicative, Monad)
+    def map[B](f: A => B): List[B] = this match {
+      case Nil => Nil
+      case Cons(h, t) => Cons(f(h), (t map f))
+    }
+
+    def flatMap[B](f: A => List[B]): List[B] = this match {
+      case Nil => Nil
+      case Cons(h, t) => f(h) ++ (t flatMap f)
+    }
+
+    def filter(f: A => Boolean): List[A] = this match {
+      case Nil => Nil
+      case Cons(h, t) => if (f(h)) Cons(h, t.filter(f)) else t.filter(f)
+    }
   }
 
   case class Cons[+A](override val head: A, override val tail: List[A]) extends List[A]
@@ -148,3 +165,9 @@ List(1, 2, 3) ++ List(4, 5, 6)
 
 List(1, 2, 3).length
 List(1, 2, 3).init
+
+
+
+List(1, 2, 3).map(_ + 10)
+List(1, 2, 3).flatMap(x => List(x + 10))
+List(1, 2, 3).filter(_ != 2)
