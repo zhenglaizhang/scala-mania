@@ -4,6 +4,7 @@ A Scala Stream is like a List, except that its elements are computed lazily, in 
 The ? symbol is the way a lazy collection shows that the end of the collection hasn’t been evaluated yet.
 
 
+A Stream is a lazy evaluated list. This means that elements in a Stream gets only evaluated when they are needed. Therefore Streams can be infinite while strict collections cannot. A Stream can also be seen as an immutable Iterator.
  */
 val stream = 1 #:: 2 #:: 3 #:: Stream.empty
 
@@ -29,3 +30,25 @@ be careful with methods that aren’t transformers. Calls to the following stric
   stream.size
   stream.sum
  */
+
+
+// we call Stream.cons(...) we call the apply method. Written out in full it would be Stream.cons.apply(...)
+def from(start: Int): Stream[Int] = {
+  println(s"===> start => $start")
+  Stream.cons(start, from(start+1))
+}
+
+def from2(start: Int): Stream[Int] = start #:: from(start + 1)
+
+val nn = from(0)
+//  how many times the from function will be called? Right 9 times,
+nn.take(10).mkString(",")
+
+/*
+A Stream can be used like every other collection because it is of type LinearSeq. Operations like filter and map are lazy evalutated. They simply return another Stream and perform the operation when required. I think we can say that all operations that return another Stream can be considered as lazy operations (like filter, map). Of course, operations like foldLeft, foldRight, find and exists are not lazy.
+ */
+
+// Streams can be used in pattern matching
+nn match {
+  case 0 #:: 1 #:: _ => println("matched")
+}
