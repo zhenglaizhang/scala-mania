@@ -36,7 +36,7 @@ trait Stream[+A] {
     @annotation.tailrec
     def go(s: Stream[A], acc: List[A]): List[A] = {
       s.uncons match {
-        case scala.None => acc
+        case scala.None         => acc
         case scala.Some((h, t)) => go(t, h :: acc)
       }
     }
@@ -56,7 +56,7 @@ trait Stream[+A] {
           buf += h
           go(t)
         }
-        case _ => buf.toList
+        case _                  => buf.toList
       }
     }
 
@@ -66,7 +66,7 @@ trait Stream[+A] {
   def take(n: Int): Stream[A] = n match {
     case 0 => Stream.empty
     case _ => uncons match {
-      case scala.None => Stream.empty
+      case scala.None         => Stream.empty
       case scala.Some((h, t)) => Stream.cons(h, t.take(n - 1))
     }
   }
@@ -74,32 +74,30 @@ trait Stream[+A] {
   def drop(n: Int): Stream[A] = n match {
     case 0 => this
     case _ => uncons match {
-      case scala.None => this
+      case scala.None         => this
       case scala.Some((h, t)) => t.drop(n - 1)
     }
   }
 
   def takeWhile(f: A => Boolean): Stream[A] = uncons match {
-    case scala.None => Stream.empty
+    case scala.None         => Stream.empty
     case scala.Some((h, t)) => if (f(h)) Stream.cons(h, t.takeWhile(f)) else Stream.empty
   }
 
   import Stream._
 
   import scala.Some
+
   def dropWhile(f: A => Boolean): Stream[A] = {
     uncons match {
-      case scala.None => empty
-      case Some((h,t)) => if ( f(h) ) t.dropWhile(f) else t
+      case scala.None   => empty
+      case Some((h, t)) => if (f(h)) t.dropWhile(f) else t
     }
   }
+
   def headOption: scala.Option[A] = uncons match {
-    case scala.Some((h,t)) => scala.Some(h)
-    case _ => scala.None
-  }
-  def tail: Stream[A] = uncons match {
-    case scala.Some((h,t)) => t
-    case _ => Stream.empty
+    case scala.Some((h, t)) => scala.Some(h)
+    case _                  => scala.None
   }
 
   /*
@@ -107,7 +105,7 @@ trait Stream[+A] {
   由于op的第二个参数B是延后计算的，那么t.foldRight(z)(op)这个表达式的计算就是延后的，系统可以决定先不计算这个表达式从而得到了一个中间停顿的结果。
    */
   def foldRight[B](z: B)(op: (A, => B) => B): B = uncons match {
-    case scala.None => z
+    case scala.None         => z
     case scala.Some((h, t)) => op(h, t.foldRight(z)(op))
   }
 
@@ -115,22 +113,18 @@ trait Stream[+A] {
   注意：当p(a)=true时系统不再运算b，所以整个运算停了下来。
    */
   def exists(p: A => Boolean): Boolean = {
-    foldRight(false){(a,b) => p(a) || b }
+    foldRight(false) { (a, b) => p(a) || b }
   }
 
   // 同样，用foldRight来实现forAll：
   def forAll(p: A => Boolean): Boolean = {
-             foldRight(true){(a,b) => p(a) && b}
-         }
-
-  /*
-  当我们遇到数据结构只能存一个元素如Option，Either时我们用map2来对接两个结构。当我们遇到能存多个元素的数据结构如List，Tree时我们就会用append来对接。Stream是一个多元素的数据结构，我们需要实现append：
-   */
+    foldRight(true) { (a, b) => p(a) && b }
+  }
 
   // 把两个Stream连接起来
   def append[B >: A](b: Stream[B]): Stream[B] = {
     uncons match {
-      case scala.None => b
+      case scala.None   => b
       case Some((h, t)) => cons(h, t.append(b))
     }
   }
@@ -138,38 +132,87 @@ trait Stream[+A] {
   // append symbol representation
   def #++[B >: A](b: Stream[B]): Stream[B] = append(b)
 
+  /*
+  当我们遇到数据结构只能存一个元素如Option，Either时我们用map2来对接两个结构。当我们遇到能存多个元素的数据结构如List，Tree时我们就会用append来对接。Stream是一个多元素的数据结构，我们需要实现append：
+   */
+
   def map[B](f: A => B): Stream[B] = uncons match {
-    case scala.None => empty[B]
+    case scala.None         => empty[B]
     case scala.Some((h, t)) => cons(f(h), t.map(f))
+  }
+
+  /*
+S类型即uncons类型>>>Option[(A, Stream[A])], uncons的新状态是 Some((t.head, t.tail))。因为我们采用了数据结构嵌入式的设计，所以必须用uncons来代表Stream，它的下一个状态就是Some((t.head, t.tail))。如果使用子类方式Cons(h,t)，那么下一个状态就可以直接用t来表示，简洁多了。
+   */
+  def mapByUnfoldInfinite[B](f: A => B): Stream[B] = Stream.unfold(uncons) {
+    case Some((h, t)) => scala.Some((f(h), Some((t.head, t.tail))))
+    case _            => scala.None
+  }
+
+  def head: A = uncons match {
+    case scala.None         => throw new NoSuchElementException("head of empty stream")
+    case scala.Some((h, _)) => h
+  }
+
+  def tail: Stream[A] = uncons match {
+    case scala.Some((h, t)) => t
+    case _                  => Stream.empty
   }
 
   //用递归算法
   def flatMap[B](f: A => Stream[B]): Stream[B] = {
     uncons match {
-      case scala.None => empty
-      case scala.Some((h,t)) => f(h) #++ t.flatMap(f)
+      case scala.None         => empty
+      case scala.Some((h, t)) => f(h) #++ t.flatMap(f)
     }
   }
 
   //用foldRight实现
   def flatMap_1[B](f: A => Stream[B]): Stream[B] = {
-    foldRight(empty[B]){(h,t) => f(h) #++ t}
+    foldRight(empty[B]) { (h, t) => f(h) #++ t }
   }
+
   //用递归算法
   def filter(p: A => Boolean): Stream[A] = {
     uncons match {
-      case scala.None => empty
-      case scala.Some((h,t)) => if(p(h)) cons(h,t.filter(p)) else t.filter(p)
+      case scala.None         => empty
+      case scala.Some((h, t)) => if (p(h)) cons(h, t.filter(p)) else t.filter(p)
     }
   }
+
   //用foldRight实现
   def filter_1(p: A => Boolean): Stream[A] = {
-    foldRight(empty[A]){(h,t) => if(p(h)) cons(h,t) else t}
+    foldRight(empty[A]) { (h, t) => if (p(h)) cons(h, t) else t }
   }
 
   //#:: is the operation symbol for cons
   def #::[B >: A](h: => B): Stream[B] = cons(h, this)
 
+  def takeByUnfold(n: Int): Stream[A] = {
+    unfold((uncons,n)) {
+      case (Some((h,t)),k) if (k > 0) => Some(h, (Some((t.head, t.tail)), k-1))
+      case _ => scala.None
+    }
+  }
+  def takeWhileByUnfold(f: A => Boolean): Stream[A] = {
+    unfold(uncons) {
+      case Some((h,t)) if (f(h)) => Some(h, Some((t.head, t.tail)))
+      case _ => scala.None
+    }
+  }
+  def filterByUnfold(f: A => Boolean): Stream[A] = {
+    unfold(uncons) {
+      case Some((h,t)) if (f(h)) => Some(h, Some((t.head, t.tail)))
+      case _ => scala.None
+    }
+  }
+  def zipWithByUnfold[B,C](b: Stream[B])(f: (A,B) => C): Stream[C] = {
+    unfold((uncons,b.uncons)) {
+      case (Some((ha,ta)),Some((hb,tb))) => Some(f(ha,hb),(Some((ta.head,ta.tail)),Some((tb.head,tb.tail))))
+      case _ => scala.None
+    }
+  }
+  def zip[B](b: Stream[B]): Stream[(A,B)] = zipWithByUnfold(b){( _ , _)}
 
 }
 
@@ -197,10 +240,10 @@ object Stream {
   /*
 unfold的工作原理模仿了一种状态流转过程：z是一个起始状态，代表的是一个类型的值。然后用户（caller）再提供一个操作函数f。f的款式是：S => Option[(A,S)]，意思是接受一个状态，然后把它转换成一对新的A值和新的状态S，再把它们放入一个Option。如果Option是None的话，这给了用户一个机会去终止运算，让unfold停止递归。从unfold的源代码可以看到f(z) match {} 的两种情况。需要注意的是函数f是针对z这个类型S来操作的，A类型是Stream［A]的元素类型。f的重点作用在于把S转换成新的S。
    */
-  def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = f(z) match {
-    case None => Stream.empty
-    case Some((h, s)) => cons(h, unfold(s)(f))
+  def unfold[A, S](z: S)(f: S => scala.Option[(A, S)]): Stream[A] = f(z) match {
+    case scala.None         => Stream.empty
+    case scala.Some((h, s)) => cons(h, unfold(s)(f))
   }
 
-  def constByUnfold[A](x: A): Stream[A] = Stream.unfold(x)(_ => Some(x, x))
+  def constByUnfold[A](x: A): Stream[A] = Stream.unfold(x)(_ => scala.Some(x, x))
 }
