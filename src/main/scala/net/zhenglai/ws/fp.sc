@@ -1,3 +1,4 @@
+import scala.annotation.tailrec
 
 /*
  pure functions - functions that have no side effects(Throwing an exception or halting with an error,  Printing to the console or reading user input,  Drawing on the screen)
@@ -89,7 +90,7 @@ def createErrorMessageOOP(errorCode: Int): String = {
 
 
 // 首先，没有中间变量。整个函数简洁明了的多。不经过中间变量直接返回结果；这就是泛函编程的一个风格特征。
-
+// 这个函数的是一个纯函数，也是一个完整函数。因为函数主体涵盖了所有输入值（注意: case _ =>）。我们可以预知任何输入msgId值所产生的结果。还有，函数中没有使用任何中间变量。
 def createErrorMessage(errorCode: Int) = errorCode match {
   case 1 => "Network Error"
   case 2 => "IO Error"
@@ -97,3 +98,48 @@ def createErrorMessage(errorCode: Int) = errorCode match {
 }
 
 assert(createErrorMessage(1) == createErrorMessageOOP(1))
+
+
+/*
+泛函编程和数学方程式解题相似；用某种方式找出问题的答案。泛函编程通用的方式包括了模式匹配（pattern matching）以及递归思维（Recursive thinking）。我们先体验一下：
+ */
+
+def factorial(n: Int): Int = n match {
+  case 1 => 1
+  case k => k * factorial(k - 1)
+}
+
+factorial(10)
+
+// 我们试着用“等量替换”方式逐步进行约化（reduce）
+
+// 递归程序可以用 loop来实现。主要目的是防止堆栈溢出（stack overflow）。不过这并不妨碍我们用递归思维去解决问题。 阶乘用while loop来写：
+def factorial2(n: Int): Int = {
+  var k: Int = n
+  var acc: Int = 1
+  while (k > 1) {
+    acc = acc * k
+    k = k - 1
+  }
+  acc
+}
+
+factorial2(10)
+/*
+注意factorial_2使用了本地变量k，acc。虽然从表达形式上失去了泛函编程的优雅，但除了可以解决堆栈溢出问题外，运行效率也比递归方式优化。但这并不意味着完全违背了“不可改变性”（Immutability）。因为变量是锁定在函数内部的。
+最后，也可用tail recursion方式编写阶乘。让编译器（compiler）把程序优化成改变成 loop 款式：
+ */
+def factorial_3(n: Int): Int = {
+
+  // 得出的同样是正确的答案。这段程序中使用了@annotation.tailrec。如果被标准的函数不符合tail recusion的要求，compiler会提示。
+  @tailrec
+  def go(n: Int, acc: Int): Int = n match {
+    case k if k <= 0 => sys.error("Negative number not supported")
+    case 1           => acc
+    case k           => go(n - 1, acc * k)
+  }
+
+  go(n, 1)
+}
+
+factorial_3(10)
