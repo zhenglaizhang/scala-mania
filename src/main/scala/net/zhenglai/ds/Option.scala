@@ -1,5 +1,9 @@
 package net.zhenglai.ds
 
+// TODO http://www.cnblogs.com/tiger-xc/p/4336280.html
+/*
+一个专门对付异常情况出现时可以有一致反应所使用的数据类型。Option可以使编程人员不必理会出现异常后应该如何处理结果，他只是获得了一个None值，但这个None值与他所期待的类型是一致的，他可以继续用处理这种类型数据的方法使用这个结果。不过遗憾的是我们通过None值只能知道某个计算没能得出结果，但到底发生了什么事Option并没有提供任何提示。这样我们也就无法向用户提供贴切的系统错误或着操作失误信息了。
+ */
 sealed trait Option[+A] {
 
   def flatMap_1[B](f: A => Option[B]): Option[B] = {
