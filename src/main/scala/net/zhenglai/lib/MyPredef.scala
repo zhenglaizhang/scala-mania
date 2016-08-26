@@ -30,6 +30,22 @@ object MyPredef {
     buf.toString
   }
 
+  // non-strict
+  /*
+  如果valTrue和valFalse都是几千行代码的大型复杂计算，那么non-strict特性会节省大量的计算资源，提高系统运行效率。除此之外，non-strict特性是实现无限数据流（Infinite Stream）的基本要求
+   */
+  def If[A](cond: Boolean, trueVal: => A, falseVal: => A): A = {
+    // cond is strict
+    if (cond) {
+      println("run trueVal")
+      trueVal
+    }
+    else {
+      println("run falseVal")
+      falseVal
+    }
+  }
+
   class Parent(val value: Int) {
     override
     def toString: String = {
@@ -39,12 +55,12 @@ object MyPredef {
 
   class Child(value: Int) extends Parent(value)
 
+  //  case class C2[A <: Upper >: Lower](a: A) // Does not compile
+
   case
   class Opt[A](value: A = null) {
     def getOrElse(default: A) = if (value != null) value else default
   }
-
-  //  case class C2[A <: Upper >: Lower](a: A) // Does not compile
 
   class Upper
 
@@ -55,4 +71,5 @@ object MyPredef {
   class Lower extends Middle2
 
   case class C[A >: Lower <: Upper](a: A)
+
 }
