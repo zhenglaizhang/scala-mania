@@ -39,6 +39,8 @@ you have to admit the code is eminently readable. Far more readable than the Jav
 In Haskell, the Option monad is called Maybe. 4
 
 Haskell and OCaml don't have these holes since they have neither null nor casting.
+
+一个Option实例包含 0 或 1 个元素；None代表为空，Some(x)代表包含一个任意类型的元素x。和List的两种状态：Nil及Cons很是相似。值得注意的是，这个为空的概念与java的null值有根本的区别：None或Nil值都具有明确的类型而null则可能是任何类型的数据。在java编程里我们通常需要单独附加一些程序来检查、处理null值，而None或Nil代表了一个类型数据的状态，可以直接使用。
  */
 
 val greeting: Option[String] = Some("Hello world")
@@ -183,3 +185,18 @@ val resource = resourceFromConfigDir orElse resourceFromClasspath getOrElse Reso
 Still, the Scala libraries use Option whenever a "null" could be used and Scala projects are following that pattern. As long as you never ever create a cast or a null, you'll only have to worry about NoPE when dealing with existing Java or .Net code.
  */
 
+
+def divide(x: Int, y: Int): Option[Int] = {
+  try {
+    Some(x / y)
+  } catch {
+    case e: Exception => None
+  }
+}
+
+/*
+首先，不用再头疼该返回什么值了：出问题就直接返回None。不过使用者必须从Option这个管子里先把值取出来，看起来好像又多了一道手续。实际上这就是OOP和泛函编程概念之间的区别：泛函编程的风格就是在一些管子里进行数据读取，没有必要先取出来。
+ */
+divide(2, 0) getOrElse Int.MinValue
+
+// double => Infinity
