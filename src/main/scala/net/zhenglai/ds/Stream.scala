@@ -169,6 +169,8 @@ trait Stream[+A] {
 
   //#:: is the operation symbol for cons
   def #::[B >: A](h: => B): Stream[B] = cons(h, this)
+
+
 }
 
 /*
@@ -190,4 +192,15 @@ object Stream {
     if (as.isEmpty) empty
     else cons(as.head, apply(as.tail: _*))
   }
+
+  // unfold是一个最通用的Stream构建函数（stream builder）
+  /*
+unfold的工作原理模仿了一种状态流转过程：z是一个起始状态，代表的是一个类型的值。然后用户（caller）再提供一个操作函数f。f的款式是：S => Option[(A,S)]，意思是接受一个状态，然后把它转换成一对新的A值和新的状态S，再把它们放入一个Option。如果Option是None的话，这给了用户一个机会去终止运算，让unfold停止递归。从unfold的源代码可以看到f(z) match {} 的两种情况。需要注意的是函数f是针对z这个类型S来操作的，A类型是Stream［A]的元素类型。f的重点作用在于把S转换成新的S。
+   */
+  def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = f(z) match {
+    case None => Stream.empty
+    case Some((h, s)) => cons(h, unfold(s)(f))
+  }
+
+  def constByUnfold[A](x: A): Stream[A] = Stream.unfold(x)(_ => Some(x, x))
 }
