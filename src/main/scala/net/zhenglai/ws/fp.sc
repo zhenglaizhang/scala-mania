@@ -28,6 +28,7 @@ Scala removes as much of the overhead (and mental load) as possible, so you can 
  */
 
 /*
+“泛函” == 函数式编程
 说到函数式编程（FP）我们常常会联想到以下几个方面：
 
 1、不可变性 － Immutability
