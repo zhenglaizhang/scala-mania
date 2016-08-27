@@ -28,6 +28,7 @@ val (ints, rng8) = nextInts(5)(rng7)              //> ints  : List[Int] = List(-
  */
 
 
+// lambda of Func(RNG):(A, RNG)
 type RAND[+A] = RNG => (A, RNG)
 
 def rnInt: RAND[Int] = _.nextInt
@@ -37,5 +38,9 @@ def rnPositiveINt: RAND[Int] = nextPositiveInt
 /*
 函数申明 def rnInt: Rand[Int] 好像没有参数，但使用时 rnInt(rng) 是需要参数的。不过如果我们想想 Func(RNG):(A,RNG) 的lambda表达形式 RNG => (A,RNG)自然就理解了。
  */
-rnInt(rng)
+val (x, rng10) = rnInt(rng)
 rnPositiveINt(rng)
+
+
+import _root_.net.zhenglai.lib._
+rnDouble2(rng)
