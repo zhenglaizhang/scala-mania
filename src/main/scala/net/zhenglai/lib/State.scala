@@ -58,4 +58,7 @@ object State {
   // 这个unit。它就是一个封装元素值和状态都不转变的State实例。unit的唯一功能就是把低阶一级的封装元素类型a升格为State类型。
   def unit[S, A](a: A) = State[S, A](s => (a, s))
 
+  def getState[S]: State[S, S] = State[S, S] { s => (s, s)}
+
+  def setState[S](s: S): State[S, Unit] = State[S, Unit] { _ => ((), s)}
 }
