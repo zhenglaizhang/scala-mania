@@ -15,11 +15,28 @@ rng.nextDouble                                    //> res3: Double = 2.306856098
 这个肯定不是泛函风格的RNG：同一个函数每次引用会产生不同的结果。泛函函数（pure function）的“等量替换”在这里不成立。再者，我们不难想象在以上rng里一定维护了一个状态，每次更新，产生了附带影响（side effect），这又违背了泛函纯函数（pure function）的不产生附带影响的要求（referencial transparency）
 
 泛函的做法重点在于用明确的方式来更新状态，即：不要维护内部状态，直接把新状态和结果一道返回
+
+函数nextInt返回了一个随意数及新的RNG。如果我们使用同一个RNG产生的结果是一样的r2==r3，恰恰体现了泛函风格。
+
+所有类型的泛函式随意数产生器都可以从Int RNG nextInt推导出来：
  */
 trait RNG {
 
   // 泛函状态变迁（state transition）的signature
   def nextInt: (Int, RNG)
+}
+
+//起始状态RNG, 种子RNG
+case class seedRNG(seed: Long) extends RNG {
+  // 泛函状态变迁（state transition）的signature
+  override def nextInt: (Int, RNG) = {
+    val seed2 = (seed*0x5DEECE66DL + 0xBL) & ((1L << 48) - 1)
+    ((seed2 >>> 16).asInstanceOf[Int], seedRNG(seed2))
+  }
+}
+
+object RNG {
+
 }
 
 object testonly {
