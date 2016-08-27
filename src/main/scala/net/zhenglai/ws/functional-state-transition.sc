@@ -1,4 +1,4 @@
-import net.zhenglai.lib.seedRNG
+import net.zhenglai.lib.{RNG, seedRNG}
 import net.zhenglai.lib.RNG._
 
 /*
@@ -26,3 +26,16 @@ val (ints, rng8) = nextInts(5)(rng7)              //> ints  : List[Int] = List(-
 /*
 从以上的例子中可以发现这些函数一致的款式：func(RNG):(A,RNG)，即：RNG => (A,RNG)， 是lambda function，纯纯的函数类型申明。这样看来随意数产生器就是一个函数类型，我们可以把产生器当作函数的参数或者返回值来使用。
  */
+
+
+type RAND[+A] = RNG => (A, RNG)
+
+def rnInt: RAND[Int] = _.nextInt
+def rnDouble: RAND[Double] = nextDouble
+def rnPositiveINt: RAND[Int] = nextPositiveInt
+
+/*
+函数申明 def rnInt: Rand[Int] 好像没有参数，但使用时 rnInt(rng) 是需要参数的。不过如果我们想想 Func(RNG):(A,RNG) 的lambda表达形式 RNG => (A,RNG)自然就理解了。
+ */
+rnInt(rng)
+rnPositiveINt(rng)
