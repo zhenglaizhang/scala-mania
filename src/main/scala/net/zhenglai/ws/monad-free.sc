@@ -43,5 +43,12 @@ for {
 不过要把Interact变成Monad就必须实现unit和flatMap两个函数，检查Interact trait，明显这是不可能的。
 
 那我们把下面的努力都应该放在如何转变成Monad这方面了。既然我们在本篇命题里提到Free Monad是Monad生产线。那么用Free Monad能不能把Interact变成Monad呢？
+
+我们先看看这个Free Monad类型结构：
  */
+trait Free[F[_], A]
+
+case class Return[F[_], A](a: A) extends Free[F, A]
+
+case class Bind[F[_], I, A](a: F[I], f: I => Free[F, A]) extends Free[F, A]
 
