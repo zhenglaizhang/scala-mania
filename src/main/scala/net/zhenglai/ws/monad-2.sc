@@ -100,6 +100,30 @@ trait Monad[M[_]] extends Functor[M] {
       a => map(mb) { b => f(a, b) }
     }
   }
+
+  def sequence[A](lm: List[M[A]]): M[List[A]] = {
+    lm.foldRight(unit(Nil: List[A])){(a,b) => map2(a,b){_ :: _} }
+  }
+  def travers[A,B](la: List[A])(f: A => M[B]): M[List[B]] = {
+    la.foldRight(unit(Nil: List[B])){(a,b) => map2(f(a),b){_ :: _}}
+  }
+  def replicateM[A](n: Int, ma: M[A]): M[List[A]] = {
+    if (n == 0) unit(Nil)
+    else map2(ma,replicateM(n-1,ma)) {_ :: _}
+  }
+  def factor[A,B](ma: M[A], mb: M[B]): M[(A,B)] = {
+    map2(ma,mb){(a,b) => (a,b)}
+  }
+  def cofactor[A,B](e: Either[M[A],M[B]]): M[Either[A,B]] = {
+    e match {
+      case Right(b) => map(b){x => Right(x)}
+      case Left(a) => map(a){x => Left(x)}
+    }
+  }
+
+  /*
+可以看出，我们新增加的组件都是以unit + flatMap这两个基础组件实现的，都是更高阶的组件。所以是不是可以说Monadic programming 就是 flatMap Programming呢？
+   */
 }
 
 
