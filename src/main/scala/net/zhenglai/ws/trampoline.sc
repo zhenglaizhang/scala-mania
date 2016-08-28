@@ -30,7 +30,7 @@ def foldL2[A, B](xs: List[A], b: B, f: (B, A) => B): B = {
   var az = xs
   while (true) {
     az match {
-      case Nil => return z
+      case Nil     => return z
       case x :: xs => {
         z = f(z, x)
         az = xs
@@ -45,3 +45,35 @@ def foldL2[A, B](xs: List[A], b: B, f: (B, A) => B): B = {
 
 但在实际编程中，统统把递归算法编写成尾递归是不现实的。有些复杂些的算法是无法用尾递归方式来实现的，加上JVM实现TCE的能力有局限性，只能对本地（Local）尾递归进行优化。
  */
+
+
+def even[A](xs: List[A]): Boolean = xs match {
+  case Nil    => true
+  case h :: t => odd(t)
+}
+
+def odd[A](xs: List[A]): Boolean = xs match {
+  case Nil    => false
+  case h :: t => even(t)
+}
+
+even((1 to 100).toList)
+
+// java.lang.StackOverflowError
+//even((1 to 1000000).toList)
+
+/*
+在上面的例子里even和odd分别为跨函数的各自的尾递归，但Scala compiler无法进行TCE处理，因为JVM不支持跨函数Jump：
+
+我们可以通过设计一种数据结构实现以heap交换stack。Trampoline正是专门为解决StackOverflow问题而设计的数据结构：
+ */
+
+trait Trampoline[+A] {
+  final def runT: A = this match {
+    case Done(a) => a
+    case More(k) => k().runT
+  }
+}
+
+case class Done[+A](a: A) extends Trampoline[A]
+case class More[+A](k: () => Trampoline[A]) extends Trampoline[A]
