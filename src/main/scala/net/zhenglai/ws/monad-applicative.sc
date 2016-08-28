@@ -32,6 +32,6 @@ trait Applicative[F[_]] extends Functor[F] {
   def unit[A](a: A): F[A]
 
   def apply[A, B](fa: F[A])(fab: F[A => B]): F[B] = {
-
+    // TODO
   }
 }

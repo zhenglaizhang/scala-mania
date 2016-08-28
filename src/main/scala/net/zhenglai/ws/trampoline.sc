@@ -84,6 +84,9 @@ A trampoline is a loop that repeatedly runs functions. Each function, called a t
 Here is our program again, rewritten in trampolined style. Call objects contain the thunks and a Done object contains the final result. Instead of making a tail call directly, each method now returns its call as a thunk for the trampoline to run. This frees up the stack after each iteration. The effect is very similar to tail-call optimisation.
 
 Trampolined code is harder to read and write, and it executes more slowly. However, trampolines can be invaluable when your program would otherwise run out of stack space, and the only other alternative is to convert it into an imperative style
+
+
+Trampoline。它主要是为了解决堆栈溢出（StackOverflow）错误而设计的。Trampoline类型是一种数据结构，它的设计思路是以heap换stack：对应传统递归算法运行时在堆栈上寄存程序状态，用Trampoline进行递归算法时程序状态是保存在Trampoline的数据结构里的。数据结构是在heap上的，所以可以实现以heap换stack的效果。这种以数据结构代替函数调用来解决问题的方式又为泛函编程提供了更广阔的发展空间。
  */
 trait Trampoline[+A] { // Bounce
   @annotation.tailrec
