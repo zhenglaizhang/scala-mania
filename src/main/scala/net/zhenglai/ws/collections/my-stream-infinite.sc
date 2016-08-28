@@ -60,3 +60,4 @@ fibByUnfold.mapByUnfoldInfinite(_ + 10).take(10).toList
 //> res12: List[Int] = List(11, 12, 13, 14)
 (fromByUnfold(5) zip fromByUnfold(1).mapByUnfoldInfinite {_ + 10}).take(5).toList
 //> res13: List[(Int, Int)] = List((5,11), (6,12), (7,13), (8,14), (9,15))
+

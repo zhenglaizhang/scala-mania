@@ -33,3 +33,6 @@ libraryDependencies += "joda-time" % "joda-time" % "2.9.4"
 libraryDependencies += "org.joda" % "joda-convert" % "1.8"
 
 libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.13.2" % "test"
+
+libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.0"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.0" % "test"
