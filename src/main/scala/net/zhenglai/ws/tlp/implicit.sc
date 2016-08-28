@@ -26,7 +26,7 @@ class Bar(x: Int) {
 
 1.min(2)
 
-val implictConv = implicitly[Int => RichInt ]
+val implictConv = implicitly[Int => RichInt]
 implictConv(1)
 
 
@@ -87,3 +87,27 @@ def find2[C](a: C, b: C)(implicit n: Numeric[C]) = n.plus(a, b)
 
 find(1, 2)
 find(12, 12)
+
+
+/*
+scala compiler 在编译程序时会根据情况自动进行隐式转换，即代码替代。在两种情况下scala会进行隐形转换：
+1、在期待一个类型的地方发现了另外一个类型：
+2、当一个类型并不支持某个方法时：
+ */
+object ab {
+  class A {
+    def printA = println("I am A")
+  }
+  class B
+  implicit def bToA(x: B): A = new A
+}
+
+import ab._
+val a: A = new B
+/*
+需要进行B => A的隐式转换
+
+在这里由于A类和B类没有任何继承关系，应该无法通过编译，但scala compiler会首先尝试搜寻B=>A的隐式转换实例，当找到bToA函数时compiler会把new B替代成bToA(new B),如此这般才能通过编译。
+ */
+
+(new B).printA //需要进行B => A的隐式转换
