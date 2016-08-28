@@ -103,3 +103,13 @@ trait Monad[M[_]] extends Functor[M] {
 }
 
 
+def listMonad = new Monad[List] {
+  override def unit[A](a: A): List[A] = List(a)
+
+  override def flatMap[A, B](ma: List[A])(f: (A) => List[B]): List[B] = ma flatMap f
+}
+
+listMonad.map(List(1, 2, 3))(_ + 10)
+listMonad.map2(List(1, 2), List(3, 4)){ (a, b) => List(a, b)}
+// 的确我们从listMonad中自动获得了可用的map和map2.
+
