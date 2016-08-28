@@ -88,6 +88,8 @@ def map[A,B](pa: Par[A])(f: A => B): Par[B] = {
 我们知道Monad是一个高度概括的抽象模型。好像创造Monad的目的是为了抽取各种数据类型的共性组件函数汇集成一套组件库从而避免重复编码。
 
 可以看出，我们新增加的组件都是以unit + flatMap这两个基础组件实现的，都是更高阶的组件。所以是不是可以说Monadic programming 就是 flatMap Programming呢？
+
+Monad也是Functor，因为我们可以用flatMap+unit来实现map。现在我们可以把Monad trait 改成 extends Functor
  */
 trait Monad[M[_]] extends Functor[M] {
 
@@ -99,12 +101,22 @@ trait Monad[M[_]] extends Functor[M] {
     flatMap(ma)(x => unit(f(x)))
   }
 
+  /*
+由于Monad是个超概括的数据类型，必须兼容各种计算模式，无法专注针对一些特殊的操作模式。在泛函编程模式中最具有特点的就是在一个封闭结构内运行函数。其中比较明显的就是map2这个函数了：
+   */
   def map2[A, B, C](ma: M[A], mb: M[B])(f: (A, B) => C): M[C] = {
     flatMap(ma) {
       a => map(mb) { b => f(a, b) }
     }
   }
 
+  /*
+map2把两个封在高阶类型结构里的元素通过运行f函数结合起来。完成操作后产生的结果仍然保持结构的完整性。这是一种典型的泛函编程函数施用模式（idiomatic function application）。由于这种函数施用模式在泛函编程中使用非常广泛，所以我们特别将这种模式的组件库独立出来并称之为Applicative。从前面的讨论我们可以注意到很多数据类型Monad实例的组件函数都可以用map2和unit来实现，
+
+那么map2+unit会不会也是Monad的最基本组件呢？答案是否定的，因为用map2+unit是无法实现flatMap、join及compose的。
+
+因为我们能够用flatMap来实现map2，所以Monad就是Applicative。但反之Applicative不一定是Monad。
+   */
   def sequence[A](lm: List[M[A]]): M[List[A]] = {
     lm.foldRight(unit(Nil: List[A])){(a,b) => map2(a,b){_ :: _} }
   }
