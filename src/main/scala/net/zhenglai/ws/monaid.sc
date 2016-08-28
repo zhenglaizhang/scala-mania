@@ -124,3 +124,34 @@ def firstOfDualOptionMonoid[A] = optionMonoid[A]
 //| pe}
 def secondOfDualOptionMonoid[A] = dual(firstOfDualOptionMonoid[A])
 //> secondOfDualOptionMonoid: [A]=> ch10.ex1.Monoid[Option[A]]
+
+
+/*
+下面这个函数用Monoid对List[A]元素A进行累加操作
+ */
+def concatenate[A](xs: List[A], m: Monoid[A]): A = {
+  xs.foldRight(m.zero)((a, b) => m.op(a, b))
+}
+
+concatenate(List(1, 2, 3, 4), intAdditionMonoid)
+
+/*
+那么如果没有List[A]元素A类型Monoid实例怎么办？我们可以加一个函数：
+如果我们有一个函数可以把A类转成B类 A => B，那我们就可以使用Monoid[B]了：
+ */
+
+def foldMap[A, B](xs: List[A])(m: Monoid[B])(f: A => B): B = {
+  xs.foldRight(m.zero)((a, b) => m.op(f(a), b))
+}
+/*
+oldRight的类型款式：foldRight[A,B](as: List[A])(z: B)(g: (A,B) => B): B。其中(A,B) => B >>> (f(A),B) => B >>> (B,B) => B 就可以使用 Monoid[B].op(B,B)=B了。我们也可以用foldLeft来实现foldMap。实际上我们同样可以用foldMap来实现foldRight和foldLeft:
+
+foldRight和foldLeft的f函数是(A,B) => B，如果用curry表达：A => (B => B)，如果能把 A => ? 转成 B => B，那么我们就可以使用endoComposeMonoid[B].op(f: B => B, g: B => B): B。
+ */
+def foldRight[A,B](as: List[A])(z: B)(f: (A,B) => B): B = {
+  foldMap(as)(endoComposeMonoid[B])(a => b => f(a,b))(z)
+}
+
+def foldLeft[A,B](as: List[A])(z: B)(f: (A,B) => B): B = {
+  foldMap(as)(dual(endoComposeMonoid[B]))(a => b => f(a,b))(z)
+}
