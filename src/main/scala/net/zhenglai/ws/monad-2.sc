@@ -23,6 +23,13 @@ def map[A,B](sa: State[S,A])(f: A => B): State[S,B]
  */
 trait Functor[F[_]] {
   def map[A, B](a: F[A])(f: A => B): F[B]
+
+  /*
+我们在设计unzip时是针对F的。在trait Functor里我们可以肯定F[(A,B)]支持map，所以我们才可以完成unzip函数的实现。这就是抽象的作用。当我们使用unzip时只要确定传入的参数fab是Functor就行了
+   */
+  def unzip[A, B](fab: F[(A, B)]): (F[A], F[B]) = {
+    (map(fab) {_._1}, map(fab) {_._2})
+  }
 }
 /*
 注意在上面的map例子里的施用类型都是高阶类型；List[A]、Option[A]、Par[A] ...都是F[A]这种形式。所以Functor的类参数是F[_]，即: Functor[List], Functor[Option], Functor[Par] ...,这里面F[_]就是F[A]，A可以是任何类型。
@@ -42,6 +49,57 @@ object StreamFunctor extends Functor[Stream] {
 
 /*
 我们只需要对不同类型的操作使用对应的Functor实例就可以了：
+
+操作模式是一致相同的。不过讲实在话，上面的这些实例都没什么意义，因为施用的具体类型本身就支持map。也就是说List，Option等本身就是Functor。换句话讲就是：它们都可以map，所以都是Functor。
  */
 ListFunctor.map(List(1, 2, 3))(_ + 10)
 OptionFunctor.map(Some(1))(_ + 10)
+
+
+
+ListFunctor.unzip(List(1 -> 10, 2 -> 20, 3 -> 30))
+OptionFunctor.unzip(Some((1, 2)))
+
+
+/*
+def map2[A,B,C](la: List[A], lb: List[B])(f: (A,B) => C): List[C] = {
+      la flatMap {a => lb map { b => f(a,b) }}
+  }
+  def map2[A,B,C](oa: Option[A], ob: Option[B])(f: (A,B) => C): Option[C] = {
+      oa flatMap{a => ob map { b => f(a,b) }}
+  }
+  def map2[A,B,C](pa: Par[A], pb: Par[B])(f: (A,B) => C): Par[C] = {
+      pa flatMap{a => pb map { b => f(a,b) }}
+  }
+
+看看这些map2函数：不但款式相同，实现方法也是相同的。不同的还是具体施用受体的数据类型。看来我们还是因为各种数据类型的不同而重复编写了map2组件。我们应该想办法一次实现map2后让所有数据类型实例都可以使用，从而彻底避免重复编码。可以肯定的是这些办法一定跟共性抽象有关。
+
+在前面那些章节的讨论中我们一直针对某些数据类型的特性设计最基本的操作函数或组件。因为各种数据类型的不同我们重复编写了map2组件。现在我们看到map2是可以用flatMap和map来实现的。那么flatMap和map就是最基本最通用的组件了吗？事实上map可以用flatMap和unit来实现：
+
+def map[A,B](pa: Par[A])(f: A => B): Par[B] = {
+ flatMap(pa) { a => unit(f(a)) }
+}
+ */
+
+
+/*
+在这个trait里unit和flatMap是抽象的。这意味着各类型的Monad实例必须实现unit和flatMap，并且会自动获取map和map2两个组件。
+ */
+trait Monad[M[_]] extends Functor[M] {
+
+  def unit[A](a: A): M[A]
+
+  def flatMap[A, B](ma: M[A])(f: A => M[B]): M[B]
+
+  def map[A, B](ma: M[A])(f: A => B): M[B] = {
+    flatMap(ma)(x => unit(f(x)))
+  }
+
+  def map2[A, B, C](ma: M[A], mb: M[B])(f: (A, B) => C): M[C] = {
+    flatMap(ma) {
+      a => map(mb) { b => f(a, b) }
+    }
+  }
+}
+
+
