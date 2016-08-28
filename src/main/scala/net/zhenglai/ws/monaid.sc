@@ -1,3 +1,5 @@
+
+
 /*
 Monoid(幺半群)是数学范畴理论（category theory）中的一个特殊范畴（category）。不过我并没有打算花时间从范畴理论的角度去介绍Monoid，而是希望从一个程序员的角度去分析Monoid以及它在泛函编程里的作用。从这个思路出发我们很自然得出Monoid就是一种数据类型，或者是一种在泛函编程过程中经常会遇到的数据类型：当我们针对List或者loop进行一个数值的积累操作时我们就会使用到Monoid。实际上Monoid就是List[A] => A的抽象模型。
 
@@ -155,3 +157,24 @@ def foldRight[A,B](as: List[A])(z: B)(f: (A,B) => B): B = {
 def foldLeft[A,B](as: List[A])(z: B)(f: (A,B) => B): B = {
   foldMap(as)(dual(endoComposeMonoid[B]))(a => b => f(a,b))(z)
 }
+
+
+def foldMapV[A, B](xs: IndexedSeq[A])(m: Monoid[B])(f: A => B): B = xs.length match {
+  case 0 => m.zero
+  case 1 => f(xs.head)
+  case _ =>
+    val (l, r) = xs.splitAt(xs.length / 2)
+    m.op(foldMapV(l)(m)(f), foldMapV(r)(m)(f))
+}
+
+
+/*
+def foldMapVP[A, B](xs: IndexedSeq[A])(m: Monoid[B])(f: A => B) = xs.length match {
+  case 0 => m.zero
+  case 1 => f(xs.head)
+  case _ =>
+    val (l, r) = xs.splitAt(xs.length / 2)
+    m.op(Par.async(foldMapVP(l)(m)(f)), Par.async(foldMapVP(r)(m)(f)))
+}
+*/
+
