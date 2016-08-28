@@ -179,4 +179,74 @@ async[A](a: => A): Par[A]：这个async函数把表达式a提交到主线程之�
   sortPar(async({println(Thread.currentThread.getName); List(4,1,2,3)}))(es).get
   sortParByMap(async({println(Thread.currentThread.getName); List(4,1,2,3)}))(es).get
    */
+
+  // 实际上map2做了两件事：启动了两个并行运算、对运算结果进行了处理。这样说map2是可以被分解成更基本的组件函数：
+  //启动两项并行运算
+  def product[A,B](pa: Par[A], pb: Par[B]): Par[(A,B)] = {
+    es => unit((run(es)(pa).get, run(es)(pb).get))(es)
+  }                                               //> product: [A, B](pa: ch71.Par.Par[A], pb: ch71.Par.Par[B])ch71.Par.Par[(A, B
+  //| )]
+  //处理运算结果
+//  def map[A,B](pa: Par[A])(f: A => B): Par[B] = {
+  //    es => unit(f(run(es)(pa).get))(es)
+  //  }                                               //> map: [A, B](pa: ch71.Par.Par[A])(f: A => B)ch71.Par.Par[B]
+  //再组合map2
+  def map2_pm[A,B,C](pa: Par[A], pb: Par[B])(f: (A,B) => C): Par[C] = {
+    map(product(pa, pb)){a => f(a._1, a._2)}
+  }                                               //> map2_pm: [A, B, C](pa: ch71.Par.Par[A], pb: ch71.Par.Par[B])(f: (A, B) => C
+  //| )ch71.Par.Par[C]
+
+
+//  我们还可以把函数A => B转换成A => Par[B]，意思是把对A的运算变成并行运算Par[B]:
+
+  def asyncF[A, B](f: A => B): A => Par[B] = a => async(f(a))
+
+  //用递归法实现
+  def sequence_r[A](lp: List[Par[A]]): Par[List[A]] = {
+    lp match {
+      case Nil => unit(List())
+      case h::t => map2(h,fork(sequence_r(t))){_ :: _}
+    }
+  }                                               //> sequence_r: [A](lp: List[ch71.Par.Par[A]])ch71.Par.Par[List[A]]
+  //用foldLeft
+  def sequenceByFoldLeft[A](lp: List[Par[A]]): Par[List[A]] = {
+    lp.foldLeft(unit[List[A]](Nil)){(t,h) => map2(h,t){_ :: _}}
+  }                                               //> sequenceByFoldLeft: [A](lp: List[ch71.Par.Par[A]])ch71.Par.Par[List[A]]
+  //用foldRight
+  def sequenceByFoldRight[A](lp: List[Par[A]]): Par[List[A]] = {
+    lp.foldRight(unit[List[A]](Nil)){(h,t) => map2(h,t){_ :: _}}
+  }                                               //> sequenceByFoldRight: [A](lp: List[ch71.Par.Par[A]])ch71.Par.Par[List[A]]
+  //用IndexedSeq切成两半来实现
+  def sequenceBalanced[A](as: IndexedSeq[Par[A]]): Par[IndexedSeq[A]] = {
+    if (as.isEmpty) unit(Vector())
+    else if (as.length == 1) map(as.head){a => Vector(a)}
+    else {
+      val (l,r) = as.splitAt(as.length / 2)
+      map2(sequenceBalanced(l),sequenceBalanced(r)){_ ++ _}
+    }
+  }                                               //> sequenceBalanced: [A](as: IndexedSeq[ch71.Par.Par[A]])ch71.Par.Par[IndexedS
+  def sequence[A](lp: List[Par[A]]): Par[List[A]] = { //| eq[A]]
+    map(sequenceBalanced(lp.toIndexedSeq)){_.toList}
+  }
+
+  def parMap[A,B](as: List[A])(f: A => B): Par[List[B]] = fork {
+    val lps = as.map{asyncF(f)}
+    sequence(lps)
+  }                                               //> parMap: [A, B](as: List[A])(f: A => B)ch71.Par.Par[List[B]]
+//  fork(parMap(List(1,2,3,4,5)){ _ + 10 })(es).get  //> pool-1-thread-1
+  //| pool-1-thread-2
+  //| pool-1-thread-3
+  //| pool-1-thread-4
+  //| pool-1-thread-5
+  //| pool-1-thread-6
+  //| pool-1-thread-8
+  //| pool-1-thread-7
+  //| pool-1-thread-9
+  //| pool-1-thread-10
+  //| pool-1-thread-14
+  //| pool-1-thread-12
+  //| pool-1-thread-15
+  //| pool-1-thread-11
+  //| pool-1-thread-13
+  //| res3: List[Int] = List(11, 12, 13, 14, 15)
 }
