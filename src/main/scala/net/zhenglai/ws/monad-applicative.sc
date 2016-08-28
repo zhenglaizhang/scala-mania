@@ -14,4 +14,24 @@
 2   def map2[A,B,C](ma: M[A], mb: M[B])(f: (A,B) => C): M[C]
 3   def flatMap[A,B]  (ma: M[A])       (f: A => M[B]) : M[B]
 map和map2都是正宗的在高阶数据类型结构内的函数施用，但flatMap的函数是 A=>M[B]，会破坏结果的结构。例如：我们对一个有3个元素的List进行map操作，结果仍然是一个3个元素的List。但如果flatMap的话就可能会产生不同长度的List：
+
+既然是更专注于函数施用，那么还有一种款式的函数是值得研究的：
+   def apply[A,B](fab: F[A => B])(fa: F[A]): F[B]
+apply的施用函数是通过一个Monadic值传入的，这就使得apply比map更加强大，因为这个施用函数还带着F结构的作用。就拿Option来说：apply的施用函数可以是None而map无论如何都必须提供施用函数。这样一来apply会比map更加灵活和强大。以下就是Applicative trait：
+
+
+因为我们可以用flatMap来实现map2和apply，所以所有Monad都是Applicative。由于我们在Monad组件库里已经实现许多有用的组件函数，我们就不需要在Applicative库里重复了。我们可以对Monad extends Applicative
 */
+
+trait Functor[F[_]] {
+  def map[A, B](xs: F[A])(f: A => B): F[B]
+}
+
+trait Applicative[F[_]] extends Functor[F] {
+
+  def unit[A](a: A): F[A]
+
+  def apply[A, B](fa: F[A])(fab: F[A => B]): F[B] = {
+
+  }
+}
