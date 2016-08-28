@@ -1,6 +1,26 @@
 import scala.annotation.tailrec
 
 /*
+面向对象编程范畴（OOP）从80年代C++到90年代java的兴起已经经历了几十年的高潮，是不是已经发展到了尽头，该是函数式编程（FP）开始兴旺发达的时候了吧。这样说似乎心眼儿有点坏，可能会得罪当今大多数的编程人员。不过计算机硬件技术的发展往往会催生新的编程技术，这倒是无可反驳的现象。当今世界上计算机行业中大数据、电子商务、多核CPU，高并发网络的普及使得C++,java这些OOP范畴的编程语言显得那么地不尽人意，函数式编程范畴的编程语言将成为主流，这应该是句大实话了吧。
+
+  说到函数式编程（FP）我们常常会联想到以下几个方面：
+
+1、不可变性 － Immutability
+
+2、函数既值 － Function as value
+
+3、无副作用 － No side effects
+
+这几样特性可以很好地解决多核CPU、多线程、高并发问题。
+
+scala是个OOP和FP混合范畴的编程语言。这是因为考虑到那么许多从OOP世界过来的编程人员可以尽快上手，而且有许多问题可能用OOP方式能得到更好的解决。但重要的是在使用scala编程中到底以OOP还是FP为主。如果我们采用scala的FP为主的话，scala标准库（sdandard library）中的数据类型和函数组件就显得不足够应付，我们必须在用scala FP开发软件前准备好一套较为完整的函数组件库（combinator library）。幸运的是我们现在有了scalaz，它使我们在泛函编程的道路上节省了一大段路程。
+
+  scalaz是一套用scala语言编写的函数库。scalaz为用户提供了大量的数据类型和组件函数来支持函数式编程。实际上scalaz的代码贡献者们是受到了纯函数式编程语言haskell的启发，把haskell中的数据类型、结构、函数组件在scalaz中用scala进行了重新实现。既然我们打算采用scala的FP，我们可能必须把scalaz作为基础组件库来使用，那么我们必须首先了解scalaz的库结构、里面各种数据类型和组件函数、掌握它们的使用方式以及应用模式。
+
+  当然，在学习和介绍scalaz的过程中我们还可以更多了解scala的函数式编程模式以及它所著名的贴切简洁的表现形式。
+
+让我们期待这个系列的scalaz讨论能真正的把我们带入函数式编程范畴的世界。。。
+
  pure functions - functions that have no side effects(Throwing an exception or halting with an error,  Printing to the console or reading user input,  Drawing on the screen)
 
 functional programming is a restriction on how we write programs, but not on what programs we can express
