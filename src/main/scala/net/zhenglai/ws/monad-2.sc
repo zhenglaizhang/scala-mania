@@ -103,7 +103,7 @@ trait Monad[M[_]] extends Functor[M] {
 }
 
 
-def listMonad = new Monad[List] {
+val listMonad = new Monad[List] {
   override def unit[A](a: A): List[A] = List(a)
 
   override def flatMap[A, B](ma: List[A])(f: (A) => List[B]): List[B] = ma flatMap f
@@ -113,3 +113,19 @@ listMonad.map(List(1, 2, 3))(_ + 10)
 listMonad.map2(List(1, 2), List(3, 4)){ (a, b) => List(a, b)}
 // 的确我们从listMonad中自动获得了可用的map和map2.
 
+
+
+val optionMonad = new Monad[Option] {
+  override def unit[A](a: A): Option[A] = Some(a)
+
+  override def flatMap[A, B](ma: Option[A])(f: (A) => Option[B]): Option[B] = ma flatMap f
+}
+
+optionMonad.map(Some(1)){ _ + 10}
+optionMonad.map2(Some(1), Some(2)){(a, b) => a + b }
+
+/*
+现在我们似乎可以说任何可以flatMap（具备flatMap函数）的数据类型都是Monad。
+
+我们可以再丰富一下现在的Monad组件库，增加多些共用组件，使Monad抽象模型能更概括实用些：
+ */
