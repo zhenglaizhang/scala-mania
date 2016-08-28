@@ -57,7 +57,7 @@ trait Future[A] {
 }
 */
 
-object par {
+object Par {
   import java.util.concurrent.{ExecutorService, Future}
 
   /*
@@ -71,6 +71,9 @@ object par {
   def run[A](es: ExecutorService)(pa: Par[A]): Future[A] = pa(es)
 
 
+  /*
+unit[A](a: A): Par[A] : 我们硬生生的按照Par的类型款式造了一个Future实例，这样我们才可以用Future.get的形式读取运算结果值。看看这个例子：unit(42+1)，在调用函数unit时由于传入参数是即时计算的，所以在进入unit前已经完成了计算结果43。然后人为的把这个结果赋予Future.get，这样我们就可以和真正的由ExecutorService返回的Future一样用同样的方式读取结果。所以说unit纯粹是一个改变格式的升格函数，没有任何其它作用。
+   */
   def unit[A](a: A): Par[A] = es => {
     new Future[A] {
 
@@ -86,11 +89,94 @@ object par {
     }
   }
 
-  def fork[A](pa: Par[A]): Par[A] = es => {
+  // fork(pa: => Par[A])才可以保证在提交任务前都不会计算表达式a
+  def fork[A](pa: => Par[A]): Par[A] = es => {
     es.submit(new Callable[A] {
       override def call(): A = run(es)(pa).get
     })
   }
 
+  /*
+async[A](a: => A): Par[A]：这个async函数把表达式a提交到主线程之外的另一个线程。新的线程由ExecutorService提供，我们无须理会，这样可以实现线程管理和并行运算组件库的松散耦合。由于async的传人函数是延后计算类型，所以我们可以把表达式a提交给另一个线程去运算。
+   */
   def async[A](a: => A): Par[A] = fork(unit(a))
+
+  /*
+  先用泛函方式启动并行运算。如果我们并行启动两个运算：
+   */
+  def map2[A,B,C](pa: Par[A], pb: Par[B])(f: (A,B) => C): Par[C] = {
+    es => new Future[C] {
+
+      //在这里按pa的定义来确定在那个线程运行。如果pa是fork Par则在非主线程中运行
+      var fa = run(es)(pa)
+      var fb = run(es)(pb)
+
+      override def isCancelled: Boolean = fa.isCancelled && fb.isCancelled
+      override def get(): C = f(fa.get, fb.get)
+      override def get(timeout: Long, unit: TimeUnit): C = {
+        val start = System.nanoTime
+        val a = fa.get
+        val end = System.nanoTime
+
+        //fa.get用去了一些时间。剩下给fb.get的timeout值要减去
+        val b = fb.get(timeout - unit.convert((end - start), TimeUnit.NANOSECONDS), unit)
+
+        f(a, b)
+      }
+      override def cancel(mayInterruptIfRunning: Boolean): Boolean = fa.cancel(mayInterruptIfRunning) || fb.cancel(mayInterruptIfRunning)
+
+      override def isDone: Boolean = fa.isDone && fb.isDone
+    }
+  }
+
+  def map3[A, B, C, D](pa: Par[A], pb: Par[B], pc: Par[C])(f: (A, B, C) => D): Par[D] = {
+    map2(pa, map2(pb, pc){(b, c) => (b, c)}){(a, bc) =>
+      val (b, c) = bc
+      f(a, b, c)
+    }
+  }
+
+  def map4[A,B,C,D,E](pa: Par[A], pb: Par[B], pc: Par[C], pd: Par[D])(f: (A,B,C,D) => E): Par[E] = { //| 71.Par.Par[C]
+    map2(pa,map2(pb,map2(pc,pd){(c,d) => (c,d)}){(b,cd) => (b,cd)}){(a,bcd) => {
+      val (b,(c,d)) = bcd
+      f(a,b,c,d)
+    }}
+  }
+  def map5[A,B,C,D,E,F](pa: Par[A], pb: Par[B], pc: Par[C], pd: Par[D], pe: Par[E])(f: (A,B,C,D,E) => F): Par[F] = { //| 71.Par.Par[C]
+    map2(pa,map2(pb,map2(pc,map2(pd,pe){(d,e) => (d,e)}){(c,de) => (c,de)}){(b,cde) => (b,cde)}){(a,bcde) => {
+      val (b,(c,(d,e))) = bcde
+      f(a,b,c,d,e)
+    }}
+  }
+
+  //我们可以run pa, get list 后进行排序，然后再封装进Future[List[Int]]
+  def sortPar(pa: Par[List[Int]]): Par[List[Int]] = {
+    es => {
+      val l = run(es)(pa).get
+      new Future[List[Int]] {
+        def get = l.sorted
+        def isDone = true
+        def isCancelled = false
+        def get(t: Long, u: TimeUnit) = get
+        def cancel(e: Boolean) = false
+      }
+    }
+  }
+  //也可以用map2来实现。因为map2可以启动并行运算，也可以对par内元素进行操作。但操作只针对一个par,
+  //我们用unit(())替代第二个par。现在我们可以对一个par的元素进行操作了
+  def sortedPar(pa: Par[List[Int]]): Par[List[Int]] = {
+    map2(pa,unit(())){(a,_) => a.sorted}
+  }
+  //map是对一个par的元素进行变形操作，我们同样可以用map2实现了
+  def map[A,B](pa: Par[A])(f: A => B): Par[B] = {
+    map2(pa,unit(())){(a,_) => f(a) }
+  }
+  //然后用map去对Par[List[Int]]排序
+  def sortParByMap(pa: Par[List[Int]]): Par[List[Int]] = {
+    map(pa){_.sorted}
+  }
+  /*
+  sortPar(async({println(Thread.currentThread.getName); List(4,1,2,3)}))(es).get
+  sortParByMap(async({println(Thread.currentThread.getName); List(4,1,2,3)}))(es).get
+   */
 }

@@ -19,16 +19,74 @@ import org.scalatest.{FlatSpec, Matchers}
  */
 class ParSpec extends FlatSpec with Matchers {
 
-  import par._
+  import Par._
 
-  "A Par" should "execute successfully and return correct result"  in {
-    val a = par.unit(4 + 7)
+  "A Par" should "execute successfully and return correct result" in {
+    val a = Par.unit(4 + 7)
 
     val b = async(2 + 1)
 
     val es = Executors.newCachedThreadPool()
 
-    par.run(es)(a).get should be (11)
-    par.run(es)(b).get should be (3)
+    Par.run(es)(a).get should be(11)
+    Par.run(es)(b).get should be(3)
+
+    es.shutdown();
   }
+
+  // one buggy tests :)
+  "A async Par" should "execute on different background thread" in {
+    val a = Par.unit {
+      println(Thread.currentThread().getName, 42 + 1)
+    }
+    val b = Par.async {
+      println(Thread.currentThread().getName, 42 + 1)
+    }
+
+    val es = Executors.newCachedThreadPool()
+    /*
+(pool-60-thread-3-ScalaTest-running-ParSpec,43)
+(pool-63-thread-1,43)
+     */
+    Par.run(es)(a).get should equal(Par.run(es)(b).get)
+
+    es.shutdown();
+  }
+
+  "map2 function f" should "execute in main thread" in {
+    val es = Executors.newCachedThreadPool()
+    map2(
+      async {
+        println(Thread.currentThread().getName)
+        41 + 2
+      },
+      async {
+        println(Thread.currentThread().getName)
+        33 + 4
+      }) { (a, b) => {
+      (Thread.currentThread().getName, a + b)
+    }
+    }(es).get should be(Thread.currentThread().getName, 43 + 37)
+
+    es.shutdown()
+  }
+
+  "map2 function f" should "execute in pool thread via fork" in {
+    val es = Executors.newCachedThreadPool()
+    fork(map2(
+      async {
+        println(Thread.currentThread().getName)
+        41 + 2
+      },
+      async {
+        println(Thread.currentThread().getName)
+        33 + 4
+      }) { (a, b) => {
+      (Thread.currentThread().getName, a + b)
+    }
+    })(es).get should not be(Thread.currentThread().getName, 43 + 37)
+
+    es.shutdown()
+  }
+
 }
