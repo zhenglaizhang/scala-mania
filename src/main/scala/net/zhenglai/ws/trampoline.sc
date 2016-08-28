@@ -24,3 +24,24 @@ def foldL[A, B](xs: List[A], b: B, f: (B, A) => B): B = xs match {
 
 // 在这个左折叠例子里自引用foldL出现在尾部位置，Scala compiler可以用TCE来进行while转换：
 foldL((1 to 10000).toList, 0, { (a: Int, b: Int) => a + b })
+
+def foldL2[A, B](xs: List[A], b: B, f: (B, A) => B): B = {
+  var z = b
+  var az = xs
+  while (true) {
+    az match {
+      case Nil => return z
+      case x :: xs => {
+        z = f(z, x)
+        az = xs
+      }
+    }
+  }
+
+  z
+}
+/*
+经过转换后递归变成Jump，程序不再使用堆栈，所以不会出现StackOverflow。
+
+但在实际编程中，统统把递归算法编写成尾递归是不现实的。有些复杂些的算法是无法用尾递归方式来实现的，加上JVM实现TCE的能力有局限性，只能对本地（Local）尾递归进行优化。
+ */
