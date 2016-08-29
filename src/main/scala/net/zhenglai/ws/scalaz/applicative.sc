@@ -1,4 +1,5 @@
 import scalaz._
+import Scalaz._
 
 /*
 typeclass：Applicative－idomatic function application
@@ -73,3 +74,51 @@ object Configure {
   }
 
 }
+
+
+
+/*
+So far, when we were mapping functions over functors, we usually mapped functions that take only one parameter. But what happens when we map a function like *, which takes two parameters, over a functor?
+
+scala> List(1, 2, 3, 4) map {(_: Int) * (_:Int)}
+<console>:14: error: type mismatch;
+ found   : (Int, Int) => Int
+ required: Int => ?
+              List(1, 2, 3, 4) map {(_: Int) * (_:Int)}
+*/
+
+//List(1, 2, 3, 4) map { (_: Int) * (_: Int)}
+
+val f1 = List(1, 2, 3, 4) map {(_:Int) * (_:Int)}.curried
+f1 map {_(9)}
+
+
+/*
+Meet the Applicative typeclass. It lies in the Control.Applicative module and it defines two methods, pure and <*>.
+
+Let’s see the contract for Scalaz’s Applicative:
+
+trait Applicative[F[_]] extends Apply[F] { self =>
+  def point[A](a: => A): F[A]
+
+  /** alias for `point` */
+  def pure[A](a: => A): F[A] = point(a)
+
+  ...
+}
+
+
+So Applicative extends another typeclass Apply, and introduces point and its alias pure.
+
+LYAHFGG:
+
+pure should take a value of any type and return an applicative value with that value inside it. … A better way of thinking about pure would be to say that it takes a value and puts it in some sort of default (or pure) context—a minimal context that still yields that value.
+
+
+Scalaz likes the name point instead of pure, and it seems like it’s basically a constructor that takes value A and returns F[A]. It doesn’t introduce an operator, but it introduces point method and its symbolic alias η to all data types.
+*/
+
+1.point[List]
+1.point[Option]
+1.point[Option] map { _ + 2 }
+1.point[List] map { _ + 2 }
