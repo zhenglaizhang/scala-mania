@@ -87,4 +87,76 @@ val z = List(1, 2, 3).map(((i: Int) => i + 1) compose ((i: Int) => i * 3))
 
 /*
 针对我们自定义的类型，我们只要实现map函数就可以得到这个类型的Functor实例。一旦实现了这个类型的Functor实例，我们就可以使用以上scalaz提供的所有Functor组件函数了。
+*/
+
+case class Item3[A](a: A, b: A, c: A)
+val item3Functor = new Functor[Item3] {
+  def map[A, B](ia: Item3[A])(f: A => B): Item3[B] = Item3(f(ia.a), f(ia.b), f(ia.c))
+}
+
+/*
+scalaz同时在scalaz-tests下提供了一套scalacheck测试库。我们可以对Item3的Functor实例进行测试：
+*/
+
+// TODO
+//item3Functor.laws[Item3].check
+/*
+1 scala> functor.laws[Item3].check
+2 <console>:27: error: could not find implicit value for parameter af: org.scalacheck.Arbitrary[Item3[Int]]
+3               functor.laws[Item3].check
+4                           ^
  */
+// 看来我们需要提供自定义类型Item3的随意产生器（Generator）：
+
+/*
+scala> implicit def item3Arbi[A](implicit a: Arbitrary[A]): Arbitrary[Item3[A]] = Arbitrary {
+     | def genItem3: Gen[Item3[A]]  = for {
+     | b <- Arbitrary.arbitrary[A]
+     | c <- Arbitrary.arbitrary[A]
+     | d <- Arbitrary.arbitrary[A]
+     | } yield Item3(b,c,d)
+     | genItem3
+     | }
+item3Arbi: [A](implicit a: org.scalacheck.Arbitrary[A])org.scalacheck.Arbitrary[Item3[A]]
+
+scala> functor.laws[Item3].check
++ functor.invariantFunctor.identity: OK, passed 100 tests.
++ functor.invariantFunctor.composite: OK, passed 100 tests.
++ functor.identity: OK, passed 100 tests.
++ functor.composite: OK, passed 100 tests.
+ */
+
+
+
+/*
+Item3的Functor实例是合理的。
+
+实际上map就是(A => B) => (F[A] => F[B])，就是把(A => B)升格（lift）成（F[A] => F[B]）:
+*/
+
+val F = item3Functor
+
+F.map(Item3("Morning", "Noon", "Night"))(_.length)
+/** Alias for `map`. */
+F.apply(Item3("Morning", "Noon", "Night"))(_.length)
+F(Item3("Morning", "Noon", "Night"))(_.length)
+/** Lift `f` into `F`. */
+F.lift((s: String) => s.length)(Item3("Morning","Noon","Night"))
+
+/*
+虽然函数升格（function lifting (A => B) => (F[A] => F[B])是Functor的主要功能，但我们说过：一旦能够获取Item3类型的Functor实例我们就能免费使用所有的注入方法：
+
+scalaz提供了Function1的Functor实例。Function1 Functor的map就是 andThen 也就是操作方调换的compose
+ */
+
+val f1 = (_: Int) + 1
+val f1a = f1 map (_ * 3)
+f1a(2) // andThen
+
+(((_: Int) + 1) map((k: Int) => k * 3))(2)
+
+(((_: Int) + 1) map((_: Int) * 3))(2)
+
+(((_: Int) + 1) andThen ((_: Int) * 3))(2)
+
+(((_: Int) * 3) compose ((_: Int) + 1))(2)
