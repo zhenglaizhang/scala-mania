@@ -194,3 +194,46 @@ item3.void
 /*
 我现在还没有想到这些函数的具体用处。不过从运算结果来看，用这些函数来产生一些数据模型用在游戏或者测试的模拟（simulation）倒是可能的。
 */
+
+
+
+
+
+
+/*
+scalaz提供了许多现成的Functor实例。我们先看看一些简单直接的实例：
+*/
+Functor[List].map(List(1, 2, 3))(_ + 3)
+Functor[Option].map(Some(3))(_ + 3)
+Functor[java.util.concurrent.Callable]
+Functor[Stream]
+Functor[Vector]
+
+
+
+
+/*
+对那些多个类型变量的类型我们可以采用部分施用方式：即type lambda来表示。一个典型的类型：Either[E,A]，我们可以把Left[E]固定下来: Either[String, A]，我们可以用type lambda来这样表述：
+*/
+
+Functor[({type l[x] = Either[String, x]})#l].map(Right(3))(_ + 3)
+/*
+如此这般我可以对Either类型进行map操作了。
+
+函数类型的Functor是针对返回类型的：
+*/
+
+Functor[({type l[x] = String => x})#l].map((s: String) => s + "!")(_.length)("Hello")
+
+Functor[({type l[x] = (String,Int) => x})#l].map((s: String, i: Int) => s.length + i)(_ * 10)("Hello",5)
+
+Functor[({type l[x] = (String,Int,Boolean) => x})#l].map((s: String,i: Int, b: Boolean)=> s + i.toString + b.toString)(_.toUpperCase)("Hello",3,true)
+
+
+//tuple类型的Functor是针对最后一个元素类型的：
+Functor[({type l[x] = (String, x)})#l].map(("a", 1))(_ + 2)
+
+Functor[({type l[x] = (String,Int,x)})#l].map(("a",1,"b"))(_.toUpperCase)
+
+
+Functor[({type l[x] = (String,Int,Boolean,x)})#l].map(("a",1,true,Item3("a","b","c")))(i => i.map(_.toUpperCase))
