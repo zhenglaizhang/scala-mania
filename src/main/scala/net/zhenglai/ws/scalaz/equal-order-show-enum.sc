@@ -234,6 +234,10 @@ MoneyCents(100) === MoneyCents(100)
 
 
 /*
+Ord is for types that have an ordering. Ord covers all the standard comparing functions such as >, <, >= and <=.
+
+Order enables ?|? syntax which returns Ordering: LT, GT, and EQ. It also enables lt, gt, lte, gte, min, and max operators by declaring order method. Similar to Equal, comparing Int and Doubl fails compilation.
+
 Scalaz的Order tyeclass提供了一组操作符号：在scalaz/syntax/OrderSyntax.scala里
 
 我们再看看Order typeclass：
@@ -353,7 +357,12 @@ Person("Zhenglai", 21) gt Person("test", 21)
 
 
 /*
+Members of Show can be presented as strings.
+
 Show =>  * A typeclass for conversion to textual representation, done via * [[scalaz.Cord]] for efficiency.
+
+Cord apparently is a purely functional data structure for potentially long Strings.
+
 Show 是一个简单的typeclass。我们用Shows(T)来实现对类型T的字符描述:
 在scalaz/Syntax/ShowSyntax.scala里的注入方法：
 
@@ -373,8 +382,10 @@ Person("Zhenglai", 24).show
 Person("Zhenglai", 24).println
 
 
-
-
+3.show
+3.shows
+"hello".print
+"hello".println
 
 
 /*
