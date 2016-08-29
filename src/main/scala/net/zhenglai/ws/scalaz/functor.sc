@@ -90,7 +90,7 @@ val z = List(1, 2, 3).map(((i: Int) => i + 1) compose ((i: Int) => i * 3))
 */
 
 case class Item3[A](a: A, b: A, c: A)
-val item3Functor = new Functor[Item3] {
+implicit val item3Functor = new Functor[Item3] {
   def map[A, B](ia: Item3[A])(f: A => B): Item3[B] = Item3(f(ia.a), f(ia.b), f(ia.c))
 }
 
@@ -160,3 +160,37 @@ f1a(2) // andThen
 (((_: Int) + 1) andThen ((_: Int) * 3))(2)
 
 (((_: Int) * 3) compose ((_: Int) + 1))(2)
+
+
+
+
+/*
+我们也可以对Functor进行compose：
+*/
+
+val f = Functor[List] compose F
+val item3 = Item3("Morning","Noon","Night")
+
+f.map(List(item3, item3))(_.length)
+
+
+val rf = F compose Functor[List]
+rf.map(Item3(List("1"),List("22"),List("333")))(_.length)
+
+
+/*
+我们再试着在Item3类型上调用那些免费的注入方法：
+*/
+item3.fpair
+item3.strengthL(3)
+/** Inject `b` to the right of `A`s in `f`. */
+item3.strengthR(3)
+/** Pair all `A`s in `fa` with the result of function application. */
+item3.fproduct(_.length)
+item3 as "Day"
+item3 >| "Day"
+item3.void
+
+/*
+我现在还没有想到这些函数的具体用处。不过从运算结果来看，用这些函数来产生一些数据模型用在游戏或者测试的模拟（simulation）倒是可能的。
+*/
