@@ -1,4 +1,6 @@
 /*
+And now, we’re going to take a look at the Functor typeclass, which is basically for things that can be mapped over.
+
 Functor是范畴学（Category theory）里的概念。不过无须担心，我们在scala FP编程里并不需要先掌握范畴学知识的。在scalaz里，Functor就是一个普通的typeclass，具备map over特性。我的理解中，Functor的主要用途是在FP过程中更新包嵌在容器（高阶类）F[T]中元素T值。典型例子如：List[String], Option[Int]等。我们曾经介绍过FP与OOP的其中一项典型区别在于FP会尽量避免中间变量（temp variables）。FP的变量V是以F[V]这种形式存在的，如：List[Int]里一个Int变量是包嵌在容器List里的。所以FP需要特殊的方式来更新变量V，这就是Functor map over的意思。scalaz提供了Functor typeclass不但使用户能map over自定义的高阶类型F[T]，并且用户通过提供自定义类型的Functor实例就可以免费使用scalaz Functor typeclass提供的一系列组件函数（combinator functions）。
 
 
@@ -19,6 +21,17 @@ trait Functor[F[_]] extends InvariantFunctor[F] { self =>
 
 ...
 
+Here are the injected operators it enables:
+
+trait FunctorOps[F[_],A] extends Ops[F[A]] {
+  implicit def F: Functor[F]
+  ////
+  import Leibniz.===
+
+  final def map[B](f: A => B): F[B] = F.map(self)(f)
+
+  ...
+}
 
 任何类型的实例只需要实现这个抽象函数map就可以使用scalaz Functor typeclass的这些注入方法了：scalaz/syntax/FunctorSyntax.scala
 
@@ -132,6 +145,8 @@ scala> functor.laws[Item3].check
 Item3的Functor实例是合理的。
 
 实际上map就是(A => B) => (F[A] => F[B])，就是把(A => B)升格（lift）成（F[A] => F[B]）:
+
+
 */
 
 val F = item3Functor
@@ -166,6 +181,7 @@ f1a(2) // andThen
 
 /*
 我们也可以对Functor进行compose：
+
 */
 
 val f = Functor[List] compose F
@@ -180,6 +196,25 @@ rf.map(Item3(List("1"),List("22"),List("333")))(_.length)
 
 /*
 我们再试着在Item3类型上调用那些免费的注入方法：
+Functor also enables some operators that overrides the values in the data structure like >|, as, fpair, strengthL, strengthR, and void:
+
+scala> List(1, 2, 3) >| "x"
+res47: List[String] = List(x, x, x)
+
+scala> List(1, 2, 3) as "x"
+res48: List[String] = List(x, x, x)
+
+scala> List(1, 2, 3).fpair
+res49: List[(Int, Int)] = List((1,1), (2,2), (3,3))
+
+scala> List(1, 2, 3).strengthL("x")
+res50: List[(String, Int)] = List((x,1), (x,2), (x,3))
+
+scala> List(1, 2, 3).strengthR("x")
+res51: List[(Int, String)] = List((1,x), (2,x), (3,x))
+
+scala> List(1, 2, 3).void
+res52: List[Unit] = List((), (), ())
 */
 item3.fpair
 item3.strengthL(3)
@@ -230,10 +265,83 @@ Functor[({type l[x] = (String,Int) => x})#l].map((s: String, i: Int) => s.length
 Functor[({type l[x] = (String,Int,Boolean) => x})#l].map((s: String,i: Int, b: Boolean)=> s + i.toString + b.toString)(_.toUpperCase)("Hello",3,true)
 
 
-//tuple类型的Functor是针对最后一个元素类型的：
+/*
+tuple类型的Functor是针对最后一个元素类型的：
+
+So this defines map method, which accepts a function A => B and returns F[B]. We are quite familiar with map method for collections:
+
+scala> List(1, 2, 3) map {_ + 1}
+res15: List[Int] = List(2, 3, 4)
+Scalaz defines Functor instances for Tuples.
+
+scala> (1, 2, 3) map {_ + 1}
+res28: (Int, Int, Int) = (1,2,4)
+Note that the operation is only applied to the last value in the Tuple,
+ */
 Functor[({type l[x] = (String, x)})#l].map(("a", 1))(_ + 2)
 
 Functor[({type l[x] = (String,Int,x)})#l].map(("a",1,"b"))(_.toUpperCase)
 
 
 Functor[({type l[x] = (String,Int,Boolean,x)})#l].map(("a",1,true,Item3("a","b","c")))(i => i.map(_.toUpperCase))
+
+(1, 2, 3) map { _ + 1}
+
+List(1, 2, 3) map { _ + 1}
+
+
+
+/*
+Function as Functors
+
+Scalaz also defines Functor instance for Function1.
+
+
+map => andThen
+
+
+How are functions functors? …
+
+What does the type fmap :: (a -> b) -> (r -> a) -> (r -> b) for this instance tell us? Well, we see that it takes a function from a to b and a function from r to a and returns a function from r to b. Does this remind you of anything? Yes! Function composition!
+*/
+
+val ff = ((x: Int) => x + 1) map { _ * 7 }
+ff(3)
+
+val fff = ((x: Int) => x + 1) ∘ { _ * 7 }
+fff(4)
+
+/*
+This is interesting. Basically map gives us a way to compose functions, except the order is in reverse from f compose g. No wonder Scalaz provides ∘ as an alias of map. Another way of looking at Function1 is that it’s an infinite map from the domain to the range. Now let’s skip the input and output stuff and go to
+ */
+
+
+/*
+In Haskell, the fmap seems to be working as the same order as f compose g. Let’s check in Scala using the same numbers:
+ */
+
+(((_: Int) * 3) map { _ + 100 }) (1)
+
+/*
+ Scalaz:
+
+final def map[B](f: A => B): F[B] = F.map(self)(f)
+So the order is completely different. Since map here’s an injected method of F[A], the data structure to be mapped over comes first, then the function comes next.
+ */
+
+// TODO how is this working?
+List(1, 2, 3) map {4*}
+List(1, 2, 3) map {4*_}
+
+// (a => b) map (b => c) ===> (a => c)
+val f4 = ((x: Int) => s"hello $x") map { _.length }
+f4(1)
+f4(1000)
+
+
+/*
+[We can think of fmap as] a function that takes a function and returns a new function that’s just like the old one, only it takes a functor as a parameter and returns a functor as the result. It takes an a -> b function and returns a function f a -> f b. This is called lifting a function.
+*/
+
+val f5 = Functor[List].lift{(_: Int) * 2}
+f5(List(1, 2, 3, 4))
