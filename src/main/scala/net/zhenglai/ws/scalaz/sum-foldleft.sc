@@ -45,3 +45,5 @@ In the above example, the traits Monoid and FoldLeft correspond to Haskell’s t
 
 All this is broken down into just the pieces you need. So, it’s a bit like ultimate ducktyping because you define in your function definition that this is what you need and nothing more.
  */
+
+

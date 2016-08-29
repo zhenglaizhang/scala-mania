@@ -1,4 +1,4 @@
-import scalaz.{Equal, Ordering, Show}
+import scalaz._
 
 /*
 Scalaz是由一堆的typeclass组成。每一个typeclass具备自己特殊的功能。用户可以通过随意多态（ad-hoc polymorphism）把这些功能施用在自己定义的类型上。scala这个编程语言借鉴了纯函数编程语言Haskell的许多概念。typeclass这个名字就是从Haskell里引用过来的。只不过在Haskell里用的名称是type class两个分开的字。因为scala是个OOP和FP多范畴语言，为了避免与OOP里的type和class发生混扰，所以就用了typeclass一个字。实际上scalaz就是Haskell基本库里大量typeclass的scala实现。
@@ -15,7 +15,24 @@ Scalaz是由一堆的typeclass组成。每一个typeclass具备自己特殊的�
 3、方法注入 method injection
 
 Equal Trait 在 core/.../scalaz/Equal.scala里，比较简单：
+
+
+Eq is used for types that support equality testing. The functions its members implement are == and /=.
+Scalaz equivalent for the Eq typeclass is called Equal:
+
+
+Instead of the standard ==, Equal enables ===, =/=, and assert_=== syntax by declaring equal method. The main difference is that === would fail compilation if you tried to compare Int and String.
+
+Note: I originally had /== instead of =/=, but Eiríkr Åsheim pointed out to me:
+
+@eed3si9n hey, was reading your scalaz tutorials. you should encourage people to use =/= and not /== since the latter has bad precedence.
 */
+
+object BuiltinEqual {
+  // not type safe!!
+  override def equals(obj: scala.Any): Boolean = super.equals(obj)
+}
+
 
 trait MyEqual[F] {self =>
   def equal(a1: F, a2: F): Boolean
@@ -41,9 +58,35 @@ def map[G](f: F => G): Equal[F] => Equal[G]
 /*
 只要实现equal(a1,a2)这个抽象函数就可以了。Equal typeclass主要的功能就是对两个相同类型的元素进行等比。那和标准的 == 符号什么区别呢？Equal typeclass提供的是类型安全（type safe）的等比，在编译时由compiler发现错误
  */
-
 2 == 2.0
 //2 === 2.0
+1 === 1
+//1 === "foo" // error: type mismatch
+
+1.some =/= 1.some
+
+//1 assert_=== 2
+/*
+java.lang.RuntimeException: 1 ≠ 2
+at scala.sys.package$.error(equal-order-show-enum.sc:23)
+at scalaz.syntax.EqualOps.assert_$eq$eq$eq(equal-order-show-enum.sc:12)
+at #worksheet#.#worksheet#(equal-order-show-enum.sc:33)
+*/
+
+
+
+/*
+Normally comparison operators like != have lower higher precedence than &&, all letters, etc. Due to special precedence rule /== is recognized as an assignment operator because it ends with = and does not start with =, which drops to the bottom of the precedence:
+ */
+
+1 != 2 && false
+//1 /==2 && false
+/*
+scala> 1 /== 2 && false
+<console>:14: error: value && is not a member of Int
+              1 /== 2 && false
+ */
+1 =/= 2 && false
 
 /*
 以上的 === 是Equal typeclass的符号方法（symbolic method），就是这个equal(a1,a2)，是通过方法注入加入到Equal typeclass里的。我们可以看到equal对两个比对对象的类型要求是非常严格的，否则无法通过编译（除非在隐式作用域implicit scode内定义Double到Int的隐式转换implicit conversion）。
@@ -408,3 +451,4 @@ trait Enum[F] extends Order[F] { self =>
   def pred(a: F): F
 Enum实例必须实现抽象函数succ,pred。除此之外由于Enum继承了Order，所以还必须实现Order trait的抽象函数order(a1,a2)。
 */
+

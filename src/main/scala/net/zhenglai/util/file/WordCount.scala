@@ -1,7 +1,5 @@
 package net.zhenglai.util.file
 
-import net.zhenglai.lib.Monoid
-
 // TODO http://www.cnblogs.com/tiger-xc/p/4447548.html
 trait WordCount
 
@@ -18,10 +16,10 @@ case class Part(lStub: String, words: Int, rStub: String) extends WordCount
 
 
 object WordCount {
-  def wcMonoid: Monoid[WordCount] = new Monoid[WordCount] {
-
-    override def op(a1: WordCount, a2: WordCount): WordCount = ???
-
-    override val zero: WordCount = Stub("")
-  }
+//  def wcMonoid: Monoid[WordCount] = new Monoid[WordCount] {
+//
+//    override def op(a1: WordCount, a2: WordCount): WordCount = ???
+//
+//    override val zero: WordCount = Stub("")
+//  }
 }
