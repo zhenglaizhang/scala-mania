@@ -1,6 +1,25 @@
 /*
 And now, we’re going to take a look at the Functor typeclass, which is basically for things that can be mapped over.
 
+
+trait GenericFunctor[->>[_, _], ->>>[_, _], F[_]] {
+  def fmap[A, B](f: A ->> B): F[A] ->>> F[B]
+}
+
+trait Functor[F[_]] extends GenericFunctor[Function, Function, F] {
+
+  final def fmap[A, B](as: F[A])(f: A => B): F[B] = fmap(f)(as)
+}
+
+
+For the sake of simplicity we will stick to the more specific Functor definition throughout the rest of this post. Such a functor is an endofunctor, because its source and target are the same (the category of Scala types and Scala functions). Maybe you remember that such a functor can be regarded as a provider of a computational context: The function f: A => B you give to fmap is lifted into the functor’s context which means that it is executed (maybe once, maybe several times or maybe even not at all) under the control of the functor.
+
+
+ how the OptionFunctor defined in the previous blog post is working: If we give fmap a Some the given function will be invoked, if we give it a None it won’t be invoked.
+
+ So far, so good. Using functors we can lift functions of arity-1 into a computational context.
+
+
 Functor是范畴学（Category theory）里的概念。不过无须担心，我们在scala FP编程里并不需要先掌握范畴学知识的。在scalaz里，Functor就是一个普通的typeclass，具备map over特性。我的理解中，Functor的主要用途是在FP过程中更新包嵌在容器（高阶类）F[T]中元素T值。典型例子如：List[String], Option[Int]等。我们曾经介绍过FP与OOP的其中一项典型区别在于FP会尽量避免中间变量（temp variables）。FP的变量V是以F[V]这种形式存在的，如：List[Int]里一个Int变量是包嵌在容器List里的。所以FP需要特殊的方式来更新变量V，这就是Functor map over的意思。scalaz提供了Functor typeclass不但使用户能map over自定义的高阶类型F[T]，并且用户通过提供自定义类型的Functor实例就可以免费使用scalaz Functor typeclass提供的一系列组件函数（combinator functions）。
 
 
