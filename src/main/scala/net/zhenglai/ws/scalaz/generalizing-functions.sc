@@ -28,7 +28,11 @@ sum(List(1, 2, 3))
 
 /*
 我们先看看这个foldLeft: 它需要一个起始值（在这里是Int 0）和一个两个值的操作（在这里是两个Int的加法）。我们可以先把这部分抽象一下：
- */
+
+If we try to generalize a little bit. I’m going to pull out a thing called Monoid. … It’s a type for which there exists a function mappend, which produces another type in the same set; and also a function that produces a zero.
+
+Now we’ll abstract on the type about Monoid, so we can define Monoid for any type A. So now IntMonoid is a monoid on Int:
+*/
 
 implicit object intMonoid extends Monoid[Int] {
   def mappend(i1: Int, i2: Int): Int = i1 + i2
@@ -81,6 +85,9 @@ h11
 
 
 // 现在这个sum是不是概括的多了。现在我们可以利用implicit使sum的调用表达更精炼：
+/*
+The final change we have to take is to make the Monoid implicit so we don’t have to specify it each time.
+*/
 object h12 {
   trait Monoid[A] {
     def mappend(a1: A, a2: A): A
@@ -95,7 +102,12 @@ object h12 {
     def mzero = ""
   }
 
-  def sum[A](xs: List[A])(implicit m: Monoid[A]): A = xs.foldLeft(m.mzero)(m.mappend)
+  // the implicit parameter is often written as a context bound:
+//  def sum[A](xs: List[A])(implicit m: Monoid[A]): A = xs.foldLeft(m.mzero)(m.mappend)
+  def sum[A: Monoid](xs: List[A]): A = {
+    val m = implicitly[Monoid[A]]
+    xs.foldLeft(m.mzero)(m.mappend)
+  }
   //> sum: [A](xs: List[A])(m: scalaz.learn.ex2.Monoid[A])A
   sum(List(1,2,3))// (intMonoid)                       //> res0: Int = 6
   sum(List("Hello,"," how are you"))//(stringMonoid)  //> res1: String = Hello, how are you
@@ -105,6 +117,8 @@ h12
 
 /*
 现在调用sum是不是贴切多了？按照scalaz的惯例，我们把implicit放到trait的companion object里：
+
+Our sum function is pretty general now, appending any monoid in a list. We can test that by writing another Monoid for String. I’m also going to package these up in an object called Monoid. The reason for that is Scala’s implicit resolution rules: When it needs an implicit parameter of some type, it’ll look for anything in scope. It’ll include the companion object of the type that you’re looking for.
 */
 object h13 {
   trait Monoid[A] {

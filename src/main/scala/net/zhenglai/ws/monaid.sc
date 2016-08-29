@@ -14,6 +14,9 @@ Monoid由以下条件组成：
 
 1、结合性（associativity）：op(a,op(b,c)) = op(op(a,b),c)：这个定律是函数组合（function composition）不可缺的条件
 2、二元函数参数中如果有一个是恒等值时操作结果为另一个参数：op(identity,v) = v
+
+
+If we try to generalize a little bit. I’m going to pull out a thing called Monoid. => It’s a type for which there exists a function mappend, which produces another type in the same set; and also a function that produces a zero.
  */
 
 
