@@ -1,4 +1,4 @@
-import scalaz.{Equal, Ordering}
+import scalaz.{Equal, Ordering, Show}
 
 /*
 Scalaz是由一堆的typeclass组成。每一个typeclass具备自己特殊的功能。用户可以通过随意多态（ad-hoc polymorphism）把这些功能施用在自己定义的类型上。scala这个编程语言借鉴了纯函数编程语言Haskell的许多概念。typeclass这个名字就是从Haskell里引用过来的。只不过在Haskell里用的名称是type class两个分开的字。因为scala是个OOP和FP多范畴语言，为了避免与OOP里的type和class发生混扰，所以就用了typeclass一个字。实际上scalaz就是Haskell基本库里大量typeclass的scala实现。
@@ -304,3 +304,27 @@ Person("Zhenglai", 21) ?|? Person("test", 21)
 Person("Zhenglai", 21) lt Person("test", 21)
 Person("Zhenglai", 21) gt Person("test", 21)
 
+
+
+
+
+
+/*
+Show =>  * A typeclass for conversion to textual representation, done via * [[scalaz.Cord]] for efficiency.
+Show 是一个简单的typeclass。我们用Shows(T)来实现对类型T的字符描述:
+在scalaz/Syntax/ShowSyntax.scala里的注入方法：
+
+final class ShowOps[F] private[syntax](val self: F)(implicit val F: Show[F]) extends Ops[F] {
+  ////
+  final def show: Cord = F.show(self)
+  final def shows: String = F.shows(self)
+  final def print: Unit = Console.print(shows)
+  final def println: Unit = Console.println(shows)
+  ////
+}
+*/
+
+implicit val personShow: Show[Person] = Show.show { p => s"${p.name}, ${p.age} years old" }
+
+Person("Zhenglai", 24).show
+Person("Zhenglai", 24).println
