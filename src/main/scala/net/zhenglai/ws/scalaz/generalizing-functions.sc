@@ -111,17 +111,58 @@ object h13 {
     def mappend(a1: A, a2: A): A
     def mzero: A
   }
-
-  implicit object intMonoid extends Monoid[Int]{
-    def mappend(i1: Int, i2: Int): Int = i1 + i2
-    def mzero = 0
-  }
-  implicit object stringMonoid extends Monoid[String]{
-    def mappend(s1: String, s2: String): String = s1 + s2
-    def mzero = ""
+  object Monoid {
+    implicit object intMonoid extends Monoid[Int]{
+      def mappend(i1: Int, i2: Int): Int = i1 + i2
+      def mzero = 0
+    }
+    implicit object stringMonoid extends Monoid[String]{
+      def mappend(s1: String, s2: String): String = s1 + s2
+      def mzero = ""
+    }
   }
 }
 
 /*
 这样，用户可以定义自己的Monoid实例在sum中使用。
+但现在这个sum还是针对List的。我们必须再进一步概括到任何M[_]。我们先把用一个针对List的foldLeft实例来实现sum：
+*/
+
+object h14 {
+  object listFoldLeft {
+    def foldLeft[A, B](xs: List[A])(b: B)(f: (B, A) => B): B = xs.foldLeft(b)(f)
+  }
+
+  def sum[A](xs: List[A])(implicit m: Monoid[A]): A = listFoldLeft.foldLeft(xs)(m.mzero)(m.mappend)
+}
+
+
+object h15 {
+  import h13.Monoid._
+  trait FoldLeft[M[_]] {
+    def foldLeft[A, B](xs: M[A])(b: B)(f: (B, A) => B): B
+  }
+
+  object FoldLeft {
+    implicit object listFoldLeft extends FoldLeft[List] {
+      override def foldLeft[A, B](xs: List[A])(b: B)(f: (B, A) => B): B = xs.foldLeft(b)(f)
+    }
+  }
+
+/*
+现在这个sum[M[_],A]是个全面概括的函数了。上面的sum也可以这样表达：
  */
+  def sum[M[_], A](xs: M[A])(implicit m: h13.Monoid[A], fl: FoldLeft[M]): A = fl.foldLeft(xs)(m.mzero)(m.mappend)
+
+  sum(List(1, 2, 3, 4))
+  sum(List("hello", "how are you"))
+
+
+  def sum1[A: h13.Monoid, M[_]: FoldLeft](xs: M[A]): A = {
+    val m = implicitly[Monoid[A]]
+    val fl = implicitly[FoldLeft[M]]
+    fl.foldLeft(xs)(m.mzero)(m.mappend)
+  }
+  sum1(List(1, 2, 3, 4))
+}
+
