@@ -1,4 +1,4 @@
-import scalaz.Equal
+import scalaz.{Equal, Ordering}
 
 /*
 Scalaz是由一堆的typeclass组成。每一个typeclass具备自己特殊的功能。用户可以通过随意多态（ad-hoc polymorphism）把这些功能施用在自己定义的类型上。scala这个编程语言借鉴了纯函数编程语言Haskell的许多概念。typeclass这个名字就是从Haskell里引用过来的。只不过在Haskell里用的名称是type class两个分开的字。因为scala是个OOP和FP多范畴语言，为了避免与OOP里的type和class发生混扰，所以就用了typeclass一个字。实际上scalaz就是Haskell基本库里大量typeclass的scala实现。
@@ -261,7 +261,46 @@ scala> 1 lt 1.0
 
 1、实现Order trait抽象函数order(a1,a2)，在scalaz/std/AnyValue.scala中的Int实例intInstance中是这样实现order(a1,a2)函数的：
 
+     def order(x: Int, y: Int) = if (x < y) Ordering.LT else if (x == y) Ordering.EQ else Ordering.GT
+
 2、用object Order里的构建函数order[A](f: (A,A) => Ordering): Order[A]
 
+scala> case class Meat(cat: String, weight: Int)
+defined class Meat
+scala> implicit val meatWeightOrder: Order[Meat] = Order.order(_.weight ?|? _.weight)
+meatWeightOrder: scalaz.Order[Meat] = scalaz.Order$$anon$11@7401c09f
+
+scala> Meat("Pork",13) lt Meat("Pork",14)
+res14: Boolean = true
+
+scala> Meat("Beef",13) gt Meat("Pork",14)
+res15: Boolean = false
+
 3、逆变构建函数orderBy:
+
+scala> case class Money(amount: Int)
+defined class Money
+
+scala> val  moneyToInt: Money => Int = money => money.amount
+moneyToInt: Money => Int = <function1>
+
+scala> implicit val moneyOrder: Order[Money] = Order.orderBy(moneyToInt)
+moneyOrder: scalaz.Order[Money] = scalaz.Order$$anon$7@3e3975d0
+
+scala> Money(20) lt Money(21)
+res16: Boolean = true
+
+scala> Money(20) ?|? Money(12)
+res17: scalaz.Ordering = GT
+
+在使用逆变构建函数时我们不需要再考虑如何实现对两个对象值的对比来获取这个Ordering返回值，我们只知道Order[Int]实现了两个Int的对比就行了。
 */
+
+implicit val personAgeOrder = new scalaz.Order[Person] {
+  override def order(a1: Person, a2: Person): Ordering = if (a1.age < a2.age) Ordering.LT else if (a1.age > a2.age) Ordering.GT else Ordering.EQ
+}
+
+Person("Zhenglai", 21) ?|? Person("test", 21)
+Person("Zhenglai", 21) lt Person("test", 21)
+Person("Zhenglai", 21) gt Person("test", 21)
+
