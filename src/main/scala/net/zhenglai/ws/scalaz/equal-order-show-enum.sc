@@ -182,3 +182,86 @@ MoneyCents(100) === MoneyCents(100)
 /*
 我们知道如何等比Int，我们又可以提供MoneyCents和Int之间的转换关系，那么我们就可以构建Equal[MoneyCents]实例。
 */
+
+
+
+
+
+
+
+
+/*
+Scalaz的Order tyeclass提供了一组操作符号：在scalaz/syntax/OrderSyntax.scala里
+
+我们再看看Order typeclass：
+
+Scalaz的Order tyeclass提供了一组操作符号：在scalaz/syntax/OrderSyntax.scala里
+
+复制代码
+ 1 /** Wraps a value `self` and provides methods related to `Order` */
+ 2 final class OrderOps[F] private[syntax](val self: F)(implicit val F: Order[F]) extends Ops[F] {
+ 3   ////
+ 4   final def <(other: F): Boolean = F.lessThan(self, other)
+ 5   final def <=(other: F): Boolean = F.lessThanOrEqual(self, other)
+ 6   final def >(other: F): Boolean = F.greaterThan(self, other)
+ 7   final def >=(other: F): Boolean = F.greaterThanOrEqual(self, other)
+ 8   final def max(other: F): F = F.max(self, other)
+ 9   final def min(other: F): F = F.min(self, other)
+10   final def cmp(other: F): Ordering = F.order(self, other)
+11   final def ?|?(other: F): Ordering = F.order(self, other)
+12   final def lte(other: F): Boolean = F.lessThanOrEqual(self, other)
+13   final def gte(other: F): Boolean = F.greaterThanOrEqual(self, other)
+14   final def lt(other: F): Boolean = F.lessThan(self, other)
+15   final def gt(other: F): Boolean = F.greaterThan(self, other)
+16   ////
+17 }
+复制代码
+其中cmp(?|?)方法使用了Ordering类型。Ordering是另外一个typeclass: scalaz/Ordering.scala
+
+1 object Ordering extends OrderingInstances with OrderingFunctions {
+2   case object LT extends Ordering(-1, "LT") { def complement = GT }
+3   case object EQ extends Ordering(0,  "EQ") { def complement = EQ }
+4   case object GT extends Ordering(1,  "GT") { def complement = LT }
+5 }
+主要定义了LT,EQ,GT三个状态。
+
+我们应该尽量使用lt,lte,gt,gte来确保类型安全（让compiler来发现错误）：
+
+scala> 1 lt 1.0
+ 5 <console>:21: error: type mismatch;
+ 6  found   : Double(1.0)
+ 7  required: Int
+ 8               1 lt 1.0
+ 9                    ^
+10
+11 scala> 1 ?|? 1.0
+12 <console>:21: error: type mismatch;
+13  found   : Double(1.0)
+14  required: Int
+15               1 ?|? 1.0
+ */
+
+1 < 1.0
+
+//1 lt 1.0
+
+//1 ?|? 1.0
+
+1 ?|? 2
+
+1 ?|? 1
+
+2 ?|? 1
+
+1 lt 2
+
+
+/*
+与Equal typeclass 同样，如果我们需要在自定义的类型T上使用Order typeclass的话，有几种方法可以构建Order[T]:
+
+1、实现Order trait抽象函数order(a1,a2)，在scalaz/std/AnyValue.scala中的Int实例intInstance中是这样实现order(a1,a2)函数的：
+
+2、用object Order里的构建函数order[A](f: (A,A) => Ordering): Order[A]
+
+3、逆变构建函数orderBy:
+*/
