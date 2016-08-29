@@ -30,7 +30,7 @@ sum(List(1, 2, 3))
 我们先看看这个foldLeft: 它需要一个起始值（在这里是Int 0）和一个两个值的操作（在这里是两个Int的加法）。我们可以先把这部分抽象一下：
  */
 
-object intMonoid {
+implicit object intMonoid extends Monoid[Int] {
   def mappend(i1: Int, i2: Int): Int = i1 + i2
   def mzero = 0
 }
@@ -39,7 +39,7 @@ def sum2(xs: List[Int]): Int = xs.foldLeft(intMonoid.mzero)(intMonoid.mappend)
 /*
 我们把这个intMonoid抽了出来。那么现在的sum已经具有了一些概括性了，因为foldLeft的具体操作依赖于我们如何定义intMonoid。
 */
-object stringMonoid {
+implicit object stringMonoid extends Monoid[String] {
   def mappend(s1: String, s2: String): String = s1 + s2
   def mzero = ""
 }
@@ -166,3 +166,27 @@ object h15 {
   sum1(List(1, 2, 3, 4))
 }
 
+
+/*
+在scalaz里为每个类型提供了足够的操作符号。使用这些符号的方式与普通的操作符号没有两样如 a |+| b，这是infix符号表述形式。scalaz会用方法注入（method injection）方式把这些操作方法集中放在类型名称+后缀op的trait里如，MonoidOp。
+
+假如我想为所有类型提供一个操作符|+|，然后用 a |+| b这种方式代表plus(a,b)，那么我们可以增加一个Monoid的延伸trait：MonoidOp，再把这个|+|放入：
+*/
+
+trait MonoidOp[A] {
+  val M: Monoid[A]
+  val a1: A
+  def |+|(a2: A) = M.mappend(a1, a2)
+}
+
+// 现在可以用infix方式调用|+|如 a |+| b。下一步是用implicit把这个|+|方法加给任何类型A:
+implicit def toMonoidOp[A: Monoid](a: A) = new MonoidOp[A] {
+  val M = implicitly[Monoid[A]]
+  val a1 = a
+}
+
+/*
+以上所见，implicit toMonoidOp的意思是对于任何类型A，如果我们能找到A类型的Monoid实例，那么我们就可以把类型A转变成MonoidOp类型，然后类型A就可以使用操作符号|+|了。现在任何类型具备Monoid实例的类型都可以使用|+|符号了
+ */
+1 |+| 2
+"hello" |+| "world"
