@@ -328,3 +328,83 @@ implicit val personShow: Show[Person] = Show.show { p => s"${p.name}, ${p.age} y
 
 Person("Zhenglai", 24).show
 Person("Zhenglai", 24).println
+
+
+
+
+
+
+/*
+Enum => An [[scalaz.Order]]able with discrete values.
+Enum typeclass 提供了下面这些方法：
+
+final class EnumOps[F] private[syntax](val self: F)(implicit val F: Enum[F]) extends Ops[F] {
+  ////
+  final def succ: F =
+    F succ self
+
+  final def -+-(n: Int): F =
+    F.succn(n, self)
+
+  final def succx: Option[F] =
+    F.succx.apply(self)
+
+  final def pred: F =
+    F pred self
+
+  final def ---(n: Int): F =
+    F.predn(n, self)
+
+  final def predx: Option[F] =
+    F.predx.apply(self)
+
+  final def from: EphemeralStream[F] =
+    F.from(self)
+
+  final def fromStep(step: Int): EphemeralStream[F] =
+    F.fromStep(step, self)
+
+  final def |=>(to: F): EphemeralStream[F] =
+    F.fromTo(self, to)
+
+  final def |->(to: F): List[F] =
+    F.fromToL(self, to)
+
+  final def |==>(step: Int, to: F): EphemeralStream[F] =
+    F.fromStepTo(step, self, to)
+
+  final def |-->(step: Int, to: F): List[F] =
+    F.fromStepToL(step, self, to)
+
+  ////
+}
+ */
+
+'a' to 'e'
+
+'a' |-> 'e'
+
+'a' |=> 'e'
+
+'a'.succ
+
+'a' -+- 2
+
+'d' --- 2
+
+
+/*
+Enum实例需要实现抽象函数succ,pred。下面是char裂隙Enum实例Enum[Char]的实现：在scalaz/std/AnyVal.scala里的char object
+     def succ(b: Char) = (b + 1).toChar
+     def pred(b: Char) = (b - 1).toChar
+     override def succn(a: Int, b: Char) = (b + a).toChar
+     override def predn(a: Int, b: Char) = (b - a).toChar
+再仔细看看Enum trait如下；
+
+trait Enum[F] extends Order[F] { self =>
+  ////
+
+  def succ(a: F): F
+  def pred(a: F): F
+Enum实例必须实现抽象函数succ,pred。除此之外由于Enum继承了Order，所以还必须实现Order trait的抽象函数order(a1,a2)。
+*/
