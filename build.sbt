@@ -48,7 +48,7 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.0" % "test"
 
 
 
-scalacOptions += "-feature"
+scalacOptions += "-feature" // -language:higherKinds
 
 initialCommands in console := "import scalaz._, Scalaz._"
 

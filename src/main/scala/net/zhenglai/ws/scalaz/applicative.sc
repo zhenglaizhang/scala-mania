@@ -5,6 +5,7 @@ import Scalaz._
 Refs =>
 
 https://softwaremill.com/applicative-functor/
+https://hseeberger.wordpress.com/2011/01/31/applicatives-are-generalized-functors/
 
  */
 
@@ -39,6 +40,26 @@ trait Applicative[F[_]] extends Apply[F] { self =>
   // alias for point
   final def pure[A](a: => A): F[A] = point(a)
 。。。
+
+
+
+
+But what if we have a function of higher arity? Can we still use a functor to lift a function of, let’s say, arity-2?
+scala> val f = (x: Int) => (y: Int) => x + y + 10
+f: (Int) => (Int) => Int = <function1>
+
+scala> fmap(Option(1))(f)
+res0: Option[(Int) => Int] = Some()
+
+What we get back is an Option[Int => Int], i.e. the “rest” of the partially applied function wrapped in an Option. Now we have a problem, because we cannot give this lifted function to another call of fmap.
+scala> fmap(Option(2))(fmap(Option(1))(f))
+:13: error: type mismatch;
+ found   : Option[(Int) => Int]
+ required: (Int) => ?
+       fmap(Option(2))(fmap(Option(1))(f))
+Of course we cannot, because fmap expects a pure function, not a lifted one.
+
+And that’s the moment when applicatives enter the stage. The idea is simple and follows intutively from what we have just seen: Instead of fmap taking a pure function, an Applicative defines the method apply taking a lifted function. And it defines the method pure to lift pure functions. Using these it is perfectly possible to partially apply an arity-n function to all of its arguments within a computational context.
 
 
 
@@ -188,10 +209,6 @@ Scalaz likes the name point instead of pure, and it seems like it’s basically 
 1.point[Option] map { _ + 2 }
 1.point[List] map { _ + 2 }
 
-
-
-
-
 /*
 Apply
 
@@ -214,3 +231,82 @@ none <* 2.some
 1.some *> 2.some
 
 none *> 2.some
+
+
+
+object h1 {
+
+  trait GenericFunctor[->>[_, _], ->>>[_, _], F[_]] {
+
+    def fmap[A, B](f: A ->> B): F[A] ->>> F[B]
+  }
+
+  trait Functor[F[_]] extends GenericFunctor[Function, Function, F] {
+
+    final def fmap[A, B](as: F[A])(f: A => B): F[B] =
+      fmap(f)(as)
+  }
+
+  trait Applicative[F[_]] extends Functor[F] {
+    def pure[A](a: A): F[A]
+
+    def apply[A, B](f: F[A => B]): F[A] => F[B]
+
+    final def apply[A, B](fa: F[A])(f: F[A => B]): F[B] = apply(f)(fa)
+
+
+    override def fmap[A, B](f: A => B): F[A] => F[B] = apply(pure(f))
+
+    /*
+Each applicative is a functor and by one of the laws for applicatives the following has to hold true: fmap = apply ο pure. Well, this law is pretty intuitive, because it makes sure we can use an applicative as a functor, i.e. for a pure arity-1 function, and it will behave as expected.
+     */
+  }
+
+
+  object Applicative {
+
+    def pure[A, F[_]](a: A)(implicit applicative: Applicative[F]): F[A] = applicative pure a
+
+    def apply[A, B, F[_]](fa: F[A])(f: F[A => B])(implicit applicative: Applicative[F]): F[B] = applicative.apply(fa)(f)
+
+    implicit object OptionApplicative extends Applicative[Option] {
+
+      override def pure[A](a: A): Option[A] = Option(a)
+
+      override def apply[A, B](f: Option[A => B]): Option[A] => Option[B] = o => for { a <- o; p <- f } yield p(a)
+    }
+  }
+  import Applicative._
+
+  def app = {
+    val f = (x: Int) => (y: Int) => x + y + 10
+    apply(Option(1))(apply(Option(2))(pure(f)))
+  }
+
+  /*
+Yes, of course we don’t need an applicative for Option, because it already offers flatMap which does the job. But with this type class approach we can deal with any class, e.g. with Either from the Scala standard library or with classes from our own projects.
+   */
+}
+
+h1.app
+
+
+/*
+You have seen the basic principle of applicatives: We can apply functions of arbitrary arity (well, greater or even one) to its arguments within a computational context. As functors provide exactly this for arity-1, applicatives are generalized functors.
+
+Thanks to Scala’s flexibility we can of course do much better than above. Using a little pimp my library and some operators we can get something that’s elegant and useful. Luckily the scalaz folks have already done this, so I will just show two ways of expressing the above example using this awesome library:
+ */
+val f = (x: Int) => (y: Int) => x + y + 10
+Option(1) <*> (Option(2) <*> Option(f))
+(Option(1) <**> Option(2)) { _ + _ + 10 }
+
+/*
+And as I stated above we can use it for types that don’t bring helpful methods like flatMap. Let’s conclude with another example using Either which is a perfect candidate to be used for results that might fail with well defined errors:
+
+
+scala> (1.right[String] <**> 2.right[String]) { _ + _ + 10 }
+res0: Either[String,Int] = Right(13)
+
+scala> (1.right[String] <**> "Error".left[Int]) { _ + _ + 10 }
+res1: Either[String,Int] = Left(Error)
+ */
