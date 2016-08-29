@@ -2,6 +2,13 @@ import scalaz._
 import Scalaz._
 
 /*
+Refs =>
+
+https://softwaremill.com/applicative-functor/
+
+ */
+
+/*
 typeclass：Applicative－idomatic function application
 
 
@@ -80,6 +87,64 @@ object Configure {
 /*
 So far, when we were mapping functions over functors, we usually mapped functions that take only one parameter. But what happens when we map a function like *, which takes two parameters, over a functor?
 
+
+
+Given a function that takes multiple arguments A,B,… that returns a Result, how can that function by applied to arguments M[A], M[B],… and get M[Result]?
+where M is an Option, List, etc.
+
+
+First of all, applicative functor forms a typeclass which can be implemented in Scala. It allows applying a wrapped function to a wrapped value.
+
+
+We can think of applicative as a type which wraps a value. Having two such wrapped values, we can apply a two-argument function to these values and preserve the outer context (wrapping). If we call this “application” map2, then we can get something like this:
+
+boxed(3), boxed(2) ===> map2(_ + _)  ===> +3, 2 ===> boxed(5)
+// boxed(+3)
+
+Having two wrapped values is much more familiar than having a "function wrapped in context”.
+
+
+INDEPENDENT CALCULATIONS
+
+Monads impose certain structure to the flow. We apply a function to the wrapped value and we receive a new wrapped value which becomes "flattened" with the outer wrapper. This means that getting subsequent wrapped values depends on results of previous calculations.
+
+for {
+   user <- getUserFuture()
+   photo <- getProfilePhoto(user)
+} yield Result(user, photo)
+The getProfilePhoto() function depends on user, so calling Future[Photo] is possible only after we fully resolve the previous step, Future[User].
+
+
+However, we often find cases like this:
+
+val res: Future[Result] = for {
+  user <- getUserFuture()
+  data <- getAdditionalDataFuture()
+}
+  yield Result(user, data)
+In this example, we deal with independent Future[User] and Future[Data] which we want to uwrap and pass to Result.apply. Why would we need monadic flow, which forces us to view this code as a sequence of steps? Here’s a good case for applicatives. All monads are also applicatives, we can just work with Future, Option and many other well known types. There are even more applicatives than monads
+
+import cats._
+import cats.std.future._
+
+val wrappedFunction = getDataFuture().map(data => { (user: User) => Result.apply(user, data)})
+Applicative[Future].ap(wrappedFunction)(getUserFuture())
+
+Bear with me, this is an intermediate step. I’m showing this example only to present the apply operation (known as <*> in Haskell). The ap() function allows us to get a wrapped function and fuse it with a wrapped value,
+
+In order to look at applicatives as a way to call a function on two wrapped values, we can use a tool called cartesian builder. It allows expressing our intent as orthogonal composition:
+
+import cats.std.future._
+import cats.syntax.cartesian._
+
+(getUserFuture() |@| getDataFuture()).map(Result.apply)
+
+
+
+
+
+
+
 scala> List(1, 2, 3, 4) map {(_: Int) * (_:Int)}
 <console>:14: error: type mismatch;
  found   : (Int, Int) => Int
@@ -122,3 +187,30 @@ Scalaz likes the name point instead of pure, and it seems like it’s basically 
 1.point[Option]
 1.point[Option] map { _ + 2 }
 1.point[List] map { _ + 2 }
+
+
+
+
+
+/*
+Apply
+
+You can think of <*> as a sort of a beefed-up(被强化的) fmap. Whereas fmap takes a function and a functor and applies the function inside the functor value, <*> takes a functor that has a function in it and another functor and extracts that function from the first functor and then maps it over the second one.
+
+trait Apply[F[_]] extends Functor[F] { self =>
+  def ap[A,B](fa: => F[A])(f: => F[A => B]): F[B]
+}
+
+Using ap, Apply enables <*>, *>, and <* operator.
+*/
+
+9.some <*> { (_: Int) + 3 }.some
+
+// As expected. *> and <* are variations that returns only the rhs or lhs.
+
+1.some <* 2.some
+none <* 2.some
+
+1.some *> 2.some
+
+none *> 2.some

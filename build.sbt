@@ -16,6 +16,8 @@ libraryDependencies ++= Seq(
   "org.scalaz" %% "scalaz-scalacheck-binding" % scalazVersion % "test"
 )
 
+libraryDependencies += "org.typelevel" %% "cats" % "0.7.0"
+
 libraryDependencies ++= Seq(
   "com.chuusai" %% "shapeless" % "2.3.1"
 )
