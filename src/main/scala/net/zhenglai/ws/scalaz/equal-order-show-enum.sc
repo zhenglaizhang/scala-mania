@@ -389,6 +389,8 @@ Person("Zhenglai", 24).println
 
 
 /*
+Enum members are sequentially ordered types — they can be enumerated. The main advantage of the Enum typeclass is that we can use its types in list ranges. They also have defined successors and predecessors, which you can get with the succ and pred functions.
+
 Enum => An [[scalaz.Order]]able with discrete values.
 Enum typeclass 提供了下面这些方法：
 
@@ -432,6 +434,9 @@ final class EnumOps[F] private[syntax](val self: F)(implicit val F: Enum[F]) ext
 
   ////
 }
+
+
+Instead of the standard to, Enum enables |-> that returns a List by declaring pred and succ method on top of Order typeclass. There are a bunch of other operations it enables like -+-, ---, from, fromStep, pred, predx, succ, succx, |-->, |->, |==>, and |=>. It seems like these are all about stepping forward or backward, and returning ranges.
  */
 
 'a' to 'e'
@@ -441,6 +446,8 @@ final class EnumOps[F] private[syntax](val self: F)(implicit val F: Enum[F]) ext
 'a' |=> 'e'
 
 'a'.succ
+
+'b'.pred
 
 'a' -+- 2
 
