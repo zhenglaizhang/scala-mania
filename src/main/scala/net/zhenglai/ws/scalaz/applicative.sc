@@ -201,7 +201,9 @@ LYAHFGG:
 pure should take a value of any type and return an applicative value with that value inside it. … A better way of thinking about pure would be to say that it takes a value and puts it in some sort of default (or pure) context—a minimal context that still yields that value.
 
 
-Scalaz likes the name point instead of pure, and it seems like it’s basically a constructor that takes value A and returns F[A]. It doesn’t introduce an operator, but it introduces point method and its symbolic alias η to all data types.
+Scalaz likes the name point instead of pure, and it seems like it’s basically a constructor that takes value A and returns F[A]. It doesn’t introduce an operator, but it introduces point oethod and its symbolic alias η to all data types.
+
+there’s something cool about the fact that constructor is abstracted out.
 */
 
 1.point[List]
@@ -231,6 +233,104 @@ none <* 2.some
 1.some *> 2.some
 
 none *> 2.some
+
+/*
+Option as Apply
+*/
+
+9.some <*> { (_: Int) + 3 }.some
+3.some <*> { 9.some <*> { (_: Int) + (_: Int) }.curried.some }
+
+
+/*
+Applicative Style
+
+Another thing I found in 7.0.0-M3 is a new notation that extracts values from containers and apply them to a single function:
+
+ */
+
+^(3.some, 5.some) {_ + _}
+
+^("hello".some, none[Int]) { _ + _ }
+
+/*
+This is actually useful because for one-function case, we no longer need to put it into the container. I am guessing that this is why Scalaz 7 does not introduce any operator from Applicative itself. Whatever the case, it seems like we no longer need Pointed or <$>.
+
+The new ^(f1, f2) {...} style is not without the problem though. It doesn’t seem to handle Applicatives that takes two type parameters like Function1, Writer, and Validation. There’s another way called Applicative Builder, which apparently was the way it worked in Scalaz 6, got deprecated in M3, but will be vindicated again because of ^(f1, f2) {...}’s issues.
+ */
+(3.some |@| 4.some) { _ + _ }
+
+
+
+/*
+Lists as Apply
+
+LYAHFGG:
+
+Lists (actually the list type constructor, []) are applicative functors. What a surprise!
+
+Let’s see if we can use <*> and |@|:
+*/
+
+List(1, 2, 3) <*> List((_: Int) * 0, (_: Int) + 100, (x: Int) => x * x)
+
+List(3, 4) <*> { List(1, 2) <*> List({(_: Int) + (_: Int)}.curried, {(_: Int) * (_: Int)}.curried) }
+
+(List("ha", "heh", "hmm") |@| List("?", "!", ".")) {_ + _}
+
+
+
+/*
+Zip Lists
+
+LYAHFGG:
+
+However, [(+3),(*2)] <*> [1,2] could also work in such a way that the first function in the left list gets applied to the first value in the right one, the second function gets applied to the second value, and so on. That would result in a list with two values, namely [4,4]. You could look at it as [1 + 3, 2 * 2].
+ */
+
+val ss = streamZipApplicative.ap(Tags.Zip(Stream(1, 2))) (Tags.Zip(Stream({(_: Int) + 3}, {(_: Int) * 2})))
+//ss.toList
+
+/*
+Useful functions for Applicatives
+
+LYAHFGG:
+
+Control.Applicative defines a function that’s called liftA2, which has a type of
+
+liftA2 :: (Applicative f) => (a -> b -> c) -> f a -> f b -> f c .
+
+ */
+val lf = Apply[Option].lift2((_: Int) :: (_: List[Int]))
+lf(3.some, List(1, 2).some)
+
+
+/*
+Let’s try implementing a function that takes a list of applicatives and returns an applicative that has a list as its result value. We’ll call it sequenceA.
+*/
+def sequenceA[F[_]: Applicative, A](list: List[F[A]]): F[List[A]] = list match {
+  case Nil     => (Nil: List[A]).point[F]
+  case x :: xs => (x |@| sequenceA(xs)) {_ :: _}
+}
+
+sequenceA(List(1.some, 2.some))
+sequenceA(List(3.some, none, 1.some))
+sequenceA(List(List(1, 2, 3), List(4, 5, 6)))
+
+/*
+We got the right answers. What’s interesting here is that we did end up needing Pointed after all, and sequenceA is generic in typeclassy way.
+
+For Function1 with Int fixed example, we have to unfortunately invoke a dark magic.
+
+scala> type Function1Int[A] = ({type l[A]=Function1[Int, A]})#l[A]
+defined type alias Function1Int
+
+scala> sequenceA(List((_: Int) + 3, (_: Int) + 2, (_: Int) + 1): List[Function1Int[Int]])
+res1: Int => List[Int] = <function1>
+
+scala> res1(3)
+res2: List[Int] = List(6, 5, 4)
+ */
 
 
 
@@ -298,7 +398,9 @@ Thanks to Scala’s flexibility we can of course do much better than above. Usin
  */
 val f = (x: Int) => (y: Int) => x + y + 10
 Option(1) <*> (Option(2) <*> Option(f))
-(Option(1) <**> Option(2)) { _ + _ + 10 }
+//(Option(1) <**> Option(2)) { _ + _ + 10 }
+^(2.some, 5.some) {_ + _ }
+^(2.some, none[Int]) {_ + _ }
 
 /*
 And as I stated above we can use it for types that don’t bring helpful methods like flatMap. Let’s conclude with another example using Either which is a perfect candidate to be used for results that might fail with well defined errors:
