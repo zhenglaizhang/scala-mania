@@ -1,5 +1,9 @@
 /*
 It seems that both * together with 1 and ++ along with [] share some common properties: - The function takes two parameters. - The parameters and the returned value have the same type. - There exists such a value that doesn’t change other values when used with the binary function.
+
+
+
+Yesterday we reviewed kinds and types, explored Tagged type, and started looking at Semigroup and Monoid as a way of abstracting binary operations over various types.
  */
 
 import scalaz._
