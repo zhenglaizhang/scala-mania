@@ -12,8 +12,8 @@ resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/release
 libraryDependencies ++= Seq(
   "org.scalaz" %% "scalaz-core" % scalazVersion,
   "org.scalaz" %% "scalaz-effect" % scalazVersion,
-//  "org.scalaz" %% "scalaz-typelevel" % scalazVersion,
-  "org.scalaz" %% "scalaz-scalacheck-binding" % scalazVersion % "test"
+  //  "org.scalaz" %% "scalaz-typelevel" % scalazVersion,
+  "org.scalaz" %% "scalaz-scalacheck-binding" % scalazVersion //% "test"
 )
 
 libraryDependencies += "org.typelevel" %% "cats" % "0.7.0"
@@ -33,9 +33,9 @@ libraryDependencies += "com.typesafe" % "config" % "1.3.0"
 // akka persistence module
 libraryDependencies += "com.typesafe.akka" %% "akka-persistence" % "2.4.9-RC2"
 
-libraryDependencies += "org.iq80.leveldb"            % "leveldb"          % "0.7"
+libraryDependencies += "org.iq80.leveldb" % "leveldb" % "0.7"
 
-libraryDependencies += "org.fusesource.leveldbjni"   % "leveldbjni-all"   % "1.8"
+libraryDependencies += "org.fusesource.leveldbjni" % "leveldbjni-all" % "1.8"
 
 libraryDependencies += "joda-time" % "joda-time" % "2.9.4"
 
