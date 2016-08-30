@@ -117,3 +117,33 @@ Monoid[Boolean @@ Tags.Disjunction].zero |+| Tags.Disjunction(true)
 Monoid[Boolean @@ Tags.Disjunction].zero |+| Monoid[Boolean @@ Tags.Disjunction].zero
 Monoid[Boolean @@ Tags.Conjunction].zero |+| Tags.Conjunction(true)
 Monoid[Boolean @@ Tags.Conjunction].zero |+| Tags.Conjunction(false)
+
+
+
+
+
+
+/*
+With Ordering, we have to look a bit harder to recognize a monoid, but it turns out that its Monoid instance is just as intuitive as the ones we’ve met so far and also quite useful.
+
+scala> Ordering.LT |+| Ordering.GT
+<console>:14: error: value |+| is not a member of object scalaz.Ordering.LT
+  Ordering.LT |+| Ordering.GT
+  ^T
+*/
+
+(Ordering.LT: Ordering) |+| (Ordering.GT: Ordering)
+(Ordering.GT: Ordering) |+| (Ordering.GT: Ordering)
+(Ordering.GT: Ordering) |+| (Ordering.LT: Ordering)
+Monoid[Ordering].zero |+| (Ordering.LT: Ordering)
+Monoid[Ordering].zero |+| (Ordering.GT: Ordering)
+
+/*
+OK, so how is this monoid useful? Let’s say you were writing a function that takes two strings, compares their lengths, and returns an Ordering. But if the strings are of the same length, then instead of returning EQ right away, we want to compare them alphabetically.
+ */
+
+def lengthCompare(a: String, b: String): Ordering = (a.length ?|? b.length) |+| (a ?|? b)
+lengthCompare("abc", "aef")
+lengthCompare("abcd", "aef")
+lengthCompare("abcd", "aefgd")
+lengthCompare("abcd", "abcd")
