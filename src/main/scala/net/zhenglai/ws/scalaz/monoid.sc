@@ -70,3 +70,50 @@ zero represents the identity value for a particular monoid.
 
 Monoid[List[Int]].zero
 Monoid[String].zero
+
+
+
+/*
+Tags.Multiplication
+
+LYAHFGG:
+
+So now that there are two equally valid ways for numbers (addition and multiplication) to be monoids, which way do choose? Well, we don’t have to.
+
+
+This is where Scalaz 7.1 uses tagged type. The built-in tags are Tags. There are 8 tags for Monoids and 1 named Zip for Applicative. (Is this the Zip List I couldn’t find yesterday?)
+
+
+/** Type tag to choose a [[scalaz.Monoid]] instance for a numeric type that performs multiplication,
+   *  rather than the default monoid for these types which by convention performs addition. */
+  sealed trait Multiplication
+
+  val Multiplication = Tag.of[Multiplication]
+ */
+
+Tags.Multiplication(10) |+| Monoid[Int @@ Tags.Multiplication].zero
+
+
+/*
+Nice! So we can multiply numbers using |+|. For addition, we use plain Int.
+ */
+
+10 |+| Monoid[Int].zero
+
+
+
+
+
+/*
+Another type which can act like a monoid in two distinct but equally valid ways is Bool. The first way is to have the or function || act as the binary function along with False as the identity value. … The other way for Bool to be an instance of Monoid is to kind of do the opposite: have && be the binary function and then make True the identity value.
+
+
+
+In Scalaz 7 these are called Boolean @@ Tags.Disjunction and Boolean @@ Tags.Conjunction respectively.
+ */
+
+Tags.Disjunction(true) |+| Tags.Disjunction(false)
+Monoid[Boolean @@ Tags.Disjunction].zero |+| Tags.Disjunction(true)
+Monoid[Boolean @@ Tags.Disjunction].zero |+| Monoid[Boolean @@ Tags.Disjunction].zero
+Monoid[Boolean @@ Tags.Conjunction].zero |+| Tags.Conjunction(true)
+Monoid[Boolean @@ Tags.Conjunction].zero |+| Tags.Conjunction(false)
