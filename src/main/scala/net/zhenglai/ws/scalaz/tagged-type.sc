@@ -154,3 +154,33 @@ object Tag {
 
 The Tag object simply tags types of A with a specified marker of T; or, in this case, Multiplication, where the result is A @@ T
 */
+
+sealed trait KiloGram
+
+def KiloGram[A](a: A): A @@ KiloGram = Tag[A, KiloGram](a)
+
+val mass = KiloGram(20.0)
+
+2 * Tag.unwrap(mass)
+
+2 * scalaz.Tag.unsubst[Double, Id, KiloGram](mass)
+
+
+
+sealed trait JoulePerKiloGram
+
+def JoulePerKiloGram[A](a: A): A @@ JoulePerKiloGram = Tag[A, JoulePerKiloGram](a)
+
+def energyR(m: Double @@ KiloGram): Double @@ JoulePerKiloGram =
+  JoulePerKiloGram(299792458.0 * 299792458.0 * Tag.unsubst[Double, Id, KiloGram](m))
+
+energyR(mass)
+/*
+scala> energyR(10.0)
+<console>:18: error: type mismatch;
+  found   : Double(10.0)
+  required: scalaz.@@[Double,KiloGram]
+  (which expands to)  AnyRef{type Tag = KiloGram; type Self = Double}
+  energyR(10.0)
+  ^
+*/
