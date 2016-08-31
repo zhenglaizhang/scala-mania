@@ -38,6 +38,7 @@ NM..Monad
 
 abstract class MonadPlus {
 
+    def filter[A](fa: F[A])(f: A => Boolean)
 }
 
 abstract class ApplicativePlus {
@@ -50,6 +51,9 @@ abstract class PlusEmpty {
 
 abstract class Plus {
   def plus[A](a: F[A], b: => F[A]): F[A]
+
+  -- PlusOps --
+  def <+>(other : => F[A]) : F[A]
 }
 
 

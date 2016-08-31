@@ -23,9 +23,12 @@ Similar to Semigroup[A] and Monoid[A], Plus[F[_]] and PlusEmpty[F[_]] requires t
 Plus introduces <+> operator to append two containers:
 
 
+
 MonadPlus introduces filter operation.
 */
 
+
 List(1, 2, 3) <+> List(4, 5, 6)
+List(1, 2, 3).empty
 
 (1 |-> 50) filter { x => x.shows contains '7' }
