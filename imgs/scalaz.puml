@@ -1,0 +1,56 @@
+@startuml
+
+abstract class InvariantFunctor {
+    xmap()
+}
+abstract class Functor {
+  /** Lift `f` into `F` and apply to `F[A]`. */
+  def map[A, B](fa: F[A])(f: A => B): F[B]
+}
+
+abstract class Apply {
+  def ap[A,B](fa: => F[A])(f: => F[A => B]): F[B]
+}
+abstract class Applicative {
+  def point[A](a: => A): F[A]
+}
+
+
+abstract class Semigroup {
+  /** The binary operation to combine `f1` and `f2`. */
+  def append(f1: F, f2: => F): F
+}
+abstract class Monoid {
+ /** The identity element for `append`. */
+  def zero: F
+}
+
+Semigroup <|-- Monoid
+
+
+abstract class Monad
+abstract class Foldable
+
+
+abstract class Bind {
+ /** Equivalent to `join(map(fa)(f))`. */
+  def bind[A, B](fa: F[A])(f: A => F[B]): F[B]
+}
+
+Applicative <|-- Monad
+Bind <|-- Monad
+Apply <|-- Bind
+
+
+InvariantFunctor <|-- Functor
+Functor <|-- Apply
+Apply <|-- Applicative
+
+
+enum TimeUnit {
+DAYS
+HOURS
+MINUTES
+}
+
+@enduml
