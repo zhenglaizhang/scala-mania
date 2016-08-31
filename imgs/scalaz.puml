@@ -36,6 +36,29 @@ note "Monad, an <b>Applicative</b> that also supports <b>Bind</b>, circumscribed
 NM..Monad
 
 
+abstract class MonadPlus {
+
+}
+
+abstract class ApplicativePlus {
+
+}
+
+abstract class PlusEmpty {
+  def empty[A]: F[A]
+}
+
+abstract class Plus {
+  def plus[A](a: F[A], b: => F[A]): F[A]
+}
+
+
+'Monad[F[_]] <|-- MonadPlus
+Monad <|-- MonadPlus
+ApplicativePlus <|-- MonadPlus
+Applicative <|-- ApplicativePlus
+PlusEmpty <|-- ApplicativePlus
+Plus <|-- PlusEmpty
 
 abstract class Foldable
 
