@@ -28,13 +28,26 @@ abstract class Monoid {
 Semigroup <|-- Monoid
 
 
-abstract class Monad
+abstract class Monad {
+
+}
+
+note "Monad, an <b>Applicative</b> that also supports <b>Bind</b>, circumscribed by the <b>monad laws</b>." as NM
+NM..Monad
+
+
+
 abstract class Foldable
 
 
 abstract class Bind {
- /** Equivalent to `join(map(fa)(f))`. */
+ -- Equivalent to `join(map(fa)(f))`. --
   def bind[A, B](fa: F[A])(f: A => F[B]): F[B]
+
+ -- BindOps --
+   def flatMap[B](f: A => F[B]) = F.bind(self)(f)
+   def >>=[B](f: A => F[B]) = F.bind(self)(f)
+   def ∗[B](f: A => F[B]) = F.bind(self)(f)
 }
 
 Applicative <|-- Monad
@@ -54,3 +67,4 @@ MINUTES
 }
 
 @enduml
+
