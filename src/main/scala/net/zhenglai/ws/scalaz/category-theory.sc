@@ -85,4 +85,27 @@ identity(John)
 in the category of finite sets, the “objects” translate to types like Person and Breakfast, and arrows translate to functions like Person => Person. The external diagram looks a lot like the type-level signatures like Person => Person.
 
 The final basic ingredient, which is what lends all the dynamics to the notion of category is composition of arrows, by which two arrows are combined to obtain a third arrow.
+
+’f ∘ g’ is read ’f following g‘, or sometimes ’f of g‘.
+ */
+val favoritePersonBreakfast = favoriteBreakfast compose favoritePerson
+
+
+
+/*
+Data for a category consists of the four ingredients:
+
+  objects: A, B, C, …
+  arrows: f: A => B
+  identity arrows: 1A: A => A
+  composition of arrows
+
+These data must satisfy the following rules:
+
+The identity laws:
+  If 1A: A => A, g: A => B, then g ∘ 1A = g
+  If f: A => B, 1B: B => B, then 1B ∘ f = f
+
+The associative law:
+  If f: A => B, g: B => C, h: C => D, then h ∘ (g ∘ f) = (h ∘ g) ∘ f
  */
