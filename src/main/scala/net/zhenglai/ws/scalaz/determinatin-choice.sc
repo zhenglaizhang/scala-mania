@@ -40,4 +40,7 @@ B -f-> A
 
 Surjective(漫射)
 If an arrow f: A => B satisfies the property ‘for any y: T => B there exists an x: T => A such that f ∘ x = y‘, it is often said to be ‘surjective for arrows from T.’
+
+
+// TODO
 */
