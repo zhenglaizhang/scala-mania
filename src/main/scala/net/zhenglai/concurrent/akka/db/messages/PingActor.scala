@@ -1,6 +1,10 @@
 package net.zhenglai.concurrent.akka.db.messages
 
-import akka.actor.{Actor, ActorLogging, Props, Status}
+import java.io.IOException
+
+import akka.actor.{Actor, ActorLogging, OneForOneStrategy, Props, Status, SupervisorStrategy}
+
+import scala.concurrent.duration.Duration
 
 /*
 Using message-passing instead of method invocation enforces encapsulation.
@@ -19,6 +23,13 @@ class PingActor(val response: String) extends Actor with ActorLogging {
     case "Ping" => sender ! response
     //  access the sender ActorRef via the sender() method.
     case unknown => sender ! Status.Failure(new Exception(s"unknown message $unknown"))
+  }
+
+  override def supervisorStrategy: SupervisorStrategy = {
+    import SupervisorStrategy._
+    OneForOneStrategy(maxNrOfRetries = 10, withinTimeRange = Duration.create("1 minute")) {
+      case _: IOException => Restart
+    }
   }
 }
 
