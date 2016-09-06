@@ -38,6 +38,7 @@ libraryDependencies += "com.typesafe.akka" % "akka-remote_2.11" % akkaVersion
 
 libraryDependencies += "com.typesafe" % "config" % "1.3.0"
 
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.3"
 
 /*
 Akka provides a logger for SL4FJ. This module is available in the 'akka-slf4j.jar'. It has one single dependency; the slf4j-api jar. In runtime you also need a SLF4J backend, we recommend Logback:

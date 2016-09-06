@@ -1,6 +1,6 @@
 package net.zhenglai.concurrent.akka.db.messages
 
-import akka.actor.{Actor, ActorLogging, Status}
+import akka.actor.{Actor, ActorLogging, ActorSystem, Props, Status}
 
 import scala.collection.mutable
 
@@ -36,4 +36,10 @@ class AkkademyDb extends Actor with ActorLogging {
       sender ! Status.Failure(new ClassNotFoundException)
     }
   }
+}
+
+
+object AkkademyDbMain extends App {
+  val system = ActorSystem("akkademy")
+  system.actorOf(Props[AkkademyDb], name = "akkademy-db")
 }
