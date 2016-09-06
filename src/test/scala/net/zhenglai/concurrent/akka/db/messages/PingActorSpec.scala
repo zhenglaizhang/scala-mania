@@ -1,14 +1,17 @@
 package net.zhenglai.concurrent.akka.db.messages
 
 import akka.actor.ActorSystem
-import akka.testkit.TestActorRef
-import net.zhenglai.concurrent.akka.db.messages.EchoActor.Store
+import akka.pattern.ask
+import akka.util.Timeout
 import org.scalatest.{BeforeAndAfterEach, FunSpecLike, Matchers}
+
+import scala.concurrent.Await
+import scala.concurrent.duration._
 
 class PingActorSpec extends FunSpecLike with Matchers with BeforeAndAfterEach {
 
   /**
-    *  get a reference to an actor system
+    * get a reference to an actor system
     *
     * An actor system is a hierarchical group of actors which share common
     * configuration, e.g. dispatchers, deployments, remote capabilities and
@@ -17,35 +20,28 @@ class PingActorSpec extends FunSpecLike with Matchers with BeforeAndAfterEach {
   implicit val system = ActorSystem()
 
 
+  implicit val timeout = Timeout(5 seconds)
+
+  val pingActor = system.actorOf(PingActor.props("Pong"))
   /*
   This basic pattern can be built on for unit testing Actors synchronously.
    */
-  describe("echoActor") {
-    describe("given Store") {
-      it("should remember the value") {
-        // use Akka Testkit to create a TestActorRef which has a synchronous API, and lets us get at the underlying actor.
-        /**
-          * Actor instances are hidden away so the act of creating an actor in our actor system returns an ActorRef
-          */
-        val actorRef = TestActorRef(new EchoActor)
-
-        /*
-        Because we are using TestActorRef, the call to tell will not continue until the request is processed.
-        tell is an asynchronous operation that returns immediately in normal usage.
-         */
-        actorRef ! Store("value")
-        val akkademyDb = actorRef.underlyingActor
-        akkademyDb.lastValue should equal("value")
+  describe("Ping-Pong Actor") {
+    describe("when Ping is sent") {
+      it("should respond with Pong") {
+        // we ask the actor for a response to a message
+        val future = pingActor ? "Ping"
+        val result = Await.result(future.mapTo[String], 1 second)
+        assert(result == "Pong")
       }
 
-
-      it("should remember only the last value") {
-        val actorRef = TestActorRef(new EchoActor)
-
-        actorRef ! Store("v1")
-        actorRef ! Store("v2")
-        actorRef.underlyingActor.lastValue should equal ("v2")
+      it("should fail on unknown message") {
+        val future = pingActor ? "unknown"
+        intercept[Exception] {
+          Await.result(future.mapTo[String], 1 second)
+        }
       }
+
     }
   }
 }
