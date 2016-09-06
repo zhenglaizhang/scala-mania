@@ -109,5 +109,33 @@ class PingActorSpec extends FunSpecLike with Matchers with BeforeAndAfterEach {
         Thread.sleep(100)
       }
     }
+
+    describe("Future ") {
+      import scala.concurrent.ExecutionContext.Implicits.global
+      it("should handle failures(Throwable) elegantly") {
+        askThat(pingActor, "unknown").onFailure {
+          case e: Exception => println("Got exception")
+        }
+      }
+
+      it("could recover from failure with default value") {
+        askThat(pingActor, "unknown").recover {
+          case e: Exception => "default"
+        }.onSuccess {
+          case x: String => assert(x == "default")
+        }
+      }
+
+      it("could recover from failure with another asynchronous operatione") {
+        /*
+        recoverWith is the function we want to invoke—this is like flatMap for the error case
+         */
+        askThat(pingActor, "unknown").recoverWith {
+          case e: Exception => askThat(pingActor, "Ping")
+        }.onSuccess {
+          case x: String => assert(x == "Pong")
+        }
+      }
+    }
   }
 }
