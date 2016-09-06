@@ -42,6 +42,12 @@ class PingActorSpec extends FunSpecLike with Matchers with BeforeAndAfterEach {
          */
         val future = pingActor ? "Ping"
 
+
+        /*
+           * Sends a one-way asynchronous message. E.g. fire-and-forget semantics.
+         */
+        pingActor ! "Ping"
+
         /*
         The Actor is untyped, so we get back a Future[AnyRef]. We call future. mapTo[String] to change the future's type to the expected type of the result.
 
