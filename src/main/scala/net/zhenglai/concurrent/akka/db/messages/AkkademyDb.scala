@@ -1,13 +1,13 @@
 package net.zhenglai.concurrent.akka.db.messages
 
-import akka.actor.{Actor, ActorLogging, ActorSystem, Props, Status}
+import akka.actor.{Actor, ActorLogging, ActorSystem, Props, Stash, Status}
 
 import scala.collection.mutable
 
 /**
   * this actor can be used as a thread-safe caching abstraction (and eventually a full-on distributed key-value store).
   */
-class AkkademyDb extends Actor with ActorLogging {
+class AkkademyDb extends Actor with ActorLogging with Stash {
 
   val map = new mutable.HashMap[String, Object]
 
@@ -16,6 +16,19 @@ class AkkademyDb extends Actor with ActorLogging {
   We define the behavior for the response to the SetRequest message using pattern matching to produce the partial function.
    */
   override def receive: Receive = {
+    case x: GetRequest =>
+      stash()
+    case Connected     =>
+      context.become(online)
+      unstashAll()
+    case unknown       => {
+      log.info("received unknown message: {}", unknown)
+      sender ! Status.Failure(new ClassNotFoundException)
+    }
+  }
+
+
+  def online: Receive = {
     /*how the actor should behave in response to different message types (with content if any).*/
     /*Scala is a natural  t as the language has pattern matching as a  rst-class language construct*/
     case SetRequest(key, value) => {
@@ -31,10 +44,8 @@ class AkkademyDb extends Actor with ActorLogging {
         case None    => sender ! Status.Failure(new KeyNotFoundException(key))
       }
     }
-    case unknown         => {
-      log.info("received unknown message: {}", unknown)
-      sender ! Status.Failure(new ClassNotFoundException)
-    }
+
+    case _: Disconnected => context.unbecome()
   }
 }
 

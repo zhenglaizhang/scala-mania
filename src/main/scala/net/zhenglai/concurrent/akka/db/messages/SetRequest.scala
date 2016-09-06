@@ -7,6 +7,7 @@ package net.zhenglai.concurrent.akka.db.messages
   * Combination of both an insert and an update in one, or like the set operation on a Map.
   *
   * There are two ways in which messages can be mutable—references and types(content).
+  *
   * @param key
   * @param value
   */
@@ -18,4 +19,9 @@ case class SetIfNotExistsRequest(key: String, value: Object)
 case class GetRequest(key: String)
 
 case class KeyNotFoundException(key: String) extends Exception
+
+
+case class Disconnected(reason: String = "")
+
+case object Connected
 
