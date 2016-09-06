@@ -31,11 +31,16 @@ class PingActorSpec extends FunSpecLike with Matchers with BeforeAndAfterEach {
       it("should respond with Pong") {
         /* we ask the actor for a response to a message
         This gives us back a placeholder—a Future—that represents the actor's reply. In the actor code, the actor will send a message back to sender(), which we will receive as the response to this future.
+
+        Asking an actor for a response demonstrates how to talk to an actor from outside the actor system by getting a response via a future.
          */
         val future = pingActor ? "Ping"
 
         /*
         The Actor is untyped, so we get back a Future[AnyRef]. We call future. mapTo[String] to change the future's type to the expected type of the result.
+
+       Don't sleep or block outside tests.!!!
+       You should only have non-blocking code outside of the test context.
          */
         val result = Await.result(future.mapTo[String], 1 second)
         assert(result == "Pong")
@@ -51,7 +56,7 @@ class PingActorSpec extends FunSpecLike with Matchers with BeforeAndAfterEach {
 
     describe("when Echo is set as response and Ping is sent") {
       it("should response with Echo") {
-//        val otherPingActor = system.actorOf(PingActor.props("Echo"))
+        //        val otherPingActor = system.actorOf(PingActor.props("Echo"))
         val otherPingActor = system.actorOf(Props(classOf[PingActor], "Echo"))
         val future = otherPingActor ? "Ping"
         Await.result(future.mapTo[String], 1 second) should equal("Echo")
