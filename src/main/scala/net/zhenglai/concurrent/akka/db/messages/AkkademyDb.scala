@@ -1,6 +1,6 @@
 package net.zhenglai.concurrent.akka.db.messages
 
-import akka.actor.{Actor, ActorLogging}
+import akka.actor.{Actor, ActorLogging, Status}
 
 import scala.collection.mutable
 
@@ -21,7 +21,19 @@ class AkkademyDb extends Actor with ActorLogging {
     case SetRequest(key, value) => {
       log.info("received SetRequest - key: {} value: {}", key, value)
       map.put(key, value)
+      sender ! Status.Success
     }
-    case unknown                => log.info("received unknown message: {}", unknown)
+
+    case GetRequest(key) => {
+      log.info("received GetRequest - key: {}", key)
+      map.get(key) match {
+        case Some(x) => sender ! x
+        case None    => sender ! Status.Failure(new KeyNotFoundException(key))
+      }
+    }
+    case unknown         => {
+      log.info("received unknown message: {}", unknown)
+      Status.Failure(new ClassNotFoundException)
+    }
   }
 }
