@@ -33,7 +33,7 @@ class AkkademyDb extends Actor with ActorLogging {
     }
     case unknown         => {
       log.info("received unknown message: {}", unknown)
-      Status.Failure(new ClassNotFoundException)
+      sender ! Status.Failure(new ClassNotFoundException)
     }
   }
 }
