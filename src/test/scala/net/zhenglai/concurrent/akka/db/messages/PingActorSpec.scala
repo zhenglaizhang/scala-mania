@@ -136,6 +136,23 @@ class PingActorSpec extends FunSpecLike with Matchers with BeforeAndAfterEach {
           case x: String => assert(x == "Pong")
         }
       }
+
+      it("could be composed") {
+        /*
+        recoverWith is the function we want to invoke—this is like flatMap for the error case
+         */
+        askThat(pingActor, "unknown").flatMap {
+          x => askThat(pingActor, x)
+        }.recoverWith {
+          case e: Exception => askThat(pingActor, "Ping")
+        }.onSuccess {
+          case x: String => assert(x == "Pong")
+        }
+
+        /*
+        Any failure along the way becomes the failure at the end of the chain. This leaves us with an elegant pipeline of operations where exceptions are handled at the end regardless of which operation caused the failure. We can focus on describing the happy path without extraneous error checking throughout the pipeline. At the end, failure as an effect is described separately.
+         */
+      }
     }
   }
 }
