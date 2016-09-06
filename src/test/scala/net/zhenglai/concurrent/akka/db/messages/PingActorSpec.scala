@@ -98,6 +98,14 @@ class PingActorSpec extends FunSpecLike with Matchers with BeforeAndAfterEach {
           case x: String => assert(x == "Pong")
         }
 
+        /*
+        compose our futures to make these chained asynchronous operations.
+         */
+        val f: Future[String] = askThat(pingActor, "Ping") flatMap { x => askThat(pingActor, x) }
+        /*
+        This is a very powerful way of handling pipelines of data processing. You can make a call to a remote service and then make a call to a second service with the result.
+         */
+
         Thread.sleep(100)
       }
     }
