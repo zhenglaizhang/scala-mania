@@ -1,8 +1,11 @@
 package net.zhenglai.concurrent.akka.db.messages
 
+import java.util.concurrent.TimeUnit
+
 import akka.actor.{Actor, ActorLogging, ActorSystem, Props, Stash, Status}
 
 import scala.collection.mutable
+import scala.concurrent.duration.Duration
 
 /**
   * this actor can be used as a thread-safe caching abstraction (and eventually a full-on distributed key-value store).
@@ -16,12 +19,13 @@ class AkkademyDb extends Actor with ActorLogging with Stash {
   We define the behavior for the response to the SetRequest message using pattern matching to produce the partial function.
    */
   override def receive: Receive = {
-    case x: GetRequest =>
+    case x: GetRequest  =>
       stash()
-    case Connected     =>
+    case CheckConnected => throw new ConnectTimeoutException("dummy")
+    case Connected      =>
       context.become(online)
       unstashAll()
-    case unknown       => {
+    case unknown        => {
       log.info("received unknown message: {}", unknown)
       sender ! Status.Failure(new ClassNotFoundException)
     }
@@ -47,6 +51,11 @@ class AkkademyDb extends Actor with ActorLogging with Stash {
 
     case _: Disconnected => context.unbecome()
   }
+
+  override def preStart(): Unit = {
+//    context.system.scheduler.scheduleOnce(Duration.create(1000, TimeUnit.MICROSECONDS))
+  }
+
 }
 
 

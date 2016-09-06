@@ -20,6 +20,9 @@ case class GetRequest(key: String)
 
 case class KeyNotFoundException(key: String) extends Exception
 
+case class ConnectTimeoutException(key: String) extends Exception
+
+case object CheckConnected
 
 case class Disconnected(reason: String = "")
 
