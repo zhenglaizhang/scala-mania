@@ -12,6 +12,9 @@ class AkkademyDb extends Actor with ActorLogging {
   val map = new mutable.HashMap[String, Object]
 
   /*type Receive = PartialFunction[Any, Unit]*/
+  /*
+  We define the behavior for the response to the SetRequest message using pattern matching to produce the partial function.
+   */
   override def receive: Receive = {
     /*how the actor should behave in response to different message types (with content if any).*/
     /*Scala is a natural  t as the language has pattern matching as a  rst-class language construct*/
