@@ -20,3 +20,11 @@
  * Project Maintenance
 
 
+> Jonas Boner from Typesafe has referred to Akka-http as "Spray 2.0". So don't expect any future versions of Spray and at some point you'll have to make the switch. I saw Jonas' Akka-http presentation at Scala Days and it looks like porting Spray code to Akka-http should be straight forward as the DSL is mostly unchanged (even though the underlying implementation of the library will be different).
+  
+  To answer your questions specifically: Spray is finished as a separate project, it is being imported into Akka under the name Akka-http (not a merge as Akka didn't have any equivalent before hand). If you need to start development now go with Spray, if you can afford to work with the inevitable bugs in a preview release go with Akka-http. Your Spray code will never stop working, but it won't be supported either outside of minor bug fixes. All new functionality will be added in Akka-http, so instead of updating to Spray 2.0 you update to Akka-http.
+  
+  
+> The Akka/Spray integration—named Akka HTTP—will provide an ideal way of producing and consuming embeddable REST services.
+
+
