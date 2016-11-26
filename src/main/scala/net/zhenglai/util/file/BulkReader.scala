@@ -1,10 +1,10 @@
 package net.zhenglai.util.file
 
 /**
-  * Created by zhenglai on 8/16/16.
-  * Traits can inherit classes
-  * the default parent is `AnyRef` if not specified
-  */
+ * Created by zhenglai on 8/16/16.
+ * Traits can inherit classes
+ * the default parent is `AnyRef` if not specified
+ */
 abstract class BulkReader {
   type In
   val source: In

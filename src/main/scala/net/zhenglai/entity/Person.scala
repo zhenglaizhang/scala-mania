@@ -1,8 +1,8 @@
 package net.zhenglai.entity
 
 /**
-  * Created by zhenglai on 8/16/16.
-  */
+ * Created by zhenglai on 8/16/16.
+ */
 case class Person(name: String, age: Option[Int] = None, address: Option[Address] = None) extends PersonState {
   // if no companion object apply defined, we still need to use new to construct the object
   // named / optional parameters and overloaded apply factory methods in objects
@@ -16,7 +16,6 @@ case class Person(name: String, age: Option[Int] = None, address: Option[Address
 
   //  def this(name: String, address: Address) = this(name, None, Some(address))
 }
-
 
 // The compiler does not automatically generate apply methods for secondary constructors in case classes.
 

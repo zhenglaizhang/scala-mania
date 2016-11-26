@@ -14,7 +14,6 @@ trait RedApples {
   val red1, red2 = "red"
 }
 
-
 trait GreenApples {
   val green1, green2 = "green"
 }

@@ -1,10 +1,9 @@
 package net.zhenglai.lib
 
 /**
-  * Created by zhenglai on 8/17/16.
-  */
+ * Created by zhenglai on 8/17/16.
+ */
 object MyPredef {
-
 
   type IntMaker = () => Int
   // type alias: () => Int
@@ -39,16 +38,14 @@ object MyPredef {
     if (cond) {
       println("run trueVal")
       trueVal
-    }
-    else {
+    } else {
       println("run falseVal")
       falseVal
     }
   }
 
   class Parent(val value: Int) {
-    override
-    def toString: String = {
+    override def toString: String = {
       s"${this.getClass.getName}($value)"
     }
   }
@@ -57,8 +54,7 @@ object MyPredef {
 
   //  case class C2[A <: Upper >: Lower](a: A) // Does not compile
 
-  case
-  class Opt[A](value: A = null) {
+  case class Opt[A](value: A = null) {
     def getOrElse(default: A) = if (value != null) value else default
   }
 

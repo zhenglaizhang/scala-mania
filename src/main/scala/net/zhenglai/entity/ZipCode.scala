@@ -1,15 +1,17 @@
 package net.zhenglai.entity
 
 /**
-  * Created by zhenglai on 8/16/16.
-  */
+ * Created by zhenglai on 8/16/16.
+ */
 case class ZipCode(zip: Int, extension: Option[Int] = None) {
-  require(valid(zip, extension), //
-    s"Invalid Zip+4 specified: $toString")
+  require(
+    valid(zip, extension), //
+    s"Invalid Zip+4 specified: $toString"
+  )
 
   //
   override def toString = //
-  if (extension.isDefined) s"$zip-${extension.get}" else zip.toString
+    if (extension.isDefined) s"$zip-${extension.get}" else zip.toString
 
   protected def valid(z: Int, e: Option[Int]): Boolean = {
     if (0 < z && z <= 99999) e match {

@@ -1,8 +1,8 @@
 package net.zhenglai.util.str
 
 /**
-  * Created by zhenglai on 8/15/16.
-  */
+ * Created by zhenglai on 8/15/16.
+ */
 object StringWrapper {
 
   def seqToString[T](seq: Seq[T]): String = seq match {
@@ -14,7 +14,6 @@ object StringWrapper {
     case prefix :+ end => reverseSeqToString(prefix) + s" :+ $end"
     case Nil => "Nil"
   }
-
 
   def seqProcess[T](seq: Seq[T])(process: T => Unit): Unit = seq match {
     case +:(head, tail) =>

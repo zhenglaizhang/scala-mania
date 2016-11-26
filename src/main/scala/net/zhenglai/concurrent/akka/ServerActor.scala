@@ -1,14 +1,14 @@
 package net.zhenglai.concurrent.akka
 
-import akka.actor.{Actor, ActorLogging, OneForOneStrategy, SupervisorStrategy}
+import akka.actor.{ Actor, ActorLogging, OneForOneStrategy, SupervisorStrategy }
 import akka.util.Timeout
 
 import scala.concurrent.duration._
 import scala.util.control.NonFatal
 
 /**
-  * Created by zhenglai on 8/18/16.
-  */
+ * Created by zhenglai on 8/18/16.
+ */
 class ServerActor extends Actor with ActorLogging {
 
   override val supervisorStrategy: SupervisorStrategy = {

@@ -10,43 +10,45 @@ package net.zhenglai.lib
 case class State[S, +A](run: S => (A, S)) {
   // 在flatMap里我们用函数f处理了封装元素a, f(a)。同时我们又引用了状态行为函数run对传入的状态s进行了状态变迁 run(s)
   def flatMap[B](f: A => State[S, B]): State[S, B] = State[S, B] {
-    s => {
-      val (a, s1) = run(s)
-      f(a).run(s1)
-    }
+    s =>
+      {
+        val (a, s1) = run(s)
+        f(a).run(s1)
+      }
   }
 
   def map[B](f: A => B): State[S, B] = State[S, B] {
-    s => {
-      val (a, s1) = run(s)
-      (f(a), s1)
-    }
+    s =>
+      {
+        val (a, s1) = run(s)
+        (f(a), s1)
+      }
   }
 
   /*
 同样，map也实施了f(a),run(s)。map也可以用flatMap来实现。它们之间的分别只是f: A => B 和 A => State[S,B]。因为我们有unit, unit(a) = State[S,A]，unit(f(a)) = State[S,B]所以我们用unit把map的函数参数A升格就行了。用flatMap来实现map可以把map抽升到更高级：这样map就不用再理会那个状态行为函数了。
    */
-  def map_1[B](f: A =>  B): State[S, B] = flatMap {a => State.unit(f(a))}
+  def map_1[B](f: A => B): State[S, B] = flatMap { a => State.unit(f(a)) }
 
   // map2的功能是用封装元素类型函数(A,B) => C来把两个State管子里的元素结合起来。我们可以施用flatMap两次来把两个管子里的元素结合起来。对于map3我们可以再加一次。
-      def map2[B,C](sb: State[S,B])(f: (A,B) => C): State[S,C] = {
-             flatMap {a => sb.map { b => f(a,b) }}
-         }
-       def map3[B,C,D](sb: State[S,B], sc: State[S,C])(f: (A,B,C) => D): State[S,D] = {
-             flatMap {a => sb.flatMap {b => sc.map { c => f(a,b,c) }}}
-         }
-  def map2_1[B,C](sb: State[S,B])(f: (A,B) => C): State[S,C] ={
+  def map2[B, C](sb: State[S, B])(f: (A, B) => C): State[S, C] = {
+    flatMap { a => sb.map { b => f(a, b) } }
+  }
+  def map3[B, C, D](sb: State[S, B], sc: State[S, C])(f: (A, B, C) => D): State[S, D] = {
+    flatMap { a => sb.flatMap { b => sc.map { c => f(a, b, c) } } }
+  }
+  def map2_1[B, C](sb: State[S, B])(f: (A, B) => C): State[S, C] = {
     for {
       a <- this
       b <- sb
-    } yield f(a,b)
+    } yield f(a, b)
   }
-  def map3_1[B,C,D](sb: State[S,B], sc: State[S,C])(f: (A,B,C) => D): State[S,D] ={
+  def map3_1[B, C, D](sb: State[S, B], sc: State[S, C])(f: (A, B, C) => D): State[S, D] = {
     for {
       a <- this
       b <- sb
       c <- sc
-    } yield f(a,b,c)
+    } yield f(a, b, c)
   }
   /*
 以上的语法糖（syntatic sugar）for-comprehension让我们俨然进入了一个泛函世界，好像有了一种兴奋的感觉。这种表达形式简洁直白，更加容易理解。同样，在map2,map3里没有涉及到任何状态变迁的东西。我们实现了状态变迁的隐形操作。
@@ -58,7 +60,7 @@ object State {
   // 这个unit。它就是一个封装元素值和状态都不转变的State实例。unit的唯一功能就是把低阶一级的封装元素类型a升格为State类型。
   def unit[S, A](a: A) = State[S, A](s => (a, s))
 
-  def getState[S]: State[S, S] = State[S, S] { s => (s, s)}
+  def getState[S]: State[S, S] = State[S, S] { s => (s, s) }
 
-  def setState[S](s: S): State[S, Unit] = State[S, Unit] { _ => ((), s)}
+  def setState[S](s: S): State[S, Unit] = State[S, Unit] { _ => ((), s) }
 }

@@ -3,8 +3,8 @@ package net.zhenglai.ui
 import net.zhenglai.pattern.Subject
 
 /**
-  * Created by zhenglai on 8/16/16.
-  */
+ * Created by zhenglai on 8/16/16.
+ */
 object ObserverApp {
 
   def main(args: Array[String]): Unit = {
@@ -19,7 +19,6 @@ object ObserverApp {
 
     onTheFly(Seq(bco1, bco2))
   }
-
 
   def onTheFly(observers: Seq[ButtonCountObserver]): Unit = {
     val button = new Button("On the fly") with Subject[Button] {

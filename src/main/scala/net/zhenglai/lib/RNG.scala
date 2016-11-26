@@ -30,7 +30,7 @@ trait RNG {
 case class seedRNG(seed: Long) extends RNG {
   // 泛函状态变迁（state transition）的signature
   override def nextInt: (Int, RNG) = {
-    val seed2 = (seed*0x5DEECE66DL + 0xBL) & ((1L << 48) - 1)
+    val seed2 = (seed * 0x5DEECE66DL + 0xBL) & ((1L << 48) - 1)
     ((seed2 >>> 16).asInstanceOf[Int], seedRNG(seed2))
   }
 }
@@ -38,13 +38,13 @@ case class seedRNG(seed: Long) extends RNG {
 object RNG {
   //值在 0.0 - 1.0 之间的Double随意数
   def nextDouble(rng: RNG): (Double, RNG) = {
-    val (i,rng2) = rng.nextInt
-    if ( i == Int.MaxValue ) (0.0, rng2)
-    else ( i.toDouble / Int.MaxValue.toDouble, rng2)
-  }
-  def nextPositiveInt(rng: RNG): (Int, RNG) =  {
     val (i, rng2) = rng.nextInt
-    if ( i == Int.MaxValue ) (Int.MaxValue, rng2)
+    if (i == Int.MaxValue) (0.0, rng2)
+    else (i.toDouble / Int.MaxValue.toDouble, rng2)
+  }
+  def nextPositiveInt(rng: RNG): (Int, RNG) = {
+    val (i, rng2) = rng.nextInt
+    if (i == Int.MaxValue) (Int.MaxValue, rng2)
     else (i.abs, rng2)
   }
   def nextBoolean(rng: RNG): (Boolean, RNG) = {
@@ -54,27 +54,24 @@ object RNG {
   }
   //产生一个随意tuple (Int, Double)
   def nextIntDouble(rng: RNG): ((Int, Double), RNG) = {
-    val (i,rng2) = nextPositiveInt(rng)
-    val (d,rng3) = nextDouble(rng2)
-    ((i,d),rng3)
+    val (i, rng2) = nextPositiveInt(rng)
+    val (d, rng3) = nextDouble(rng2)
+    ((i, d), rng3)
   }
   //产生一个随意数的n长度List
   def nextInts(n: Int)(rng: RNG): (List[Int], RNG) = {
     def go(n: Int, rng: RNG, acc: List[Int]): (List[Int], RNG) = {
-      if ( n <= 0 ) (acc, rng)
+      if (n <= 0) (acc, rng)
       else {
-        val (i,rng2) = rng.nextInt
-        go(n-1,rng2,i :: acc)
+        val (i, rng2) = rng.nextInt
+        go(n - 1, rng2, i :: acc)
       }
     }
-    go(n,rng,Nil: List[Int])
+    go(n, rng, Nil: List[Int])
   }
 }
 
-
-
 object testonly {
-
 
   case class Bar()
 

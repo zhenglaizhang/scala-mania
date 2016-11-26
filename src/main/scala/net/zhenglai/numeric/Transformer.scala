@@ -1,19 +1,16 @@
 package net.zhenglai.numeric
 
 /**
-  * Created by zhenglai on 8/15/16.
-  */
+ * Created by zhenglai on 8/15/16.
+ */
 object Transformer {
-
 
   val inverse: PartialFunction[Double, Double] = {
     case d if d != 0.0 => 1.0 / d
   }
 
-
   // lift the partial function as one that returns an Option
   val inverseSafe = inverse.lift
-
 
   inverse(2)
   inverse(10)

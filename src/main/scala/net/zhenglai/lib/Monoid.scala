@@ -14,7 +14,7 @@ trait Monoid[A] {
 }
 
 object Monoid {
-  implicit val IntMonoid   : Monoid[Int]    = new Monoid[Int] {
+  implicit val IntMonoid: Monoid[Int] = new Monoid[Int] {
     def mappend(a: Int, b: Int): Int = a + b
 
     def mzero: Int = 0
@@ -32,8 +32,7 @@ object Test {
     xs.foldLeft(m.mzero)(m.mappend)
   }
 
-
-//  You can still provide different monoid directly to the function. We could provide an instance of monoid for Int using multiplications.
+  //  You can still provide different monoid directly to the function. We could provide an instance of monoid for Int using multiplications.
   val multiMonoid: Monoid[Int] = new Monoid[Int] {
     override def mappend(a1: Int, a2: Int): Int = a1 * a2
     override def mzero: Int = 1

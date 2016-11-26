@@ -3,8 +3,8 @@ package net.zhenglai.dsl
 import scala.annotation.tailrec
 
 /**
-  * Created by zhenglai on 8/15/16.
-  */
+ * Created by zhenglai on 8/15/16.
+ */
 object Factorial {
 
   def factorial(i: BigInt): BigInt = {

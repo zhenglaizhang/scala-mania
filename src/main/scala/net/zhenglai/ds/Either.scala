@@ -14,35 +14,35 @@ package net.zhenglai.ds
 sealed trait Either[+E, +A] {
   def map[B](f: A => B): Either[E, B] = this match {
     case Right(x) => Right(f(x))
-    case Left(e)  => Left(e)
+    case Left(e) => Left(e)
   }
 
   def flatMap[EE >: E, B](f: A => Either[EE, B]): Either[EE, B] = this match {
-    case Left(e)  => Left(e)
+    case Left(e) => Left(e)
     case Right(x) => f(x)
   }
 
   def orElse[EE >: E, AA >: A](default: Either[EE, AA]): Either[EE, AA] = this match {
-    case Left(_)  => default
+    case Left(_) => default
     case Right(x) => Right(x)
   }
 
   //用递归算法
-  def map2[EE >: E, B, C](b: Either[EE, B])(f: (A,B) => C): Either[EE, C] = (this,b) match {
-    case (Left(e),_) => Left(e)
+  def map2[EE >: E, B, C](b: Either[EE, B])(f: (A, B) => C): Either[EE, C] = (this, b) match {
+    case (Left(e), _) => Left(e)
     case (_, Left(e)) => Left(e)
-    case (Right(a),Right(b)) => Right(f(a,b))
+    case (Right(a), Right(b)) => Right(f(a, b))
   }
   //用for comprehension
-  def map2_1[EE >: E, B, C](b: Either[EE, B])(f: (A,B) => C): Either[EE, C] = {
+  def map2_1[EE >: E, B, C](b: Either[EE, B])(f: (A, B) => C): Either[EE, C] = {
     for {
       aa <- this
       bb <- b
-    } yield f(aa,bb)
+    } yield f(aa, bb)
   }
   //用 flatMap写
-  def map2_2[EE >: E, B, C](b: Either[EE, B])(f: (A,B) => C): Either[EE, C] = {
-    flatMap(aa => b map(bb => f(aa,bb)))
+  def map2_2[EE >: E, B, C](b: Either[EE, B])(f: (A, B) => C): Either[EE, C] = {
+    flatMap(aa => b map (bb => f(aa, bb)))
   }
 }
 

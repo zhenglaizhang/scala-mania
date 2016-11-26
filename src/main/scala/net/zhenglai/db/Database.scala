@@ -1,21 +1,20 @@
 package net.zhenglai.db
 
 /**
-  * Created by zhenglai on 8/16/16.
-  */
+ * Created by zhenglai on 8/16/16.
+ */
 object Database {
 
   sealed trait Status
 
   //
-  case class ResultSet(/*...*/)
+  case class ResultSet( /*...*/ )
 
   //
-  case class Connection(/*...*/)
+  case class Connection( /*...*/ )
 
   //
-  case class DatabaseException(message: String, cause: Throwable) extends
-    RuntimeException(message, cause)
+  case class DatabaseException(message: String, cause: Throwable) extends RuntimeException(message, cause)
 
   case class Connected(connection: Connection) extends Status
 
@@ -38,5 +37,5 @@ class Database {
   //
   def disconnect(): Status = ???
 
-  def query(/*...*/): Status = ???
+  def query( /*...*/ ): Status = ???
 }

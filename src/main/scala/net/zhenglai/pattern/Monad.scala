@@ -1,8 +1,8 @@
 package net.zhenglai.pattern
 
 /**
-  * Created by zhenglai on 8/17/16.
-  */
+ * Created by zhenglai on 8/17/16.
+ */
 trait Monad[M[_]] {
   //
   def flatMap[A, B](fa: M[A])(f: A => M[B]): M[B]

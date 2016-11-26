@@ -10,8 +10,8 @@ object fibonacci {
     @annotation.tailrec
     def go(count: Int, prev: Int, cur: Int): Int = count match {
       case m if (m < 0) => sys.error("Negative Number Not Allowed!")
-      case 0            => prev
-      case c            => go(count - 1, cur, cur + prev)
+      case 0 => prev
+      case c => go(count - 1, cur, cur + prev)
     }
 
     go(n, 0, 1)

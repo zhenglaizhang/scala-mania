@@ -10,7 +10,6 @@ object Service {
     def getId = 123
   }
 
-
   /*
   the author is free to mix in more traits without changing the public type of make, making it easier to manage backwards compatibility.
    */

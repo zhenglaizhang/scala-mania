@@ -2,8 +2,7 @@ package net.zhenglai.lib
 
 import java.util.concurrent.Executors
 
-import org.scalatest.{FlatSpec, Matchers}
-
+import org.scalatest.{ FlatSpec, Matchers }
 
 /*
 从应用例子里我们可以了解线程的管理是由现有的java工具提供的（Executors.newCachedThreadPool）,我们无须了解线程管理细节。我们同时确定了线程的管理机制与我们设计的并行运算Par是松散耦合的。
@@ -63,10 +62,12 @@ class ParSpec extends FlatSpec with Matchers {
       async {
         println(Thread.currentThread().getName)
         33 + 4
-      }) { (a, b) => {
-      (Thread.currentThread().getName, a + b)
-    }
-    }(es).get should be(Thread.currentThread().getName, 43 + 37)
+      }
+    ) { (a, b) =>
+        {
+          (Thread.currentThread().getName, a + b)
+        }
+      }(es).get should be(Thread.currentThread().getName, 43 + 37)
 
     es.shutdown()
   }
@@ -81,10 +82,12 @@ class ParSpec extends FlatSpec with Matchers {
       async {
         println(Thread.currentThread().getName)
         33 + 4
-      }) { (a, b) => {
-      (Thread.currentThread().getName, a + b)
-    }
-    })(es).get should not be(Thread.currentThread().getName, 43 + 37)
+      }
+    ) { (a, b) =>
+        {
+          (Thread.currentThread().getName, a + b)
+        }
+      })(es).get should not be (Thread.currentThread().getName, 43 + 37)
 
     es.shutdown()
   }

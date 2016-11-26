@@ -1,8 +1,8 @@
 package net.zhenglai.lib
 
 /**
-  * Created by zhenglai on 8/17/16.
-  */
+ * Created by zhenglai on 8/17/16.
+ */
 object HadoopSerialization {
 
   object Serialization {

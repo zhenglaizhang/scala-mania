@@ -1,14 +1,15 @@
 package net.zhenglai.entity
 
 /**
-  * Created by zhenglai on 8/16/16.
-  */
+ * Created by zhenglai on 8/16/16.
+ */
 
 object Address {
 
   def apply(zip: String) = //
     new Address(
-      "[unknown]", Address.zipToCity(zip), Address.zipToState(zip), zip)
+      "[unknown]", Address.zipToCity(zip), Address.zipToState(zip), zip
+    )
 
   def zipToCity(zip: String) = "Anytown"
 

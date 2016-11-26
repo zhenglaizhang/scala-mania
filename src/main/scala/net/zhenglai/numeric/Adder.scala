@@ -1,8 +1,8 @@
 package net.zhenglai.numeric
 
 /**
-  * Created by zhenglai on 8/17/16.
-  */
+ * Created by zhenglai on 8/17/16.
+ */
 
 object Add {
   implicit val addInt = new Add[Int] {
@@ -23,7 +23,6 @@ trait Add[T] {
 object Adder {
 
   import Add._
-
 
   def main(args: Array[String]): Unit = {
     println(sumSeq(Vector(1 -> 10, 2 -> 20, 3 -> 30)))

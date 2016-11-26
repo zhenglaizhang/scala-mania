@@ -6,8 +6,9 @@ package object json {
       s"[${elems.map(show(_)).mkString(", ")}]"
     case JObj(bindings) =>
       s"{ ${
-        bindings.map { case (key, value) =>
-          key + ": " + show(value)
+        bindings.map {
+          case (key, value) =>
+            key + ": " + show(value)
         }.mkString(", ")
       } }"
     case JNum(num) =>

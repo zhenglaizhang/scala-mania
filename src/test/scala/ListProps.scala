@@ -1,5 +1,5 @@
 import org.scalacheck.Prop.forAll
-import org.scalacheck.{Gen, Properties}
+import org.scalacheck.{ Gen, Properties }
 
 object ListProps extends Properties("List") {
 
@@ -18,7 +18,7 @@ object ListProps extends Properties("List") {
     nx => nx.headOption == nx.reverse.lastOption
   }
 
-  property("size") = forAll(Gen.listOfN(10, Gen.choose(0, 100))) {nx => nx.size == 10 }
+  property("size") = forAll(Gen.listOfN(10, Gen.choose(0, 100))) { nx => nx.size == 10 }
 
   //  property("failing") = forAll(initList)(nx => nx.reverse == nx)
 }

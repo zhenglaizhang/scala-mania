@@ -1,8 +1,8 @@
 package net.zhenglai.ui
 
 /**
-  * Created by zhenglai on 8/16/16.
-  */
+ * Created by zhenglai on 8/16/16.
+ */
 
 /*
 () => Unit:   pure side effects
@@ -13,7 +13,7 @@ class ButtonWithCallbacks(val label: String, val callbacks: List[() => Unit]) ex
     updateUI()
 
     callbacks foreach {
-      _ ()
+      _()
     }
   }
 
@@ -21,7 +21,6 @@ class ButtonWithCallbacks(val label: String, val callbacks: List[() => Unit]) ex
     println(s"Drawing $label")
   }
 }
-
 
 object ButtonWithCallbacks {
 

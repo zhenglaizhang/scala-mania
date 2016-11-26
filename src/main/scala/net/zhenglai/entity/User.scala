@@ -1,8 +1,8 @@
 package net.zhenglai.entity
 
 /**
-  * Created by zhenglai on 8/18/16.
-  */
+ * Created by zhenglai on 8/18/16.
+ */
 
 case class User() {
 

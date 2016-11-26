@@ -2,7 +2,7 @@ package net.zhenglai.concurrent.akka.db.messages
 
 import java.io.IOException
 
-import akka.actor.{Actor, ActorLogging, OneForOneStrategy, Props, Status, SupervisorStrategy}
+import akka.actor.{ Actor, ActorLogging, OneForOneStrategy, Props, Status, SupervisorStrategy }
 
 import scala.concurrent.duration.Duration
 

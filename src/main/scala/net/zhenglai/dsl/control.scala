@@ -3,8 +3,8 @@ package net.zhenglai.dsl
 import scala.annotation.tailrec
 
 /**
-  * Created by zhenglai on 8/15/16.
-  */
+ * Created by zhenglai on 8/15/16.
+ */
 object control {
 
   @tailrec
@@ -14,7 +14,6 @@ object control {
       continue(conditional)(action)
     }
   }
-
 
   var count = 0
   continue(count < 5) {

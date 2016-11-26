@@ -1,8 +1,8 @@
 package net.zhenglai.app
 
 /**
-  * Created by zhenglai on 8/16/16.
-  */
+ * Created by zhenglai on 8/16/16.
+ */
 object ProductApp {
 
   // generic way of accessing fields

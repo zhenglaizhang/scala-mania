@@ -5,8 +5,8 @@ import scala.collection.mutable
 import akka.actor.{ Actor, ActorLogging, ActorSystem, Props, Stash, Status }
 
 /**
-  * this actor can be used as a thread-safe caching abstraction (and eventually a full-on distributed key-value store).
-  */
+ * this actor can be used as a thread-safe caching abstraction (and eventually a full-on distributed key-value store).
+ */
 class AkkademyDb extends Actor with ActorLogging with Stash {
 
   val map = new mutable.HashMap[String, Object]
@@ -16,18 +16,17 @@ class AkkademyDb extends Actor with ActorLogging with Stash {
   We define the behavior for the response to the SetRequest message using pattern matching to produce the partial function.
    */
   override def receive: Receive = {
-    case x: GetRequest  =>
+    case x: GetRequest =>
       stash()
     case CheckConnected => throw new ConnectTimeoutException("dummy")
-    case ConnectedState      =>
+    case ConnectedState =>
       context.become(online)
       unstashAll()
-    case unknown        => {
+    case unknown => {
       log.info("received unknown message: {}", unknown)
       sender ! Status.Failure(new ClassNotFoundException)
     }
   }
-
 
   def online: Receive = {
     /*how the actor should behave in response to different message types (with content if any).*/
@@ -42,7 +41,7 @@ class AkkademyDb extends Actor with ActorLogging with Stash {
       log.info("received GetRequest - key: {}", key)
       map.get(key) match {
         case Some(x) => sender ! x
-        case None    => sender ! Status.Failure(new KeyNotFoundException(key))
+        case None => sender ! Status.Failure(new KeyNotFoundException(key))
       }
     }
 
@@ -50,11 +49,10 @@ class AkkademyDb extends Actor with ActorLogging with Stash {
   }
 
   override def preStart(): Unit = {
-//    context.system.scheduler.scheduleOnce(Duration.create(1000, TimeUnit.MICROSECONDS))
+    //    context.system.scheduler.scheduleOnce(Duration.create(1000, TimeUnit.MICROSECONDS))
   }
 
 }
-
 
 object AkkademyDbMain extends App {
   val system = ActorSystem("akkademy")

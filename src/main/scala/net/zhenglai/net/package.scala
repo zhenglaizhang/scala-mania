@@ -1,6 +1,6 @@
 package net.zhenglai
 
-import java.net.{Socket, SocketAddress}
+import java.net.{ Socket, SocketAddress }
 
 package object net {
 
@@ -12,8 +12,8 @@ package object net {
   // Type aliases are bound to toplevel names by using package objects:
   type SocketFactory = SocketAddress => Socket
 
-  val addrToInet  : SocketAddress => Long = ???
-  val inetToSocket: Long => Socket        = ???
+  val addrToInet: SocketAddress => Long = ???
+  val inetToSocket: Long => Socket = ???
 
   val factory: SocketFactory = addrToInet andThen inetToSocket
 

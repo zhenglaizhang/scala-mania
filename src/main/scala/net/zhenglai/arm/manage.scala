@@ -4,15 +4,15 @@ import scala.language.reflectiveCalls
 import scala.util.control.NonFatal
 
 /**
-  * Created by zhenglai on 8/14/16.
-  */
+ * Created by zhenglai on 8/14/16.
+ */
 object manage {
 
   // trait Closable {
   //  def close(): Unit
   // }
   // def apply[R <: Closable, T]
-  def apply[R <: {def close() : Unit}, T](resource: => R)(use: R => T) = {
+  def apply[R <: { def close(): Unit }, T](resource: => R)(use: R => T) = {
     var res: Option[R] = None
     try {
       res = Some(resource)
@@ -24,7 +24,6 @@ object manage {
       r.close()
     }
   }
-
 
 }
 

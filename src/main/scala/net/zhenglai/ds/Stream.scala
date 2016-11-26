@@ -30,7 +30,6 @@ List由于内存占用问题不适合大数据集处理，但它的计算模式�
 // */
 //case class Cons[+A](head: () => A, tail: () => Stream[A]) extends Stream[A]
 
-
 trait Stream[+A] {
   /*
 用tuple(A, Stream[A])来代表一个完整的Stream并把它放进一个Option里，本意是空的Stream就可以用None来表示。这个Option就像是那个附加的套子把我们的目标类型(A, Stream[A])套成了F[A]类型。其实我们的目的是对管子里的A类型进行操作，特别是对A类型元素进行模式匹配。但是在之前的设计里我们却对F[A]这个戴着套子的类型进行了模式匹配。
@@ -43,7 +42,7 @@ trait Stream[+A] {
     @annotation.tailrec
     def go(s: Stream[A], acc: List[A]): List[A] = {
       s.uncons match {
-        case scala.None         => acc
+        case scala.None => acc
         case scala.Some((h, t)) => go(t, h :: acc)
       }
     }
@@ -66,7 +65,7 @@ trait Stream[+A] {
     case (h, t) => h :: t.toList
   } getOrElse Nil
 
-//  def toList = toListFast
+  //  def toList = toListFast
 
   def toListFast: List[A] = {
     val buf = new collection.mutable.ListBuffer[A]
@@ -78,7 +77,7 @@ trait Stream[+A] {
           buf += h
           go(t)
         }
-        case _                  => buf.toList
+        case _ => buf.toList
       }
     }
 
@@ -89,7 +88,7 @@ trait Stream[+A] {
   def take(n: Int): Stream[A] = n match {
     case 0 => Stream.empty
     case _ => uncons match {
-      case scala.None         => Stream.empty
+      case scala.None => Stream.empty
       case scala.Some((h, t)) => Stream.cons(h, t.take(n - 1))
     }
   }
@@ -105,19 +104,19 @@ trait Stream[+A] {
   def drop(n: Int): Stream[A] = n match {
     case 0 => this
     case _ => uncons match {
-      case scala.None         => this
+      case scala.None => this
       case scala.Some((h, t)) => t.drop(n - 1)
     }
   }
 
   def takeWhile(f: A => Boolean): Stream[A] = uncons match {
-    case scala.None         => Stream.empty
+    case scala.None => Stream.empty
     case scala.Some((h, t)) => if (f(h)) Stream.cons(h, t.takeWhile(f)) else Stream.empty
   }
 
-  def takeWhile2(f: A => Boolean): Stream[A] =  {
+  def takeWhile2(f: A => Boolean): Stream[A] = {
     uncons map {
-      case (h,t) => if ( f(h) ) Stream.cons(h,t.takeWhile2(f)) else Stream.empty
+      case (h, t) => if (f(h)) Stream.cons(h, t.takeWhile2(f)) else Stream.empty
     } getOrElse Stream.empty
   }
 
@@ -127,14 +126,14 @@ trait Stream[+A] {
 
   def dropWhile(f: A => Boolean): Stream[A] = {
     uncons match {
-      case scala.None   => empty
+      case scala.None => empty
       case Some((h, t)) => if (f(h)) t.dropWhile(f) else t
     }
   }
 
   def headOption: scala.Option[A] = uncons match {
     case scala.Some((h, t)) => scala.Some(h)
-    case _                  => scala.None
+    case _ => scala.None
   }
 
   /*
@@ -144,12 +143,12 @@ trait Stream[+A] {
   //高阶类型操作
    */
   def foldRight[B](z: B)(op: (A, => B) => B): B = uncons match {
-    case scala.None         => z
+    case scala.None => z
     case scala.Some((h, t)) => op(h, t.foldRight(z)(op))
   }
 
   // monadic style
-  def foldRigh2[B](z: B)(op: (A, =>B) => B): B = uncons map {
+  def foldRigh2[B](z: B)(op: (A, => B) => B): B = uncons map {
     case (h, t) => op(h, t.foldRigh2(z)(op))
   } getOrElse z
 
@@ -168,7 +167,7 @@ trait Stream[+A] {
   // 把两个Stream连接起来
   def append[B >: A](b: Stream[B]): Stream[B] = {
     uncons match {
-      case scala.None   => b
+      case scala.None => b
       case Some((h, t)) => cons(h, t.append(b))
     }
   }
@@ -181,7 +180,7 @@ trait Stream[+A] {
    */
 
   def map[B](f: A => B): Stream[B] = uncons match {
-    case scala.None         => empty[B]
+    case scala.None => empty[B]
     case scala.Some((h, t)) => cons(f(h), t.map(f))
   }
 
@@ -190,23 +189,23 @@ S类型即uncons类型>>>Option[(A, Stream[A])], uncons的新状态是 Some((t.h
    */
   def mapByUnfoldInfinite[B](f: A => B): Stream[B] = Stream.unfold(uncons) {
     case Some((h, t)) => scala.Some((f(h), Some((t.head, t.tail))))
-    case _            => scala.None
+    case _ => scala.None
   }
 
   def head: A = uncons match {
-    case scala.None         => throw new NoSuchElementException("head of empty stream")
+    case scala.None => throw new NoSuchElementException("head of empty stream")
     case scala.Some((h, _)) => h
   }
 
   def tail: Stream[A] = uncons match {
     case scala.Some((h, t)) => t
-    case _                  => Stream.empty
+    case _ => Stream.empty
   }
 
   //用递归算法
   def flatMap[B](f: A => Stream[B]): Stream[B] = {
     uncons match {
-      case scala.None         => empty
+      case scala.None => empty
       case scala.Some((h, t)) => f(h) #++ t.flatMap(f)
     }
   }
@@ -219,7 +218,7 @@ S类型即uncons类型>>>Option[(A, Stream[A])], uncons的新状态是 Some((t.h
   //用递归算法
   def filter(p: A => Boolean): Stream[A] = {
     uncons match {
-      case scala.None         => empty
+      case scala.None => empty
       case scala.Some((h, t)) => if (p(h)) cons(h, t.filter(p)) else t.filter(p)
     }
   }
@@ -233,51 +232,52 @@ S类型即uncons类型>>>Option[(A, Stream[A])], uncons的新状态是 Some((t.h
   def #::[B >: A](h: => B): Stream[B] = cons(h, this)
 
   def takeByUnfold(n: Int): Stream[A] = {
-    unfold((uncons,n)) {
-      case (Some((h,t)),k) if (k > 0) => Some(h, (Some((t.head, t.tail)), k-1))
+    unfold((uncons, n)) {
+      case (Some((h, t)), k) if (k > 0) => Some(h, (Some((t.head, t.tail)), k - 1))
       case _ => scala.None
     }
   }
   def takeWhileByUnfold(f: A => Boolean): Stream[A] = {
     unfold(uncons) {
-      case Some((h,t)) if (f(h)) => Some(h, Some((t.head, t.tail)))
+      case Some((h, t)) if (f(h)) => Some(h, Some((t.head, t.tail)))
       case _ => scala.None
     }
   }
   def filterByUnfold(f: A => Boolean): Stream[A] = {
     unfold(uncons) {
-      case Some((h,t)) if (f(h)) => Some(h, Some((t.head, t.tail)))
+      case Some((h, t)) if (f(h)) => Some(h, Some((t.head, t.tail)))
       case _ => scala.None
     }
   }
-  def zipWithByUnfold[B,C](b: Stream[B])(f: (A,B) => C): Stream[C] = {
-    unfold((uncons,b.uncons)) {
-      case (Some((ha,ta)),Some((hb,tb))) => Some(f(ha,hb),(Some((ta.head,ta.tail)),Some((tb.head,tb.tail))))
+  def zipWithByUnfold[B, C](b: Stream[B])(f: (A, B) => C): Stream[C] = {
+    unfold((uncons, b.uncons)) {
+      case (Some((ha, ta)), Some((hb, tb))) => Some(f(ha, hb), (Some((ta.head, ta.tail)), Some((tb.head, tb.tail))))
       case _ => scala.None
     }
   }
-  def zip[B](b: Stream[B]): Stream[(A,B)] = zipWithByUnfold(b){( _ , _)}
+  def zip[B](b: Stream[B]): Stream[(A, B)] = zipWithByUnfold(b) { (_, _) }
 
   /*
 乍看起来好像挺复杂，但尝试去理解代码的意义，上面一段代码会更容易理解一点。 中间插播了一段map,flatMap的示范，目的是希望在后面的设计思考中向泛函编程风格更靠近一点。
    */
-  def zipWithByUnfoldWithMap[B,C](b: Stream[B])(f: (A,B) => C): Stream[C] = {
+  def zipWithByUnfoldWithMap[B, C](b: Stream[B])(f: (A, B) => C): Stream[C] = {
     //起始状态是tuple(Stream[A],Stream[B])，状态转换函数>>> （s1,s2) => Option(a, (s1,s2))
-    unfold((this,b)) { s => {
-      for {
-        a <- s._1.uncons   //用flatMap从Option[(A,Stream[A])]取出元素 >>> (A,Stream[A])
-        b <- s._2.uncons   //用flatMap从Option[(B,Stream[B])]取出元素 >>> (B,Stream[B])
-      } yield {
-        ( f(a._1, b._1), (a._2, b._2) ) //返回新的状态：C >>> (f(a,b),(ta,tb))
+    unfold((this, b)) { s =>
+      {
+        for {
+          a <- s._1.uncons //用flatMap从Option[(A,Stream[A])]取出元素 >>> (A,Stream[A])
+          b <- s._2.uncons //用flatMap从Option[(B,Stream[B])]取出元素 >>> (B,Stream[B])
+        } yield {
+          (f(a._1, b._1), (a._2, b._2)) //返回新的状态：C >>> (f(a,b),(ta,tb))
+        }
       }
-    }
     }
   }
 
   def mapByUnfoldWithMap[B](f: A => B): Stream[B] = {
     unfold(this) { s =>
       this.uncons map {
-        case (h,t) => (f(h),t)
+        case (h, t) => (f(h), t)
       }
     }
   }
@@ -297,7 +297,6 @@ object Stream {
     def uncons = scala.Some((h, t))
   }
 
-
   def apply[A](as: A*): Stream[A] = {
     if (as.isEmpty) empty
     else cons(as.head, apply(as.tail: _*))
@@ -308,16 +307,15 @@ object Stream {
 unfold的工作原理模仿了一种状态流转过程：z是一个起始状态，代表的是一个类型的值。然后用户（caller）再提供一个操作函数f。f的款式是：S => Option[(A,S)]，意思是接受一个状态，然后把它转换成一对新的A值和新的状态S，再把它们放入一个Option。如果Option是None的话，这给了用户一个机会去终止运算，让unfold停止递归。从unfold的源代码可以看到f(z) match {} 的两种情况。需要注意的是函数f是针对z这个类型S来操作的，A类型是Stream［A]的元素类型。f的重点作用在于把S转换成新的S。
    */
   def unfold[A, S](z: S)(f: S => scala.Option[(A, S)]): Stream[A] = f(z) match {
-    case scala.None         => Stream.empty
+    case scala.None => Stream.empty
     case scala.Some((h, s)) => cons(h, unfold(s)(f))
   }
 
-  def unfoldWithMap[A,S](z: S)(f: S => scala.Option[(A,S)]): Stream[A] ={
+  def unfoldWithMap[A, S](z: S)(f: S => scala.Option[(A, S)]): Stream[A] = {
     f(z) map {
-      case (a,s) => cons(a,unfold(s)(f))
+      case (a, s) => cons(a, unfold(s)(f))
     } getOrElse empty
   }
-
 
   def constByUnfold[A](x: A): Stream[A] = Stream.unfold(x)(_ => scala.Some(x, x))
 }

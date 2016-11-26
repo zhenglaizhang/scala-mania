@@ -4,7 +4,6 @@ import akka.actor.Actor
 
 class EchoActor extends Actor {
 
-
   import EchoActor._
 
   var lastValue: Object = _
@@ -12,7 +11,7 @@ class EchoActor extends Actor {
   override def receive: Receive = {
     case Store(value: Object) =>
       lastValue_=(value)
-    case EchoActor.Read         =>
+    case EchoActor.Read =>
       sender ! Result(lastValue)
   }
 }

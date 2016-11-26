@@ -23,7 +23,6 @@ trait NonZero[A] {
   def nonZero(a: A): Boolean
 }
 
-
 object NonZero {
   /*
   为了方便使用NoneZero typeclass，我们在伴生对象里定义NonZero[A]的构建函数，这样我们就不需要每次都重新实现抽象行为函数nonZero了
@@ -33,7 +32,6 @@ object NonZero {
   def create[A](f: A => Boolean): NonZero[A] = new NonZero[A] {
     override def nonZero(a: A): Boolean = f(a)
   }
-
 
   /*
   我们按scalaz惯例在object NonZero放一个默认隐式转换：
@@ -50,7 +48,6 @@ object NonZero {
 class NonZeroOps[A](a: A)(implicit ev: NonZero[A]) {
   def isNonZero: Boolean = ev.nonZero(a)
 }
-
 
 /*
 跟着就是隐式作用域解析了（implicit resolution）：

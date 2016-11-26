@@ -1,29 +1,27 @@
 package net.zhenglai.concurrent.akka.db.messages
 
-import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.actor.{ ActorRef, ActorSystem, Props }
 import akka.pattern.ask
 import akka.util.Timeout
-import org.scalatest.{BeforeAndAfterEach, FunSpecLike, Matchers}
+import org.scalatest.{ BeforeAndAfterEach, FunSpecLike, Matchers }
 
 import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ Await, Future }
 
 class PingActorSpec extends FunSpecLike with Matchers with BeforeAndAfterEach {
 
   /**
-    * get a reference to an actor system
-    *
-    * An actor system is a hierarchical group of actors which share common
-    * configuration, e.g. dispatchers, deployments, remote capabilities and
-    * addresses. It is also the entry point for creating or looking up actors.
-    */
+   * get a reference to an actor system
+   *
+   * An actor system is a hierarchical group of actors which share common
+   * configuration, e.g. dispatchers, deployments, remote capabilities and
+   * addresses. It is also the entry point for creating or looking up actors.
+   */
   implicit val system = ActorSystem()
-
 
   implicit val timeout = Timeout(5 seconds)
 
   val pingActor = system.actorOf(PingActor.props("Pong"))
-
 
   def askThat(actor: ActorRef, message: String): Future[String] = (actor ? message).mapTo[String]
 
@@ -41,7 +39,6 @@ class PingActorSpec extends FunSpecLike with Matchers with BeforeAndAfterEach {
         Scala future requires a timeout (specied via implicit parameters in the ask method), so the future will fail if the timeout is violated.
          */
         val future = pingActor ? "Ping"
-
 
         /*
            * Sends a one-way asynchronous message. E.g. fire-and-forget semantics.
@@ -75,7 +72,6 @@ class PingActorSpec extends FunSpecLike with Matchers with BeforeAndAfterEach {
       }
     }
 
-
     describe("Future example") {
       import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -87,7 +83,6 @@ class PingActorSpec extends FunSpecLike with Matchers with BeforeAndAfterEach {
         (pingActor ? "Ping").onSuccess {
           case x: String => assert(x == "Pong")
         }
-
 
         /*
         The most common use case is the need to transform a response asynchronously before doing something with it
@@ -180,7 +175,6 @@ class PingActorSpec extends FunSpecLike with Matchers with BeforeAndAfterEach {
         val r = Await.result(futureAddition, 1 second)
         assert(r == 9)
       }
-
 
       it("could be flipped/sequenced") {
         import scala.concurrent.ExecutionContext.Implicits.global

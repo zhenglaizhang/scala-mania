@@ -3,8 +3,8 @@ package net.zhenglai.concurrent.akka
 import scala.util.Try
 
 /**
-  * Created by zhenglai on 8/17/16.
-  */
+ * Created by zhenglai on 8/17/16.
+ */
 
 /*
  * defines all the messages exchanged between our actors
@@ -43,5 +43,4 @@ object Messages {
   case object DumpAll
 
 }
-
 

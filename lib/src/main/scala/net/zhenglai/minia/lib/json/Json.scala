@@ -1,8 +1,7 @@
 package net.zhenglai.minia.lib.json
 
-
 /**
-  * Representation of json in scala
+ * Representation of json in scala
  */
 abstract class JSON
 

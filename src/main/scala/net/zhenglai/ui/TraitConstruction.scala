@@ -1,8 +1,8 @@
 package net.zhenglai.ui
 
 /**
-  * Created by zhenglai on 8/16/16.
-  */
+ * Created by zhenglai on 8/16/16.
+ */
 
 trait T1 {
   println(s" in T1: x = $x")
@@ -27,7 +27,6 @@ class C12 extends Base12 with T1 with T2 {
   val c = "C12"
   println(s" in C12: c = $c")
 }
-
 
 object TraitConstruction {
 

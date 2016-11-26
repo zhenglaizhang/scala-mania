@@ -10,16 +10,14 @@ trait WordCount
 // 记录了未完整文字的字符
 case class Stub(chars: String) extends WordCount
 
-
 //lStub=左边文字结尾, words=完整字数，rStub＝右边文字开头
 case class Part(lStub: String, words: Int, rStub: String) extends WordCount
 
-
 object WordCount {
-//  def wcMonoid: Monoid[WordCount] = new Monoid[WordCount] {
-//
-//    override def op(a1: WordCount, a2: WordCount): WordCount = ???
-//
-//    override val zero: WordCount = Stub("")
-//  }
+  //  def wcMonoid: Monoid[WordCount] = new Monoid[WordCount] {
+  //
+  //    override def op(a1: WordCount, a2: WordCount): WordCount = ???
+  //
+  //    override val zero: WordCount = Stub("")
+  //  }
 }

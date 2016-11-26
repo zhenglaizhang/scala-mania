@@ -1,6 +1,6 @@
 package net.zhenglai.concurrent
 
-import java.util.concurrent.{ConcurrentHashMap, ConcurrentLinkedQueue}
+import java.util.concurrent.{ ConcurrentHashMap, ConcurrentLinkedQueue }
 
 class ConcurrentPool[K, V] {
 

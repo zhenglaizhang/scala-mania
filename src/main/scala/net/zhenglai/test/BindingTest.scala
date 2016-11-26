@@ -3,7 +3,7 @@ package net.zhenglai.test
 // This object contains the bindings/scope tests
 object Test {
 
-  def main(arg : Array[String]) : Unit = {
+  def main(arg: Array[String]): Unit = {
     testSamePackage()
     testWildcardImport()
     testExplicitImport()
@@ -12,7 +12,7 @@ object Test {
 
   // This looks for a binding 'x' within the same package (test) as this scope.
   def testSamePackage() {
-//    println(x)  // 在另外文件的test package. prints: Externally bound x object in package test
+    //    println(x)  // 在另外文件的test package. prints: Externally bound x object in package test
   }
 
   // This defines a new scope with an 'x' binding that we can import with a wildcard.
@@ -24,7 +24,7 @@ object Test {
   // using a wildcard import.
   def testWildcardImport() {
     import Wildcard._
-    println(x)  // prints: Wildcard Import x
+    println(x) // prints: Wildcard Import x
   }
 
   // This defines another binding of 'x' that we can import explicitly.
@@ -34,12 +34,12 @@ object Test {
 
   def testExplicitImport() {
     import Explicit.x
-    println(x)  // .x优先于._  prints: Explicit Import x
+    println(x) // .x优先于._  prints: Explicit Import x
   }
 
   // This defines an inline binding for x.  Note that with all the imports, there are no ambiguous naming conflicts.
   def testInlineDefinition() {
     val x = "Inline definition x" //即使写在最前，本地binding x还是最优先
-    println(x)  // prints:  Inline definition x
+    println(x) // prints:  Inline definition x
   }
 }

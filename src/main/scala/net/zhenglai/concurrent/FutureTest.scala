@@ -2,30 +2,31 @@ package net.zhenglai.concurrent
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Future}
-import scala.util.{Failure, Success, Try}
+import scala.concurrent.{ Await, Future }
+import scala.util.{ Failure, Success, Try }
 
 /**
-  * Created by zhenglai on 8/17/16.
-  */
+ * Created by zhenglai on 8/17/16.
+ */
 
 case class ThatsOdd(i: Int) extends RuntimeException(s"odd $i received")
 
 object FutureTest {
 
   val doComplete: PartialFunction[Try[String], Unit] = {
-    case s@Success(_) => println(s)
-    case f@Failure(_) => println(f)
+    case s @ Success(_) => println(s)
+    case f @ Failure(_) => println(f)
   }
 
   def main(args: Array[String]): Unit = {
     val futures: IndexedSeq[Future[String]] = (0 to 9) map {
       // ForkJoinPool
-      i => Future {
-        val s = i.toString
-        println(s)
-        s
-      }
+      i =>
+        Future {
+          val s = i.toString
+          println(s)
+          s
+        }
     }
 
     // fold walks through the Futures in the same order in which they were constructed.
@@ -38,7 +39,6 @@ object FutureTest {
 
     println(s"Final result n is $n")
 
-
     println("---------------------")
     val futures2 = (0 to 9) map {
       case i if i % 2 == 0 => Future.successful(i.toString)
@@ -47,15 +47,15 @@ object FutureTest {
 
     futures2 foreach (_ onComplete doComplete)
 
-
     println("---------------------")
     val futures3: IndexedSeq[Future[String]] = (0 to 9) map {
       // ForkJoinPool
-      i => Future {
-        val s = i.toString
-        println(s)
-        s
-      }
+      i =>
+        Future {
+          val s = i.toString
+          println(s)
+          s
+        }
     }
 
     futures3 foreach {

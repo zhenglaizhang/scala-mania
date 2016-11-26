@@ -1,8 +1,8 @@
 package net.zhenglai.dsl
 
 /**
-  * Created by zhenglai on 8/15/16.
-  */
+ * Created by zhenglai on 8/15/16.
+ */
 object Op extends Enumeration {
 
   type Op = Value
@@ -24,6 +24,4 @@ case class WhereOp[T](columnName: String, op: Op, value: T)
 
 // WHERE x IN (a, b, c, ...)
 case class WhereIn[T](columnName: String, val1: T, vals: T*)
-
-
 

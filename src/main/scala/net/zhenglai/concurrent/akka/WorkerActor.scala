@@ -1,12 +1,12 @@
 package net.zhenglai.concurrent.akka
 
-import akka.actor.{Actor, ActorLogging}
+import akka.actor.{ Actor, ActorLogging }
 
-import scala.util.{Success, Try}
+import scala.util.{ Success, Try }
 
 /**
-  * Created by zhenglai on 8/18/16.
-  */
+ * Created by zhenglai on 8/18/16.
+ */
 class WorkerActor extends Actor with ActorLogging {
 
   import Messages._
@@ -19,17 +19,17 @@ class WorkerActor extends Actor with ActorLogging {
       dataStore += key -> value
       sender ! Response(Success(s"$key -> $value added"))
 
-    case Read(key)          =>
+    case Read(key) =>
       sender ! Response(Try(s"${dataStore(key)} found for key = $key"))
     case Update(key, value) =>
       dataStore += key -> value
       sender ! Response(Success(s"$key -> $value updated"))
-    case Delete(key)        =>
+    case Delete(key) =>
       dataStore -= key
       sender ! Response(Success(s"$key deleted"))
-    case Crash(_)           =>
+    case Crash(_) =>
       throw WorkerActor.CrashException
-    case DumpAll            =>
+    case DumpAll =>
       sender ! Response(Success(s"${self.path}: dataStore = $dataStore"))
   }
 }
