@@ -23,6 +23,6 @@ package object json {
 
   sealed trait JsonOption
 
-  final case object IgnoreSpace extends JsonOption
+  case object IgnoreSpace extends JsonOption
 
 }

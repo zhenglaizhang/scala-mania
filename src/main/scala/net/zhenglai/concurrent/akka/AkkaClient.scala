@@ -39,7 +39,7 @@ object AkkaClient {
 
   private def exit(message: String, status: Int): Nothing = {
     for (sys <- system) {
-      sys.shutdown()
+      sys.terminate()
     }
     println(message)
     sys.exit(status)

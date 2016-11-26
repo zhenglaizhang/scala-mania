@@ -1,3 +1,7 @@
+import scalariform.formatter.preferences._
+import com.typesafe.sbt.SbtScalariform
+import com.typesafe.sbt.SbtScalariform.ScalariformKeys
+
 name in Global := "scala-mania"
 
 organization in Global := "net.zhengla"
@@ -28,6 +32,7 @@ lazy val root = project.in(file("."))
   .settings(akkaActorDeps)
   .settings(akkaHttpDeps)
   .settings(scalazDeps)
+  .settings(jodaDeps)
   .settings(commonScalacOptions)
   .aggregate(lib, ws, crawler, doc)
 
@@ -55,6 +60,7 @@ resolvers in Global ++= Seq(
 lazy val commonScalacOptions = Seq(
   scalacOptions ++= Seq(
     "-deprecation"
+    , "-feature"
     , "-encoding", "UTF-8"
     //    , "-feature" // Emit warning and location for usages of features that should be imported explicitly
     , "language:_"
@@ -152,18 +158,16 @@ lazy val testAkkaDeps = libraryDependencies ++= {
 lazy val testCommonDeps = libraryDependencies ++= {
   Seq(
     "org.scalacheck" %% "scalacheck" % "1.13.2" % "test",
-    "org.scalatest" %% "scalatest" % "3.0.0" % "test"
+    "org.scalatest" %% "scalatest" % "3.0.0" % "test",
+    "org.scalactic" %% "scalactic" % "3.0.0" % "test"
   )
 }
 
 // finagle
 lazy val finageDeps = Nil
 
-// code formatting
-import scalariform.formatter.preferences._
-import com.typesafe.sbt.SbtScalariform
-import com.typesafe.sbt.SbtScalariform.ScalariformKeys
 
+// formatting
 SbtScalariform.scalariformSettings
 
 ScalariformKeys.preferences := ScalariformKeys.preferences.value
@@ -190,21 +194,22 @@ libraryDependencies += "org.iq80.leveldb" % "leveldb" % "0.7"
 
 libraryDependencies += "org.fusesource.leveldbjni" % "leveldbjni-all" % "1.8"
 
-libraryDependencies += "joda-time" % "joda-time" % "2.9.4"
-
-libraryDependencies += "org.joda" % "joda-convert" % "1.8"
-
-libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.13.2" // % "test"
-
-libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.0"
-
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.0" % "test"
+lazy val jodaDeps = libraryDependencies ++= {
+  Seq(
+    "joda-time" % "joda-time" % "2.9.4",
+    "org.joda" % "joda-convert" % "1.8"
+  )
+}
 
 libraryDependencies += "com.syncthemall" % "boilerpipe" % "1.2.2"
 
-
-scalacOptions += "-feature" // -language:higherKinds
-
 initialCommands in console := "import scalaz._, Scalaz._"
-
 initialCommands in console in Test := "import scalaz._, Scalaz._, scalacheck.ScalazProperties._, scalacheck.ScalazArbitrary._,scalacheck.ScalaCheckBinding._"
+
+publishTo := Some(if (isSnapshot.value) sonatypeSnapshots else sonatypeReleases)
+publishMavenStyle := true
+publishArtifact in Test := false
+publishArtifact in(Compile, packageSrc) := true
+
+lazy val sonatypeSnapshots = "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+lazy val sonatypeReleases = "Sonatype OSS Releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2"
