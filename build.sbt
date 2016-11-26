@@ -22,6 +22,7 @@ lazy val root = project.in(file("."))
 
 lazy val lib = project
   .settings(commonScalacOptions)
+  .settings(testCommonDeps)
 
 lazy val ws = project
   .settings(commonScalacOptions)
@@ -43,23 +44,23 @@ lazy val commonScalacOptions = Seq(
   scalacOptions ++= Seq(
     "-deprecation"
     , "-encoding", "UTF-8"
-//    , "-feature" // Emit warning and location for usages of features that should be imported explicitly
-//    , "-unchecked" // Enable additional warnings where generated code depends on assumptions
-////    , "-Xfatal-warnings"
-//    , "-Xfuture" // Turn on future language features
-//    , "-Xlint" // Enable specific warnings (see `scalac -Xlint:help`)
-//    , "-Xcheckinit" // Check init specific warnings
-//    , "-Yno-adapted-args" // Do not adapt an argument list (either by inserting () or creating a tuple) to match the receiver
-//    //  , "-Ylog-classpath" // Enable problematic classpath logging
-//    , "-Ywarn-dead-code" // Warn when dead code is identified
-//    , "-Ywarn-inaccessible" // Warn about inaccessible types in method signatures
-//    , "-Ywarn-infer-any" // Warn when a type argument is inferred to be `Any`
-//    , "-Ywarn-nullary-override" // Warn when non-nullary `def f()' overrides nullary `def f'
-//    , "-Ywarn-nullary-unit" // Warn when nullary methods return Unit
-//    , "-Ywarn-numeric-widen" // Warn when numerics are widened
-//    , "-Ywarn-unused" // Warn when local and private vals, vars, defs, and types are unused
-//    , "-Ywarn-unused-import" // Warn when imports are unused
-//    , "-Ywarn-value-discard" // Warn when non-Unit expression results are unused
+    //    , "-feature" // Emit warning and location for usages of features that should be imported explicitly
+    //    , "-unchecked" // Enable additional warnings where generated code depends on assumptions
+    ////    , "-Xfatal-warnings"
+    //    , "-Xfuture" // Turn on future language features
+    //    , "-Xlint" // Enable specific warnings (see `scalac -Xlint:help`)
+    //    , "-Xcheckinit" // Check init specific warnings
+    //    , "-Yno-adapted-args" // Do not adapt an argument list (either by inserting () or creating a tuple) to match the receiver
+    //    //  , "-Ylog-classpath" // Enable problematic classpath logging
+    //    , "-Ywarn-dead-code" // Warn when dead code is identified
+    //    , "-Ywarn-inaccessible" // Warn about inaccessible types in method signatures
+    //    , "-Ywarn-infer-any" // Warn when a type argument is inferred to be `Any`
+    //    , "-Ywarn-nullary-override" // Warn when non-nullary `def f()' overrides nullary `def f'
+    //    , "-Ywarn-nullary-unit" // Warn when nullary methods return Unit
+    //    , "-Ywarn-numeric-widen" // Warn when numerics are widened
+    //    , "-Ywarn-unused" // Warn when local and private vals, vars, defs, and types are unused
+    //    , "-Ywarn-unused-import" // Warn when imports are unused
+    //    , "-Ywarn-value-discard" // Warn when non-Unit expression results are unused
   )
 )
 
@@ -127,10 +128,19 @@ lazy val akkaHttpDeps = Seq(
   }
 )
 
+lazy val testAkkaDeps = libraryDependencies ++= {
+  Seq(
+    "com.typesafe.akka" %% "akka-testkit" % AKKA_VERSION % "test",
+    "com.typesafe.akka" %% "akka-http-testkit" % AKKA_VERSION % "test"
+  )
+}
 
-lazy val testDeps = Seq(
-
-)
+lazy val testCommonDeps = libraryDependencies ++= {
+  Seq(
+    "org.scalacheck" %% "scalacheck" % "1.13.2" % "test",
+    "org.scalatest" %% "scalatest" % "3.0.0" % "test"
+  )
+}
 
 // finagle
 lazy val finageDeps = Nil
