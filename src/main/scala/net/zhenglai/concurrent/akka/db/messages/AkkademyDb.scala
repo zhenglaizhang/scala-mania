@@ -1,11 +1,8 @@
 package net.zhenglai.concurrent.akka.db.messages
 
-import java.util.concurrent.TimeUnit
-
-import akka.actor.{Actor, ActorLogging, ActorSystem, Props, Stash, Status}
-
 import scala.collection.mutable
-import scala.concurrent.duration.Duration
+
+import akka.actor.{ Actor, ActorLogging, ActorSystem, Props, Stash, Status }
 
 /**
   * this actor can be used as a thread-safe caching abstraction (and eventually a full-on distributed key-value store).
@@ -49,7 +46,7 @@ class AkkademyDb extends Actor with ActorLogging with Stash {
       }
     }
 
-    case _: DisconnectedState => context.unbecome()
+    case Disconnected(_) => context.unbecome()
   }
 
   override def preStart(): Unit = {
