@@ -21,7 +21,7 @@ a powerful technique called pattern matching which will allow us to deconstruct 
     case Winter => Spring
     case Spring => Summer
     case Summer => Fall
-    case Fall => Winter
+    case Fall   => Winter
   }
 
   val next2: Season => Season = next => fromInt(toInt(next))
@@ -29,7 +29,7 @@ a powerful technique called pattern matching which will allow us to deconstruct 
   val toInt: Season => Int = s => s match {
     case Spring => 0
     case Summer => 1
-    case Fall => 2
+    case Fall   => 2
     case Winter => 3
   }
 

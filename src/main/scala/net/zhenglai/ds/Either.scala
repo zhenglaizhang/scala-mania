@@ -14,23 +14,23 @@ package net.zhenglai.ds
 sealed trait Either[+E, +A] {
   def map[B](f: A => B): Either[E, B] = this match {
     case Right(x) => Right(f(x))
-    case Left(e) => Left(e)
+    case Left(e)  => Left(e)
   }
 
   def flatMap[EE >: E, B](f: A => Either[EE, B]): Either[EE, B] = this match {
-    case Left(e) => Left(e)
+    case Left(e)  => Left(e)
     case Right(x) => f(x)
   }
 
   def orElse[EE >: E, AA >: A](default: Either[EE, AA]): Either[EE, AA] = this match {
-    case Left(_) => default
+    case Left(_)  => default
     case Right(x) => Right(x)
   }
 
   //用递归算法
   def map2[EE >: E, B, C](b: Either[EE, B])(f: (A, B) => C): Either[EE, C] = (this, b) match {
-    case (Left(e), _) => Left(e)
-    case (_, Left(e)) => Left(e)
+    case (Left(e), _)         => Left(e)
+    case (_, Left(e))         => Left(e)
     case (Right(a), Right(b)) => Right(f(a, b))
   }
   //用for comprehension

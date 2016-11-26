@@ -8,10 +8,10 @@ package net.zhenglai.entity
 //  since toString, equals, hashCode wont work properly for subclass
 // We are subclassing state!!
 case class Employee(
-  name: String,
-    age: Option[Int] = None,
-    address: Option[Address] = None,
-    title: String = "[unknown]", //
+    name:    String,
+    age:     Option[Int]      = None,
+    address: Option[Address]  = None,
+    title:   String           = "[unknown]", //
     manager: Option[Employee] = None
 ) extends PersonState with EmployeeState {
   // invoking parent class constructor

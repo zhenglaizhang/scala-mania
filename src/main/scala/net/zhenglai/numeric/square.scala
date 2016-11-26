@@ -8,12 +8,12 @@ object square {
 
   Seq(None, Some(12)) map {
     case Some(x) => x
-    case None =>
+    case None    =>
   }
 
   // not recommended
   Seq(None, Some(12)) map {
     case Some(x) => x
-    case None =>
+    case None    =>
   }
 }

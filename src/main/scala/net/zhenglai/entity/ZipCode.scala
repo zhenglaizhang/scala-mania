@@ -15,7 +15,7 @@ case class ZipCode(zip: Int, extension: Option[Int] = None) {
 
   protected def valid(z: Int, e: Option[Int]): Boolean = {
     if (0 < z && z <= 99999) e match {
-      case None => validUSPS(z, 0)
+      case None    => validUSPS(z, 0)
       case Some(e) => 0 < e && e <= 9999 && validUSPS(z, e)
     }
     else false

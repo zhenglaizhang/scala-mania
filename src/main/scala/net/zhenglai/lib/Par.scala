@@ -207,7 +207,7 @@ async[A](a: => A): Par[A]：这个async函数把表达式a提交到主线程之�
   //用递归法实现
   def sequence_r[A](lp: List[Par[A]]): Par[List[A]] = {
     lp match {
-      case Nil => unit(List())
+      case Nil    => unit(List())
       case h :: t => map2(h, fork(sequence_r(t))) { _ :: _ }
     }
   } //> sequence_r: [A](lp: List[ch71.Par.Par[A]])ch71.Par.Par[List[A]]

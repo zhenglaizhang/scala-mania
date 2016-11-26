@@ -10,7 +10,7 @@ object SeqElementType {
     case head +: _ => head match {
       case _: Double => "Double"
       case _: String => "String"
-      case _ => "Other types"
+      case _         => "Other types"
     }
   }
 

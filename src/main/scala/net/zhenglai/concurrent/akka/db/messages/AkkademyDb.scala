@@ -41,7 +41,7 @@ class AkkademyDb extends Actor with ActorLogging with Stash {
       log.info("received GetRequest - key: {}", key)
       map.get(key) match {
         case Some(x) => sender ! x
-        case None => sender ! Status.Failure(new KeyNotFoundException(key))
+        case None    => sender ! Status.Failure(new KeyNotFoundException(key))
       }
     }
 

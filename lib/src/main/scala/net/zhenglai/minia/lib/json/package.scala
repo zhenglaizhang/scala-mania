@@ -15,4 +15,14 @@ package object json {
     case JStr(str) => "\"" + str + "\""
     case JNull => "null"
   }
+
+  def fromString(
+    str: String,
+    opts: JsonOption*
+  ) = ???
+
+  sealed trait JsonOption
+
+  final case object IgnoreSpace extends JsonOption
+
 }

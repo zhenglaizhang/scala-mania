@@ -42,7 +42,7 @@ object FutureTest {
     println("---------------------")
     val futures2 = (0 to 9) map {
       case i if i % 2 == 0 => Future.successful(i.toString)
-      case i => Future.failed(ThatsOdd(i))
+      case i               => Future.failed(ThatsOdd(i))
     }
 
     futures2 foreach (_ onComplete doComplete)

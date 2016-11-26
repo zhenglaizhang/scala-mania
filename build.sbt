@@ -37,7 +37,8 @@ lazy val doc = project
 resolvers in Global ++= Seq(
   Resolver.mavenLocal,
   "twitter-repo" at "http://maven.twttr.com",
-  "typesafe-repo" at "http://repo.typesafe.com/typesafe/releases/"
+  //  "typesafe-repo" at "http://repo.typesafe.com/typesafe/releases/"
+  Resolver.typesafeRepo("release")
 )
 
 lazy val commonScalacOptions = Seq(
@@ -144,6 +145,21 @@ lazy val testCommonDeps = libraryDependencies ++= {
 
 // finagle
 lazy val finageDeps = Nil
+
+
+// code formatting
+import scalariform.formatter.preferences._
+import com.typesafe.sbt.SbtScalariform
+import com.typesafe.sbt.SbtScalariform.ScalariformKeys
+
+SbtScalariform.scalariformSettings
+
+ScalariformKeys.preferences := ScalariformKeys.preferences.value
+  .setPreference(AlignParameters, true)
+  .setPreference(AlignArguments, true)
+  .setPreference(AlignSingleLineCaseStatements, true)
+  .setPreference(DoubleIndentClassDeclaration, true)
+  .setPreference(DanglingCloseParenthesis, Force)
 
 libraryDependencies += "org.scala-lang.modules" % "scala-async_2.11" % "0.9.5"
 

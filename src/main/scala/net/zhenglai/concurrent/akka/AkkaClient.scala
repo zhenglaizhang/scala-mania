@@ -32,9 +32,9 @@ object AkkaClient {
   }
 
   def processArgs(args: Seq[String]): Unit = args match {
-    case Nil =>
+    case Nil                                     =>
     case ("-h" | "--help" | "-H" | "-?") +: tail => exit(help, 0)
-    case head +: tail => exit(s"Unknown input $head!\n $help", 1)
+    case head +: tail                            => exit(s"Unknown input $head!\n $help", 1)
   }
 
   private def exit(message: String, status: Int): Nothing = {

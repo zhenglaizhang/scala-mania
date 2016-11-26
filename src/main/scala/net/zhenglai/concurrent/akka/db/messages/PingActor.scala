@@ -20,7 +20,7 @@ class PingActor(val response: String) extends Actor with ActorLogging {
     The Actor has an implicit sender value through self, which is used in the actor, so tell will always provide self as the sender.
    implicit final val self = context.self
      */
-    case "Ping" => sender ! response
+    case "Ping"  => sender ! response
     //  access the sender ActorRef via the sender() method.
     case unknown => sender ! Status.Failure(new Exception(s"unknown message $unknown"))
   }

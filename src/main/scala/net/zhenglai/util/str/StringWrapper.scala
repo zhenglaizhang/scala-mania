@@ -7,12 +7,12 @@ object StringWrapper {
 
   def seqToString[T](seq: Seq[T]): String = seq match {
     case head +: tail => s"$head +: ${seqToString(tail)}"
-    case Nil => "Nil"
+    case Nil          => "Nil"
   }
 
   def reverseSeqToString[T](seq: Seq[T]): String = seq match {
     case prefix :+ end => reverseSeqToString(prefix) + s" :+ $end"
-    case Nil => "Nil"
+    case Nil           => "Nil"
   }
 
   def seqProcess[T](seq: Seq[T])(process: T => Unit): Unit = seq match {

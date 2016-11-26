@@ -14,13 +14,13 @@ class ServerActor extends Actor with ActorLogging {
   override val supervisorStrategy: SupervisorStrategy = {
     val decider: SupervisorStrategy.Decider = {
       case WorkerActor.CrashException => SupervisorStrategy.Escalate
-      case NonFatal(ex) => SupervisorStrategy.Resume
+      case NonFatal(ex)               => SupervisorStrategy.Resume
     }
 
     OneForOneStrategy(
-      maxNrOfRetries = 10,
+      maxNrOfRetries  = 10,
       withinTimeRange = 100 seconds,
-      loggingEnabled = true
+      loggingEnabled  = true
     )(decider orElse super.supervisorStrategy.decider)
   }
   implicit val timeout = Timeout(1 seconds)
