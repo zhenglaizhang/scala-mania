@@ -75,3 +75,7 @@ project/plugins/project/
 .worksheet
 
 project/target/*
+
+
+# OS specific
+.DS_Store

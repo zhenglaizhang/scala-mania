@@ -159,7 +159,6 @@ lazy val testCommonDeps = libraryDependencies ++= {
 // finagle
 lazy val finageDeps = Nil
 
-
 // code formatting
 import scalariform.formatter.preferences._
 import com.typesafe.sbt.SbtScalariform
