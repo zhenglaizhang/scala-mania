@@ -42,6 +42,7 @@ lazy val lib = project
 
 lazy val ws = project
   .settings(commonScalacOptions)
+  .settings(testCommonDeps)
 
 lazy val crawler = project
   .settings(commonScalacOptions)
@@ -54,6 +55,7 @@ resolvers in Global ++= Seq(
   Resolver.mavenLocal,
   "twitter-repo" at "http://maven.twttr.com",
   //  "typesafe-repo" at "http://repo.typesafe.com/typesafe/releases/"
+  "Artima Maven Repository" at "http://repo.artima.com/releases",
   Resolver.typesafeRepo("release")
 )
 
@@ -81,6 +83,7 @@ lazy val commonScalacOptions = Seq(
     //    , "-Ywarn-unused" // Warn when local and private vals, vars, defs, and types are unused
     //    , "-Ywarn-unused-import" // Warn when imports are unused
     //    , "-Ywarn-value-discard" // Warn when non-Unit expression results are unused
+//    ,s"-P:artima-supersafe:config-file:${baseDirectory.value in Global}/project/supersafe.cfg"
   )
 )
 
@@ -158,8 +161,8 @@ lazy val testAkkaDeps = libraryDependencies ++= {
 lazy val testCommonDeps = libraryDependencies ++= {
   Seq(
     "org.scalacheck" %% "scalacheck" % "1.13.2" % "test",
-    "org.scalatest" %% "scalatest" % "3.0.0" % "test",
-    "org.scalactic" %% "scalactic" % "3.0.0" % "test"
+    "org.scalatest" %% "scalatest" % "3.0.1" % "test",
+    "org.scalactic" %% "scalactic" % "3.0.1" % "test"
   )
 }
 
