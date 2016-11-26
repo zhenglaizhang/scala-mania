@@ -24,9 +24,8 @@ val wow = Seq(1, 2, 3).lift
 wow(0) // index!!
 wow(30)
 
-Seq(1,2,3).lift(22).getOrElse(-1)
+Seq(1, 2, 3).lift(22).getOrElse(-1)
 // This shows a neat approach to avoid index out of bounds exceptions.
-
 
 /*
 //Methods

@@ -1,8 +1,8 @@
-import java.io.{FileNotFoundException, InputStream}
-import java.net.{MalformedURLException, URL}
+import java.io.{ FileNotFoundException, InputStream }
+import java.net.{ MalformedURLException, URL }
 
 import scala.io.Source
-import scala.util.{Failure, Success, Try}
+import scala.util.{ Failure, Success, Try }
 
 case class UnderAgeException(message: String) extends Exception(message)
 
@@ -18,14 +18,11 @@ class Cigarettes
 val youngCustomer = Customer(14)
 
 try {
-    buyCigarettes(youngCustomer)
-    "Yo, here are your cancer stikcks! Happy smoking'!"
+  buyCigarettes(youngCustomer)
+  "Yo, here are your cancer stikcks! Happy smoking'!"
 } catch {
-    case UnderAgeException(msg) => msg
+  case UnderAgeException(msg) => msg
 }
-
-
-
 
 /*
 Error handling, the functional way
@@ -39,8 +36,6 @@ Where Option[A] is a container for a value of type A that may be present or not,
 There are two different types of Try: If an instance of Try[A] represents a successful computation, it is an instance of Success[A], simply wrapping a value of type A. If, on the other hand, it represents a computation in which an error has occurred, it is an instance of Failure[A], wrapping a Throwable
  */
 
-
-
 def parseURL(url: String): Try[URL] = Try(new URL(url))
 
 /*
@@ -52,7 +47,6 @@ Try apply
 // It’s also possible to use getOrElse to pass in a default value to be returned if the Try is a Failure:
 parseURL("http://www.google.com") getOrElse new URL("http://www.bing.com")
 
-
 /*
 Mapping a Try[A] that is a Success[A] to a Try[B] results in a Success[B]. If it’s a Failure[A], the resulting Try[B] will be a Failure[B], on the other hand, containing the same exception as the Failure[A]
  */
@@ -60,18 +54,16 @@ Mapping a Try[A] that is a Success[A] to a Try[B] results in a Success[B]. If it
 parseURL("http://www.google.com").map(_.getProtocol)
 parseURL("garbage").map(_.getProtocol)
 
-
 def inputStreamForURL(url: String): Try[Try[Try[InputStream]]] = parseURL(url).map { u =>
-    Try(u.openConnection()).map(conn => Try(conn.getInputStream))
+  Try(u.openConnection()).map(conn => Try(conn.getInputStream))
 }
 
-def inputStreamForURLGood(url: String): Try[InputStream] = parseURL(url).flatMap{ u =>
+def inputStreamForURLGood(url: String): Try[InputStream] = parseURL(url).flatMap { u =>
   Try(u.openConnection()).flatMap(conn => Try(conn.getInputStream))
 }
 /*
 Now we get a Try[InputStream], which can be a Failure wrapping an exception from any of the stages in which one may be thrown, or a Success that directly wraps the InputStream, the final result of our chain of operations.
  */
-
 
 /*
 The filter method returns a Failure if the Try on which it is called is already a Failure or if the predicate passed to it returns false (in which case the wrapped exception is a NoSuchElementException).
@@ -92,12 +84,11 @@ def getURLContent(url: String): Try[Iterator[String]] =
     source = Source.fromInputStream(is)
   } yield source.getLines()
 
-
 getURLContent("garbage")
 
 getURLContent("http://danielwestheide.com/foobar") match {
   case Success(lines) => lines.foreach(println)
-  case Failure(ex) => println(s"Problem rendering URL content: ${ex.getMessage}")
+  case Failure(ex)    => println(s"Problem rendering URL content: ${ex.getMessage}")
 }
 
 /*
@@ -107,13 +98,11 @@ An alternative is recover, which expects a partial function and returns another 
 val content = getURLContent("garbage") recover {
   case e: FileNotFoundException => Iterator("Requested page does not exist")
   case e: MalformedURLException => Iterator("Please make sure to enter a valid URL")
-  case _ => Iterator("An unexpected error has occurred. We are so sorry!")
+  case _                        => Iterator("An unexpected error has occurred. We are so sorry!")
 }
 
 content.get.foreach(println)
 
-
-
 /*
 The Try type allows you to encapsulate computations that result in errors in a container and to chain operations on the computed values in a very elegant way.
- */
+ */ 

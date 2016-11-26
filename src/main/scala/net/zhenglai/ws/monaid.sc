@@ -19,10 +19,9 @@ Monoid由以下条件组成：
 If we try to generalize a little bit. I’m going to pull out a thing called Monoid. => It’s a type for which there exists a function mappend, which produces another type in the same set; and also a function that produces a zero.
  */
 
-
 // 我们用scala的特质（trait）描述了Monoid。它就是一个抽象的数据类型。
 trait Monoid[A] { //被封装的类型A
-  val zero: A  //恒等值identity
+  val zero: A //恒等值identity
 
   def op(a1: A, a2: A): A //二元函数
 }
@@ -57,7 +56,7 @@ Monoid m是个抽象类型，m.zero和m.op()的具体意义要看Monoid的实例
  */
 
 def reduce[A](xs: List[A])(m: Monoid[A]): A = xs match {
-  case Nil => m.zero
+  case Nil    => m.zero
   case h :: t => m.op(h, reduce(t)(m))
 }
 
@@ -70,7 +69,7 @@ reduce(List("11", "22", "33"))(stringConcatMonid)
  */
 
 def reduceGeneric[A](xs: List[A])(zero: A)(op: (A, A) => A): A = xs match {
-  case Nil => zero
+  case Nil    => zero
   case h :: t => op(h, reduceGeneric(t)(zero)(op))
 }
 
@@ -87,25 +86,24 @@ reduceGeneric(List(1, 2, 3))(0)(_ + _)
 List("this is ", "the string ", "monoid").foldLeft(stringConcatMonid.zero)(stringConcatMonid.op)
 List("this is ", "the string ", "monoid").foldRight(stringConcatMonid.zero)(stringConcatMonid.op)
 
-
 def optionMonoid[A] = new Monoid[Option[A]] {
   def op(o1: Option[A], o2: Option[A]): Option[A] = o1 orElse o2
-  val zero = None  // op(zero, o1)= None orElse o2 = o2
-}                                               //> optionMonoid: [A]=> ch10.ex1.Monoid[Option[A]]{val zero: None.type}
+  val zero = None // op(zero, o1)= None orElse o2 = o2
+} //> optionMonoid: [A]=> ch10.ex1.Monoid[Option[A]]{val zero: None.type}
 def listConcatMonoid[A] = new Monoid[List[A]] {
   def op(l1: List[A], l2: List[A]) = l1 ++ l2
   val zero = Nil
-}                                               //> listConcatMonoid: [A]=> ch10.ex1.Monoid[List[A]]{val zero: scala.collection.
+} //> listConcatMonoid: [A]=> ch10.ex1.Monoid[List[A]]{val zero: scala.collection.
 //| immutable.Nil.type}
 val booleanOrMonoid = new Monoid[Boolean] {
-    def op(b1: Boolean, b2: Boolean) = b1 || b2
-    val zero = false
-  }                                         //> booleanOrMonoid  : ch10.ex1.Monoid[Boolean] = ch10.ex1$$anonfun$main$1$$anon
+  def op(b1: Boolean, b2: Boolean) = b1 || b2
+  val zero = false
+} //> booleanOrMonoid  : ch10.ex1.Monoid[Boolean] = ch10.ex1$$anonfun$main$1$$anon
 //| $6@5b464ce8
 val booleanAndMonoid = new Monoid[Boolean] {
-    def op(b1: Boolean, b2: Boolean) = b1 && b2
-    val zero = true
-  }                                         //> booleanAndMonoid  : ch10.ex1.Monoid[Boolean] = ch10.ex1$$anonfun$main$1$$an
+  def op(b1: Boolean, b2: Boolean) = b1 && b2
+  val zero = true
+} //> booleanAndMonoid  : ch10.ex1.Monoid[Boolean] = ch10.ex1$$anonfun$main$1$$an
 //| on$7@57829d67
 
 /*
@@ -113,23 +111,22 @@ val booleanAndMonoid = new Monoid[Boolean] {
  */
 def endoComposeMonoid[A] = new Monoid[A => A] {
   def op(f: A => A, g: A => A) = f compose g
-  val zero = (a: A) => a    // op(zero, g: A => A) = zero compose g = g
-}                                         //> endoComposeMonoid: [A]=> ch10.ex1.Monoid[A => A]
+  val zero = (a: A) => a // op(zero, g: A => A) = zero compose g = g
+} //> endoComposeMonoid: [A]=> ch10.ex1.Monoid[A => A]
 def endoAndThenMonoid[A] = new Monoid[A => A] {
   def op(f: A => A, g: A => A) = f andThen g
-  val zero = (a: A) => a   // op(zero, g: A => A) = zero andThen g = g
-}                                         //> endoAndThenMonoid: [A]=> ch10.ex1.Monoid[A => A]
+  val zero = (a: A) => a // op(zero, g: A => A) = zero andThen g = g
+} //> endoAndThenMonoid: [A]=> ch10.ex1.Monoid[A => A]
 //计算m的镜像Monoid
 def dual[A](m: Monoid[A]) = new Monoid[A] {
-  def op(x: A, y: A) = m.op(y,x)    //镜像op即时二元参数位置互换
+  def op(x: A, y: A) = m.op(y, x) //镜像op即时二元参数位置互换
   val zero = m.zero
-}                                         //> dual: [A](m: ch10.ex1.Monoid[A])ch10.ex1.Monoid[A]
+} //> dual: [A](m: ch10.ex1.Monoid[A])ch10.ex1.Monoid[A]
 def firstOfDualOptionMonoid[A] = optionMonoid[A]
 //> firstOfDualOptionMonoid: [A]=> ch10.ex1.Monoid[Option[A]]{val zero: None.ty
 //| pe}
 def secondOfDualOptionMonoid[A] = dual(firstOfDualOptionMonoid[A])
 //> secondOfDualOptionMonoid: [A]=> ch10.ex1.Monoid[Option[A]]
-
 
 /*
 下面这个函数用Monoid对List[A]元素A进行累加操作
@@ -153,14 +150,13 @@ oldRight的类型款式：foldRight[A,B](as: List[A])(z: B)(g: (A,B) => B): B。
 
 foldRight和foldLeft的f函数是(A,B) => B，如果用curry表达：A => (B => B)，如果能把 A => ? 转成 B => B，那么我们就可以使用endoComposeMonoid[B].op(f: B => B, g: B => B): B。
  */
-def foldRight[A,B](as: List[A])(z: B)(f: (A,B) => B): B = {
-  foldMap(as)(endoComposeMonoid[B])(a => b => f(a,b))(z)
+def foldRight[A, B](as: List[A])(z: B)(f: (A, B) => B): B = {
+  foldMap(as)(endoComposeMonoid[B])(a => b => f(a, b))(z)
 }
 
-def foldLeft[A,B](as: List[A])(z: B)(f: (A,B) => B): B = {
-  foldMap(as)(dual(endoComposeMonoid[B]))(a => b => f(a,b))(z)
+def foldLeft[A, B](as: List[A])(z: B)(f: (A, B) => B): B = {
+  foldMap(as)(dual(endoComposeMonoid[B]))(a => b => f(a, b))(z)
 }
-
 
 def foldMapV[A, B](xs: IndexedSeq[A])(m: Monoid[B])(f: A => B): B = xs.length match {
   case 0 => m.zero
@@ -169,7 +165,6 @@ def foldMapV[A, B](xs: IndexedSeq[A])(m: Monoid[B])(f: A => B): B = xs.length ma
     val (l, r) = xs.splitAt(xs.length / 2)
     m.op(foldMapV(l)(m)(f), foldMapV(r)(m)(f))
 }
-
 
 /*
 def foldMapVP[A, B](xs: IndexedSeq[A])(m: Monoid[B])(f: A => B) = xs.length match {

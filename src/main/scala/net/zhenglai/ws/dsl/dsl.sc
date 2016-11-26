@@ -41,7 +41,6 @@ Here are some of the niceties in the syntax of Scala that makes it a DSL friendl
   Currying
  */
 
-
 case class Stock(name: String)
 case class Bond(name: String)
 
@@ -58,9 +57,6 @@ sell(200 bondsOf "Sun") as valid Scala code
 And the best part is that the entire extension of the class Int is lexically scoped and will only be available within the scope of the implicit definition function pimpInt.
  */
 implicit def pimpInt(i: Int) = new PimpedInt(i)
-
-
-
 
 object TradeDSL {
 
@@ -127,7 +123,7 @@ object TradeDSL {
 
     def premiumPricing(qty: Int, price: Int) = qty match {
       case q if q > 100 => q * price - 100
-      case _ => qty * price
+      case _            => qty * price
     }
 
     def defaultPricing(qty: Int, price: Int): Int = qty * price
@@ -149,8 +145,8 @@ object TradeDSL {
       new Order to sell(200 bondsOf "Sun")
         maxUnitPrice 300
         using {
-        (qty, unit) => qty * unit - 500
-      }
+          (qty, unit) => qty * unit - 500
+        }
     )
     println((0 /: orders)(_ + _.totalValue))
   }

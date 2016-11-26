@@ -3,7 +3,6 @@
 Type specialization is actualy more of an performance technique than plain "type system stuff"
  */
 
-
 val pi = Parcel(1) // will use `int` specialized methods
 
 /*
@@ -47,4 +46,4 @@ public class Parcel extends java.lang.Object implements scala.Product,scala.Seri
 
 /*
 HotSpot an boolean is represented as int, so it takes 4 bytes of space. It’s cousin java.lang.Boolean on the other hand has 8 bytes of object header, as does any Java object, then it stores the boolean inside (another 4 bytes), and due to the Java Object Layout alignment rules, the space taked up by this object will be aligned to 16 bytes (8 for object header, 4 for the value, 4 bytes of padding). That’s yet another reason why we want to avoid boxing so badly.
- */
+ */ 

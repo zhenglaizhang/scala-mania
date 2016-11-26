@@ -1,11 +1,9 @@
-import scala.util.{Failure, Success, Try}
-
+import scala.util.{ Failure, Success, Try }
 
 type Or[A, B] = Either[A, B]
 val l: String Or Int = Left("boo")
 
 def positive(i: Int): Option[Int] = if (i > 0) Some(i) else None
-
 
 positive(12)
 positive(-12)
@@ -30,10 +28,8 @@ def addInts(s1: String, s2: String): NumberFormatException Or Int = {
   }
 }
 
-
 println(addInts("1", "2"))
 println(addInts("", "2"))
-
 
 def positive3(i: Int): Try[Int] = Try {
   assert(i > 0, s"nonpositive number $i")
@@ -42,7 +38,6 @@ def positive3(i: Int): Try[Int] = Try {
 
 positive3(12)
 positive3(-12)
-
 
 def positive4(i: Int): Try[Int] =
   if (i > 0) Success(0)

@@ -17,7 +17,7 @@ We would like to provide an operator. But we don’t want to enrich just one typ
 */
 
 trait MonoidOp[A] {
-  val F    : Monoid[A]
+  val F: Monoid[A]
   val value: A
 
   def |+|(a2: A) = F.append(value, a2)
@@ -35,8 +35,6 @@ implicit def toMonoidOp[A: Monoid](a: A): MonoidOp[A] = new MonoidOp[A] {
 We were able to inject |+| to both Int and String with just one definition.
 */
 
-
-
 /*
 Standard type syntax
 
@@ -46,6 +44,6 @@ Using the same technique, Scalaz also provides method injections for standard li
 1.some | 2
 Some(1).getOrElse(2)
 
-(1 > 10)? 1 | 2
+(1 > 10) ? 1 | 2
 
 if (1 > 10) 1 else 2

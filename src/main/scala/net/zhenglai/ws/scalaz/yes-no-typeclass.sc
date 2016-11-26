@@ -17,13 +17,11 @@ object CanTruthy {
   }
 }
 
-
 trait CanTruthyOps[A] {
   def self: A
   implicit def F: CanTruthy[A]
   final def truthy: Boolean = F.truthys(self)
 }
-
 
 object ToCanTruthyOps {
   implicit def toCanTruthyOps[A](v: A)(implicit ev: CanTruthy[A]) = new CanTruthyOps[A] {
@@ -40,7 +38,6 @@ implicit val intCanTruthy: CanTruthy[Int] = CanTruthy.truthys({
 import ToCanTruthyOps._
 
 10.truthy
-
 
 implicit def listCanTruthy[A]: CanTruthy[List[A]] = CanTruthy.truthys({
   case Nil => false
@@ -61,12 +58,10 @@ implicit val nilCanTruthy: CanTruthy[scala.collection.immutable.Nil.type] = CanT
 
 Nil.truthy
 
-
 // And for Boolean using identity:
 implicit val booleanCanTruthy: CanTruthy[Boolean] = CanTruthy.truthys(identity)
 
 false.truthy
-
 
 /*
 Using CanTruthy typeclass, let’s define truthyIf like LYAHFGG:
@@ -81,8 +76,8 @@ def truthyIf[A: CanTruthy, B, C](cond: A)(ifyes: => B)(ifno: => C) =
   if (cond.truthy) ifyes
   else ifno
 
-truthyIf (Nil) {"This is the Nil"} {"This is not Nil"}
+truthyIf(Nil) { "This is the Nil" } { "This is not Nil" }
 
-truthyIf (2 :: 3 :: 4 :: Nil) {"YEAH!"} {"NO!"}
+truthyIf(2 :: 3 :: 4 :: Nil) { "YEAH!" } { "NO!" }
 
-truthyIf (true) {"YEAH!"} {"NO!"}
+truthyIf(true) { "YEAH!" } { "NO!" }

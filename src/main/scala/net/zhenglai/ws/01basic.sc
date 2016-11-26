@@ -1,15 +1,13 @@
 import scala.annotation.tailrec
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 val bi = BigInt("111111111111111111111111111111")
 
 upper("test")
 
-
 'a' to 'g' by 3
 
 1.1 to 10.4 by 2.1
-
 
 BigInt(1) to BigInt(10) by 4
 val bi2 = BigInt("111111111111111111111111111111")
@@ -19,8 +17,6 @@ def upper(strings: String*): Seq[String] = {
   strings.map(_.toUpperCase)
 }
 bi + bi2
-
-
 
 // partial function
 
@@ -37,7 +33,6 @@ pf2.andThen(pf)(12.0d)
 pf.isDefinedAt(12.0)
 pf2.isDefinedAt(12.0d)
 
-
 def tryPF(x: Any, pf: PartialFunction[Any, String]) = {
   try {
     pf(x).toString
@@ -48,23 +43,18 @@ def tryPF(x: Any, pf: PartialFunction[Any, String]) = {
 
 tryPF(12, pf)
 
-
-
 def add(a: Int)(b: Int) = a + b
 add(12)(3)
-add(12){3}
-add{12}{3}
-add({12})({3})
-
+add(12) { 3 }
+add { 12 } { 3 }
+add({ 12 })({ 3 })
 
 def m1[A](a: A, f: A => String) = f(a)
 def m2[A](a: A)(f: A => String) = f(a)
 //m1(100, i => s"$i + $i") // missing parameter type
-m2(100){i => s"$i + $i"}
-
+m2(100) { i => s"$i + $i" }
 
 // use last argument list for implicit arguments
-
 
 import scala.concurrent.ExecutionContext.Implicits.global
 val f = Future {
@@ -94,7 +84,7 @@ def factorial(i: Int): Long = {
   def fac(i: Int, accumulator: Int): Long = {
     if (i <= 1) accumulator
     else
-      fac(i - 1, accumulator *i)
+      fac(i - 1, accumulator * i)
   }
   fac(i, 1)
 }
@@ -104,7 +94,6 @@ def factorial(i: Int): Long = {
 }
 
 // Unit () returned
-
 
 println(12)
 

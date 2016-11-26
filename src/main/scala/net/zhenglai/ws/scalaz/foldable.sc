@@ -68,7 +68,7 @@ import scalaz._
 import Scalaz._
 
 List(1, 2, 3).foldRight(1)(_ * _)
-9.some.foldLeft(2){_ + _}
+9.some.foldLeft(2) { _ + _ }
 
 /*
 These are already in the standard library. Let’s try the foldMap operator. Monoid[A] gives us zero and |+|, so that’s enough information to fold things over. Since we can’t assume that Foldable contains a monoid we need a function to change from A => B where [B: Monoid]:
@@ -85,4 +85,4 @@ This surely beats writing Tags.Disjunction(true) for each of them and connecting
 
 /*
 On day 4 we reviewed typeclass laws like Functor laws and used ScalaCheck to validate on arbitrary examples of a typeclass. We also looked at three different ways of using Option as Monoid, and looked at Foldable that can foldMap etc.
- */
+ */ 

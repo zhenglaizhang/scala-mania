@@ -34,12 +34,11 @@ object Moolean {
     case _                       => False
   }
 
-
   /*
 you’re kind of able to write your own control structures by need. Our algebraic datatype remained untouched. Instead we used implicit type conversion to start a chain for collecting the different parts of the whole expression.
    */
   // Quarternary operator
-  implicit def startQuarternary(mool: Moolean)/*: QuarternaryTrueReceiver[Any]*/ = new QuarternaryTrueReceiver(mool)
+  implicit def startQuarternary(mool: Moolean) /*: QuarternaryTrueReceiver[Any]*/ = new QuarternaryTrueReceiver(mool)
 
   class QuarternaryTrueReceiver[+A](mool: Moolean) {
     def ?[A](trueValue: A) = new QuarternaryFalseReceiver(mool, trueValue)

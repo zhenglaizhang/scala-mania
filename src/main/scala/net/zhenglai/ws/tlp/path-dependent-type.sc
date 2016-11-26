@@ -25,11 +25,9 @@ val out1 = new Outer
  */
 val out1in = new out1.Innter
 
-
 val out2 = new Outer
 val out2in = new out2.Innter
 val ok: PathDep1 = out1in
-
 
 class Outer {
 
@@ -54,13 +52,11 @@ class Parent {
   def child: Child = new this.Child
 }
 
-
-
 class ChildrenContainer(val p: Parent) {
   /*
   Using the path dependent type we have now encoded in the type system, the logic, that this container should only contain children of this parent - and not "any parent"
    */
-//  type ChildOfThisParent = p.Child
+  //  type ChildOfThisParent = p.Child
 
   /*
   Parameter Dependent Types are a form of Path Dependent Types, as we have seen before we can refer to a type nested in a specific instance with the . syntax
@@ -69,7 +65,6 @@ class ChildrenContainer(val p: Parent) {
    */
   def add(c: p.Child): p.Child = p.child
 }
-
 
 /*
 In computer science and logic, a dependent type is a type that depends on a value.
@@ -86,13 +81,9 @@ isSingleton False = List Nat
 this is a function that computes a type as result and not a value, we will be able then to use this in a “normal” function (from value to value), to compute the type of one value depending on another value.
  */
 
-
 /*
 Scala is not a fully dependently typed language and we have to forget some of the amazing things we can do with Idris
  */
-
-
-
 
 object bad {
   object Franchise {
@@ -101,8 +92,9 @@ object bad {
   class Franchise(name: String) {
     import Franchise.Character
     def createFanFiction(
-      lovestruck: Character,
-      objectOfDesire: Character): (Character, Character) = (lovestruck, objectOfDesire)
+      lovestruck:     Character,
+      objectOfDesire: Character
+    ): (Character, Character) = (lovestruck, objectOfDesire)
   }
 
   val starTrek = new Franchise("Star Trek")
@@ -125,8 +117,9 @@ object normal {
   class Franchise(name: String) {
     import Franchise.Character
     def createFanFiction(
-      lovestruck: Character,
-      objectOfDesire: Character): (Character, Character) = {
+      lovestruck:     Character,
+      objectOfDesire: Character
+    ): (Character, Character) = {
       // It’s the kind of fail-fast behaviour
       require(lovestruck.franchise == objectOfDesire.franchise)
       (lovestruck, objectOfDesire)
@@ -139,7 +132,6 @@ there is a way to fail even faster – not at runtime, but at compile time. To a
 
 In Scala, a nested type is bound to a specific instance of the outer type, not to the outer type itself. This means that if you try to use an instance of the inner type outside of the instance of the enclosing type, you will face a compile error:
  */
-
 
 class A {
   class B
@@ -164,8 +156,9 @@ class Franchise(name: String) {
    */
   case class Character(name: String)
   def createFanFictionWith(
-    lovestruck: Character,
-    objectOfDesire: Character): (Character, Character) = (lovestruck, objectOfDesire)
+    lovestruck:     Character,
+    objectOfDesire: Character
+  ): (Character, Character) = (lovestruck, objectOfDesire)
 }
 
 val starTrek = new Franchise("Star Trek")
@@ -183,13 +176,11 @@ starTrek.createFanFictionWith(lovestruck = quark, objectOfDesire = jadzia)
 starWars.createFanFictionWith(lovestruck = luke, objectOfDesire = yoda)
 //starTrek.createFanFictionWith(lovestruck = jadzia, objectOfDesire = luke)
 
-
 /*
 This technique also works if our method is not defined on the Franchise class, but in some other module. In this case, we can make use of dependent method types, where the type of one parameter depends on a previous parameter:
  */
 def createFanFiction(f: Franchise)(lovestruck: f.Character, objectOfDesire: f.Character) =
   (lovestruck, objectOfDesire)
-
 
 //the type of the lovestruck and objectOfDesire parameters depends on the Franchise instance passed to the method. Note that this only works if the instance on which other types depend is in its own parameter list.
 
@@ -233,4 +224,4 @@ the cake pattern, which is a technique for composing your components and managin
 In general, whenever you want to make sure that objects created or managed by a specific instance of another type cannot accidentally or purposely be interchanged or mixed, path-dependent types are the way to go.
 
 Path-dependent types and dependent method types play a crucial role for attempts to encode information into types that is typically only known at runtime, for instance heterogenous lists, type-level representations of natural numbers and collections that carry their size in their type.
- */
+ */ 

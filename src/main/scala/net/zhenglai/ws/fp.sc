@@ -40,7 +40,6 @@ A pure function is modular and composable because it separates the logic of the 
 Polymorphic functions: abstracting over types
  */
 
-
 /*
 It's Not "Just About Finger Typing"
 
@@ -95,7 +94,6 @@ StringBuilder.append之所以不是纯函数是因为StringBuilder是一个内�
 
 2
 
-
 // OOP style, 典型的指令式编程（Imperative Programming）；通过改变变量值来实现程序的状态转变
 def createErrorMessageOOP(errorCode: Int): String = {
   var result: String = ""
@@ -109,7 +107,6 @@ def createErrorMessageOOP(errorCode: Int): String = {
   return result
 }
 
-
 // 首先，没有中间变量。整个函数简洁明了的多。不经过中间变量直接返回结果；这就是泛函编程的一个风格特征。
 // 这个函数的是一个纯函数，也是一个完整函数。因为函数主体涵盖了所有输入值（注意: case _ =>）。我们可以预知任何输入msgId值所产生的结果。还有，函数中没有使用任何中间变量。
 def createErrorMessage(errorCode: Int) = errorCode match {
@@ -119,7 +116,6 @@ def createErrorMessage(errorCode: Int) = errorCode match {
 }
 
 assert(createErrorMessage(1) == createErrorMessageOOP(1))
-
 
 /*
 泛函编程和数学方程式解题相似；用某种方式找出问题的答案。泛函编程通用的方式包括了模式匹配（pattern matching）以及递归思维（Recursive thinking）。我们先体验一下：

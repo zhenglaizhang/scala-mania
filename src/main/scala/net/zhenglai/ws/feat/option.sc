@@ -51,8 +51,6 @@ val greeting2: Option[String] = None
 val greeting3: None.type = None
 val greeting4: Option[Nothing] = None
 
-
-
 /*
 you will need to interoperate with Java libraries or code in other JVM languages that happily make use of null to denote absent values
 
@@ -61,17 +59,19 @@ you will need to interoperate with Java libraries or code in other JVM languages
 val absentGreeting: Option[String] = Option(null) // absentGreeting will be None
 val presentGreeting: Option[String] = Option("Hello!") // presentGreeting will be Some("Hello!")
 
-
 case class User(
-                 id: Int,
-                 firstName: String,
-                 lastName: String,
-                 age: Int,
-                 gender: Option[String])
+  id:        Int,
+  firstName: String,
+  lastName:  String,
+  age:       Int,
+  gender:    Option[String]
+)
 
 object UserRepository {
-  private val users = Map(1 -> User(1, "John", "Doe", 32, Some("male")),
-                           2 -> User(2, "Johanna", "Doe", 30, None))
+  private val users = Map(
+    1 -> User(1, "John", "Doe", 32, Some("male")),
+    2 -> User(2, "Johanna", "Doe", 30, None)
+  )
   def findById(id: Int): Option[User] = users.get(id)
   def findAll = users.values
 }
@@ -94,15 +94,13 @@ User(2, "Zhenglai", "Zhang", 20, None).gender.getOrElse("Not specified")
 
 val gender = u.gender match {
   case Some(gender) => gender
-  case None => "not specified"
+  case None         => "not specified"
 }
 println(s"Gender: $gender")
 
 /*
 pattern matching on an Option instance is rather verbose, which is also why it is usually not idiomatic to process options this way.
  */
-
-
 
 /*
 Options can be viewed as collections
@@ -128,15 +126,12 @@ val age = UserRepository.findById(1).map(_.age)
 
 val gender2 = UserRepository.findById(1).map(_.gender)
 
-
-
 /*
 Just like you can flatMap a List[List[A]] to a List[B], you can do the same for an Option[Option[A]]
  */
 val gender4 = UserRepository.findById(1).flatMap(_.gender) // gender is Some("male")
 val gender5 = UserRepository.findById(2).flatMap(_.gender) // gender is None
 val gender6 = UserRepository.findById(3).flatMap(_.gender) // gender is None
-
 
 val names: List[Option[String]] = List(Some("Johanna"), None, Some("Daniel"))
 names.map(_.map(_.toUpperCase)) // List(Some("JOHANNA"), None, Some("DANIEL"))
@@ -146,8 +141,6 @@ The one element of any Some[String] in the original list is unwrapped and put in
  */
 names.flatMap(xs => xs.map(_.toUpperCase)) // List("JOHANNA", "DANIEL")
 
-
-
 /*
 If the instance of Option[A] is defined, i.e. it is a Some[A], and the predicate passed to filter returns true for the wrapped value of type A, the Some instance is returned. If the Option instance is already None or the predicate returns false for the value inside the Some, the result is None
  */
@@ -155,7 +148,6 @@ If the instance of Option[A] is defined, i.e. it is a Some[A], and the predicate
 UserRepository.findById(1).filter(_.age > 30) // Some(user), because age is > 30
 UserRepository.findById(2).filter(_.age > 30) // None, because age is <= 30
 UserRepository.findById(3).filter(_.age > 30) // None, because user is already None
-
 
 /*
 this is equivalent to nested invocations of flatMap. If the UserRepository already returns None or the Gender is None, the result of the for comprehension is None.
@@ -173,18 +165,15 @@ for {
    */
 } yield gender
 
-
 // chain options
 case class Resource(content: String)
 val resourceFromConfigDir: Option[Resource] = None
 val resourceFromClasspath: Option[Resource] = Some(Resource("I was found on the classpath"))
 val resource = resourceFromConfigDir orElse resourceFromClasspath getOrElse Resource("default resource")
 
-
 /*
 Still, the Scala libraries use Option whenever a "null" could be used and Scala projects are following that pattern. As long as you never ever create a cast or a null, you'll only have to worry about NoPE when dealing with existing Java or .Net code.
  */
-
 
 def divide(x: Int, y: Int): Option[Int] = {
   try {

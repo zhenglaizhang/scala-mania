@@ -9,11 +9,11 @@ case class Player(name: String, score: Int)
  return type of Unit, its sole purpose is to perform a side effect, namely printing a message.
  */
 def printMessage(player: Player): Unit = player match {
-    /*
+  /*
      Their return value is what is returned by the block belonging to the first matched pattern.
      */
   case Player(_, score) if score > 10000 => println("Got a job, dude!")
-  case Player(name, _) => println(s"Hey $name, nice to see you again!")
+  case Player(name, _)                   => println(s"Hey $name, nice to see you again!")
 }
 
 /*
@@ -21,7 +21,7 @@ pure function, whose return type is String
  */
 def message(player: Player) = player match {
   case Player(_, score) if score > 10000 => "Got a job, dude!"
-  case Player(name, _) => s"Hey $name, nice to see you again"
+  case Player(name, _)                   => s"Hey $name, nice to see you again"
 }
 
 def printMessage2(player: Player) = println(message(player))
@@ -45,7 +45,6 @@ doSomethingWithTheName(name)
 
 def doSomethingWithTheName(name: String) = ()
 
-
 def scores: List[Int] = List(12)
 
 val best :: rest = scores
@@ -57,10 +56,6 @@ println(s"The score of our champion is $best")
 def gameResult: (String, Int) = ("Zhenglai", 2000)
 val (gamerName, score) = gameResult
 println(s"$gamerName got $score scores")
-
-
-
-
 
 /*
 Patterns in for comprehensions
@@ -90,7 +85,6 @@ def hallOfFame2 = for {
   // guard clause
   if (score > 5000)
 } yield name
-
 
 val lists = List(1, 2, 3) :: List.empty :: List(5, 3) :: Nil
 for {

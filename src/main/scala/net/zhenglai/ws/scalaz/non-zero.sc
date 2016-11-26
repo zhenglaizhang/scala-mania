@@ -5,7 +5,6 @@ import net.zhenglai.lib.ToNonZeroOps._
 0.isNonZero
 (-2).isNonZero
 
-
 // 试试其它即兴类型
 
 implicit val stringNZInstance: NonZero[String] = NonZero.create {
@@ -19,7 +18,6 @@ implicit def listNZInstance[A]: NonZero[List[A]] = NonZero.create {
   case Nil => false
   case _   => true
 }
-
 
 null.asInstanceOf[String].isNonZero
 "".isNonZero

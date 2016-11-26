@@ -26,8 +26,6 @@ object h11 {
   */
 }
 
-
-
 case class TrafficLight(name: String)
 val red = TrafficLight("red")
 val yellow = TrafficLight("yellow")

@@ -109,7 +109,7 @@ object Holder {
     implicit def optionPrinter[V](implicit pv: Printer[V]): Printer[Option[V]] =
       new Printer[Option[V]] {
         def print(ov: Option[V]) = ov match {
-          case None => "None"
+          case None    => "None"
           case Some(v) => s"Option[${pv.print(v)}]"
         }
       }
@@ -117,7 +117,7 @@ object Holder {
     implicit def listPrinter[V](implicit pv: Printer[V]): Printer[List[V]] =
       new Printer[List[V]] {
         def print(ov: List[V]) = ov match {
-          case Nil => "Nil"
+          case Nil        => "Nil"
           case l: List[V] => s"List[${l.map(pv.print).mkString(", ")}]"
         }
       }
@@ -126,10 +126,6 @@ object Holder {
 
   // res: Option[List[1: Int, 3: Int, 6: Int]]
 }
-
-
-
-
 
 object raw {
   object Statistics {
@@ -183,7 +179,6 @@ object adpaterPattern {
   }
 }
 
-
 /*
 Type classes, one of the prominent features of the Haskell language, despite their name, haven’t got anything to do with classes in object-oriented programming.
 
@@ -193,7 +188,6 @@ As such, type classes allow ad-hoc and retroactive polymorphism. Code that relie
 
 type classes – a pattern that allows you to design your programs to be open for extension without giving up important information about concrete types.
  */
-
 
 object Math {
   import annotation.implicitNotFound
@@ -207,7 +201,6 @@ object Math {
   /*
   We have created a type class called NumberLike. Type classes always take one or more type parameters, and they are usually designed to be stateless, i.e. the methods defined on our NumberLike trait operate only on the passed in arguments. In particular, where our adapter above operated on its member of type T and one argument, the methods defined for our NumberLike type class take two parameters of type T each – the member has become the first parameter of the operations supported by NumberLike.
    */
-
 
   // Providing default implementation
 
@@ -232,7 +225,6 @@ object Math {
   members of type classes are usually singleton objects. Also, please note the implicit keyword before each of the type class implementations. This is one of the crucial elements for making type classes possible in Scala, making type class members implicitly available under certain conditions.
    */
 
-
   // Coding against type classes
   object Statistics {
 
@@ -252,19 +244,15 @@ import scala.annotation.implicitNotFound
 val numbers = Vector[Double](13, 23.0, 42, 45, 61, 73, 96, 100, 199, 420, 900, 3839)
 println(Statistics.mean(numbers))
 
-
 /*
 If we try this with a Vector[String], we get an error at compile time, stating that no implicit value could be found for parameter ev: NumberLike[String]. If you don’t like this error message, you can customize it by annotating your type class trait with the @implicitNotFound annotation
  */
-
 
 /*
 Error:(214, 17) No member of type class NumberLike in scope for String
 Statistics.mean(Vector("Hello"));}
  */
 //Statistics.mean(Vector("Hello"))
-
-
 
 /*
 A second, implicit parameter list on all methods that expect a member of a type class can be a little verbose. As a shortcut for implicit parameters with only one type parameter, Scala provides so-called context bounds.
@@ -276,7 +264,7 @@ object Statistics2 {
   import Math.NumberLike
   def mean[T](xs: Vector[T])(implicit ev: NumberLike[T]): T =
     ev.divide(xs.reduce(ev.plus(_, _)), xs.size)
-  def median[T : NumberLike](xs: Vector[T]): T = xs(xs.size / 2)
+  def median[T: NumberLike](xs: Vector[T]): T = xs(xs.size / 2)
   def quartiles[T: NumberLike](xs: Vector[T]): (T, T, T) =
     (xs(xs.size / 4), median(xs), xs(xs.size / 4 * 3))
   def iqr[T: NumberLike](xs: Vector[T]): T = quartiles(xs) match {
@@ -284,9 +272,6 @@ object Statistics2 {
       implicitly[NumberLike[T]].minus(upperQuartile, lowerQuartile)
   }
 }
-
-
-
 
 object JodaImplicits {
 
@@ -301,7 +286,6 @@ object JodaImplicits {
   }
 
 }
-
 
 //import JodaImplicits._
 //import Math.Statistics._
@@ -337,16 +321,13 @@ object LabelMarker {
   def label[T: LabelMarker](t: T) = implicitly[LabelMarker[T]].output(t)
 }
 
-
 import LabelMarker._
 val l1 = label(Song("Hey ya", "Outkast"))
 val l2 = label(Address("Something", 273))
 
-
 /*
 Typeclasses capture the notion of retroactive extensibility. With static method overloads, you have to define them all at once in one place, but with typeclasses you can define new instances anytime you want for any new types in any modules.
  */
-
 
 object SomeModule {
   case class Car(title: String)
@@ -362,4 +343,4 @@ val void = println(label(Car("Mustang")))
 
 /*
 Once class is written, to make it inherited from some class or trait, you have to touch its definition, which may be unavailable to you (e.g. it's class from some library). With typeclasses you don't have to touch class definition to write instance for that class. That's one of aspects of mentioned retroactive extensibility. And no, rules for T type parameter are just the same as for regular generic classes.
- */
+ */ 

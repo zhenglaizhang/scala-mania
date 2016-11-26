@@ -12,8 +12,6 @@ Parametric polymorphism refers to when the type of a value contains one or more 
 def head[A](xs: List[A]): A = xs.head
 head(1 :: 2 :: 3 :: Nil)
 
-
-
 /*
 Subtype polymorphism
  */
@@ -28,10 +26,6 @@ object h11 {
 /*
 We can at least provide different definitions of plus for A. But, this is not flexible since trait Plus needs to be mixed in at the time of defining the datatype. So it can’t work for Int and String.
  */
-
-
-
-
 
 /*
 Ad-hoc polymorphism

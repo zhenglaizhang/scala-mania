@@ -32,9 +32,10 @@ object Json extends Dynamic {
   def applyDynamicNamed(name: String)(args: (String, Any)*) = {
     args.foreach(arg => {
       println(
-               s"""
+        s"""
                   |Creating a $name, for:\n ${arg._1}":"${arg._2}"
-       """.stripMargin)
+       """.stripMargin
+      )
 
     })
   }
@@ -45,10 +46,11 @@ Json.node(nickname = "nick", fullName = "Zhenglai Zhang")
 object OhMy extends Dynamic {
   def applyDynamic(methodName: String)(args: Any*): Unit = {
     println(
-             s"""
+      s"""
                 |methodName: $methodName
                 |args: ${args.mkString(",")}
-       """.stripMargin)
+       """.stripMargin
+    )
   }
 }
 
@@ -56,7 +58,6 @@ object OhMy extends Dynamic {
 So the signature of applyDynamic takes the method name and it’s arguments. So obviously we’d have to access them by their order. Very nice for building up some strings etc.
  */
 OhMy.dynamicMethod("with", "some", 1337)
-
 
 object MagicBox extends Dynamic {
   private var box = mutable.Map[String, Any]()

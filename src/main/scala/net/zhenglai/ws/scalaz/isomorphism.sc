@@ -33,7 +33,6 @@ case object Mother extends Family
 case object Father extends Family
 case object Child extends Family
 
-
 sealed trait Relic
 case object Feather extends Relic
 case object Stone extends Relic
@@ -47,13 +46,13 @@ val isoFamilyRelic = new (Family <=> Relic) {
   val to: Family => Relic = {
     case Mother => Feather
     case Father => Stone
-    case Child => Flower
+    case Child  => Flower
   }
 
   val from: Relic => Family = {
     case Feather => Mother
-    case Stone => Father
-    case Flower => Child
+    case Stone   => Father
+    case Flower  => Child
   }
 }
 
@@ -79,9 +78,6 @@ res24: org.scalacheck.Prop = Prop
 scala> res24.check
 + OK, passed 100 tests.
  */
-
-
-
 
 /*
 It’s encouraging to see support for isomorphisms in Scalaz. Hopefully we are going the right direction.

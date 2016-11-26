@@ -28,7 +28,6 @@ val out1in = new out1.Inner
 out1.g(out1in)
 out2.f(out1in)
 
-
 trait R {
   type A = Int
 }
@@ -45,8 +44,4 @@ null.asInstanceOf[Some[Int]]
 
 Note: When A is a package or object, then A.B behaves as you would expect, the # fun comes into play with traits or classes.
  */
-
-
-
-
 

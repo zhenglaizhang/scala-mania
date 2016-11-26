@@ -4,18 +4,14 @@ val Hello = "Hello"
 val hello = "hello"
 println(double(12))
 
-
 // auxiliary constructor
 // keyword this
-
 
 // type declaration
 //  keyword type
 
-
 // no break
 // no continue
-
 
 println(3e-5)
 3E6
@@ -36,7 +32,6 @@ val configFilePath = if (configFile.exists()) {
 }
 goodbye("Programming Scala")
 
-
 // symbol literals
 //  interned strings
 
@@ -44,14 +39,11 @@ goodbye("Programming Scala")
 
 //`id
 
-
 // Tony Hoare
 // billion dollar mistake
 
-
 1.+(2) * 3
 1 + 2 * 3
-
 
 // Dropping dot from methods without parameters is DEPRECATED!
 val xs = List("hello", "scala", "fighting")
@@ -69,7 +61,6 @@ val head1 +: head2 +: tail = Vector(1, 2, 3, 4)
   // unreachable code
   case Hello => "Got Hello"
 }
-
 
 // You put the cursor on a variable definition, hit Alt+Enter and IntelliJ will offer you to add a type annotation to the declaration
 val d = List(1, 2, 3, 4)
@@ -95,9 +86,10 @@ def double(i: Int) {
   2 * i
 }
 
-for (x <- xs // generator expression
-     if x.contains("l") // && !x.startsWith("s")
-     if !x.contains("s")
+for (
+  x <- xs // generator expression
+  if x.contains("l") // && !x.startsWith("s")
+  if !x.contains("s")
 ) {
   // guard as filter
   println(x)
@@ -125,20 +117,19 @@ tail
 
 def isEven(n: Int) = (n % 2) == 0
 d reduce (_ + _)
-d.fold(10) (_ + _)
-(d fold 10) (_ + _)
+d.fold(10)(_ + _)
+(d fold 10)(_ + _)
 
 // partial application
 val fold1 = (d fold 10) _
-fold1 (_ + _)
+fold1(_ + _)
 
-(List.empty[Int] fold 10) (_ + _)
+(List.empty[Int] fold 10)(_ + _)
 
 //List.empty[Int] reduce (_ + _)
 // unsupported exception reduceLeft
 
 List.empty[Int] reduceOption (_ + _)
-
 
 d map (2 * _)
 
@@ -147,19 +138,20 @@ d.foldRight(List.empty[Int]) {
 }
 
 d.foldLeft(List.empty[Int]) {
-  (list, x) => {
-    println(s"checking list: [$list]\t x: [${x * 2}]")
-    list :+ x * 2
-  }
+  (list, x) =>
+    {
+      println(s"checking list: [$list]\t x: [${x * 2}]")
+      list :+ x * 2
+    }
 }
 
 d.foldLeft(List.empty[Int]) {
-  (list, x) => {
-    println(s"checking list: [$list]\t x: [${x * 2}]")
-    x * 2 +: list
-  }
+  (list, x) =>
+    {
+      println(s"checking list: [$list]\t x: [${x * 2}]")
+      x * 2 +: list
+    }
 }
-
 
 trait Foo {
   val x: Int

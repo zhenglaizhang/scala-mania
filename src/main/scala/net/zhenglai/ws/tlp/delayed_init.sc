@@ -24,6 +24,6 @@ Main.main(Array())
 // the compiler emits:
 object Main2 extends DelayedInit {
   def delayedInit(x: => Unit = {
-    println("Hello!")
-  }) =  ??? // impl is left for us to fill in
+                    println("Hello!")
+                  }) = ??? // impl is left for us to fill in
 }

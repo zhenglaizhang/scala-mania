@@ -288,16 +288,12 @@ class FilterableMonad[A] {
   def filter(p: A => Boolean): M[A] = ???
 }
 
-
-
 class M[A] {
-  def map[B](f: A => B):M[B] = ???
-
+  def map[B](f: A => B): M[B] = ???
 
   // plus
-//  def plus[B](other: M[A <: B]): M[B] = ???
+  //  def plus[B](other: M[A <: B]): M[B] = ???
 }
 
-def identity[A](x:A) = x
-
+def identity[A](x: A) = x
 

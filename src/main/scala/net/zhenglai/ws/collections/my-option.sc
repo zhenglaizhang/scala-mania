@@ -37,17 +37,16 @@ val lifted = Option.lift[Int, Int](divide9)
 lifted(Some(2))
 lifted(None)
 
-
-def divide(x: Double,y: Double): Double ={
+def divide(x: Double, y: Double): Double = {
   x / y
-}                                               //> divide: (x: Double, y: Double)Double
-val lifted2 = Option.lift2(divide)                     //> lifted2  : (ch4.exx.Option[Double], ch4.exx.Option[Double]) => ch4.exx.Opti
+} //> divide: (x: Double, y: Double)Double
+val lifted2 = Option.lift2(divide) //> lifted2  : (ch4.exx.Option[Double], ch4.exx.Option[Double]) => ch4.exx.Opti
 //| on[Double] = <function2>
-lifted2(Some(9),Some(2.0))                      //> res2: ch4.exx.Option[Double] = Some(4.5)
+lifted2(Some(9), Some(2.0)) //> res2: ch4.exx.Option[Double] = Some(4.5)
 
 def divThenMul(x: Double, y: Double, z: Double): Double = {
   x / y * z
-}                                               //> divThenMul: (x: Double, y: Double, z: Double)Double
-val lifted3 = Option.lift3(divThenMul)                 //> lifted3  : (ch4.exx.Option[Double], ch4.exx.Option[Double], ch4.exx.Option[
+} //> divThenMul: (x: Double, y: Double, z: Double)Double
+val lifted3 = Option.lift3(divThenMul) //> lifted3  : (ch4.exx.Option[Double], ch4.exx.Option[Double], ch4.exx.Option[
 //| Double]) => ch4.exx.Option[Double] = <function3>
-lifted3(Some(9.0),Some(2.0),Some(5))            //> res3: ch4.exx.Option[Double] = Some(22.5)
+lifted3(Some(9.0), Some(2.0), Some(5)) //> res3: ch4.exx.Option[Double] = Some(22.5)

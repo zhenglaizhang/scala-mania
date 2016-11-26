@@ -23,18 +23,15 @@ class Bar(x: Int) {
   }
 }
 
-
 1.min(2)
 
 val implictConv = implicitly[Int => RichInt]
 implictConv(1)
 
-
 /*
 Implicit Views can also be triggered when an expression does not conform to the Expected Type,
  */
 8: scala.runtime.RichInt
-
 
 /*
 Accessing an Implicit Parameter Introduced by a Context Bound
@@ -54,7 +51,6 @@ def foo[A: M] = {
   val ma = implicitly[M[A]]
 }
 */
-
 
 trait Show[T] { def show(t: T): String }
 object Show {
@@ -76,7 +72,6 @@ implicitly[Show[Person]].show(p)
 
 Person.PersonShow(si = implicitly, ss = Show.ShoutyStringShow).show(p)
 
-
 /*
 implicitly is just a convenience method to look up an implicit value that you know already exists. So it fails to compile when there is no such implicit value in scope.
  */
@@ -87,7 +82,6 @@ def find2[C](a: C, b: C)(implicit n: Numeric[C]) = n.plus(a, b)
 
 find(1, 2)
 find(12, 12)
-
 
 /*
 scala compiler 在编译程序时会根据情况自动进行隐式转换，即代码替代。在两种情况下scala会进行隐形转换：
@@ -170,13 +164,12 @@ object h12 {
     }
     import Container._
     // 类型T由A,B组成。compiler从A的伴生对象中解析到隐式转换。
-    def foo(implicit p: T) = println(p)            //> foo: (implicit p: scalaz.learn.demo.Container.Foo)Unit
-    foo                                              //> implicit x
+    def foo(implicit p: T) = println(p) //> foo: (implicit p: scalaz.learn.demo.Container.Foo)Unit
+    foo //> implicit x
   }
 }
 
 h12.demo
-
 
 object h13 {
   object Container {
@@ -197,8 +190,6 @@ object h13 {
   def foo(implicit p: T[A]) = println(p)
 }
 h13.foo
-
-
 
 object h14 {
   object Container {

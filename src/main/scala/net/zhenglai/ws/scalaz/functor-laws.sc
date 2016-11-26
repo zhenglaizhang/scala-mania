@@ -5,7 +5,7 @@ All functors are expected to exhibit certain kinds of functor-like properties an
 
 The second law says that composing two functions and then mapping the resulting function over a functor should be the same as first mapping one function over the functor and then mapping the other one.
  */
-import net.zhenglai.lib.{COption, CSome}
+import net.zhenglai.lib.{ COption, CSome }
 
 import scalaz._
 import Scalaz._
@@ -14,8 +14,7 @@ val seq = List(1, 2, 3)
 
 seq map (identity) assert_=== seq
 
-(seq map {{(_: Int) * 3} map {(_: Int) + 1}}) assert_=== (seq map {(_: Int) * 3} map {(_:Int) + 1})
-
+(seq map { { (_: Int) * 3 } map { (_: Int) + 1 } }) assert_=== (seq map { (_: Int) * 3 } map { (_: Int) + 1 })
 
 /*
 These are laws the implementer of the functors must abide, and not something the compiler can check for you. Scalaz 7+ ships with FunctorLaw traits that describes this in code:
@@ -44,11 +43,8 @@ scala> functor.laws[List].check()
 + functor.composite: OK, passed 100 tests.
  */
 
-
-(CSome(0, "ho"): COption[String]) map {(_: String) + "ha"}
+(CSome(0, "ho"): COption[String]) map { (_: String) + "ha" }
 (CSome(0, "ho"): COption[String]) map { identity }
-
-
 
 /*
 Here are the laws for Applicative:
@@ -67,10 +63,6 @@ Here are the laws for Applicative:
       FB.equal(ap(point(a))(f), ap(f)(point((f: A => B) => f(a))))
   }
  */
-
-
-
-
 
 /*
 Semigroup Laws
@@ -91,10 +83,6 @@ Remember, 1 * (2 * 3) and (1 * 2) * 3 must hold, which is called associative.
  */
 
 // scala> semigroup.laws[Int @@ Tags.Multiplication].check()
-
-
-
-
 
 /*
 Monoid Laws
@@ -141,4 +129,4 @@ scala> monoid.laws[Int @@ Tags.Multiplication].check()
 + monoid.semigroup.associative: OK, passed 100 tests.
 + monoid.left identity: OK, passed 100 tests.
 + monoid.right identity: OK, passed 100 tests.
-*/
+*/ 

@@ -28,7 +28,6 @@ val b = a.copy(y = 10)
 // equality of case classes is value based (equals and hashCode implementations based on the case class parameters are generated)
 a == Point(0, 0)
 
-
 // usual syntax
 Circle(2.5) match {
   case Circle(r) => println("Radius = " + r)

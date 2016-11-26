@@ -21,10 +21,9 @@ head(Car("Honda") :: Car("Toyota") :: Nil)
 
 概括化后变成：sum[M[_],A](xs: M[A]): A
  */
-def sum(xs: List[Int]): Int = xs.foldLeft(0)(_+_)
+def sum(xs: List[Int]): Int = xs.foldLeft(0)(_ + _)
 sum(List(1, 2, 3))
 //你不能这样：sum(List(1.0,2.0,3.0)
-
 
 /*
 我们先看看这个foldLeft: 它需要一个起始值（在这里是Int 0）和一个两个值的操作（在这里是两个Int的加法）。我们可以先把这部分抽象一下：
@@ -49,7 +48,7 @@ implicit object stringMonoid extends Monoid[String] {
 }
 def sum3(xs: List[String]): String = xs.foldLeft(stringMonoid.mzero)(stringMonoid.mappend)
 //> sum: (xs: List[String])String
-sum3(List("Hello,"," how are you"))                //> res0: String = Hello, how are you
+sum3(List("Hello,", " how are you")) //> res0: String = Hello, how are you
 
 /*
 按这样推敲，我们可以对任何类型A进行sum操作，只要用一个类型参数的trait就行了：
@@ -60,29 +59,27 @@ trait Monoid[A] {
 }
 // 注意具体的操作mappend和起始值都没有定义，这个会留待trait Monoid各种类型的实例里：
 
-
 object h11 {
   trait Monoid[A] {
     def mappend(a1: A, a2: A): A
     def mzero: A
   }
-  object intMonoid extends Monoid[Int]{
+  object intMonoid extends Monoid[Int] {
     def mappend(i1: Int, i2: Int): Int = i1 + i2
     def mzero = 0
   }
-  object stringMonoid extends Monoid[String]{
+  object stringMonoid extends Monoid[String] {
     def mappend(s1: String, s2: String): String = s1 + s2
     def mzero = ""
   }
 
-   def sum[A](xs: List[A])(m: Monoid[A]): A = xs.foldLeft(m.mzero)(m.mappend)
-                                                     //> sum: [A](xs: List[A])(m: scalaz.learn.ex2.Monoid[A])A
-   sum(List(1,2,3))(intMonoid)                       //> res0: Int = 6
-   sum(List("Hello,"," how are you"))(stringMonoid)  //> res1: String = Hello, how are you
+  def sum[A](xs: List[A])(m: Monoid[A]): A = xs.foldLeft(m.mzero)(m.mappend)
+  //> sum: [A](xs: List[A])(m: scalaz.learn.ex2.Monoid[A])A
+  sum(List(1, 2, 3))(intMonoid) //> res0: Int = 6
+  sum(List("Hello,", " how are you"))(stringMonoid) //> res1: String = Hello, how are you
 }
 
 h11
-
 
 // 现在这个sum是不是概括的多了。现在我们可以利用implicit使sum的调用表达更精炼：
 /*
@@ -93,27 +90,26 @@ object h12 {
     def mappend(a1: A, a2: A): A
     def mzero: A
   }
-  implicit object intMonoid extends Monoid[Int]{
+  implicit object intMonoid extends Monoid[Int] {
     def mappend(i1: Int, i2: Int): Int = i1 + i2
     def mzero = 0
   }
-  implicit object stringMonoid extends Monoid[String]{
+  implicit object stringMonoid extends Monoid[String] {
     def mappend(s1: String, s2: String): String = s1 + s2
     def mzero = ""
   }
 
   // the implicit parameter is often written as a context bound:
-//  def sum[A](xs: List[A])(implicit m: Monoid[A]): A = xs.foldLeft(m.mzero)(m.mappend)
+  //  def sum[A](xs: List[A])(implicit m: Monoid[A]): A = xs.foldLeft(m.mzero)(m.mappend)
   def sum[A: Monoid](xs: List[A]): A = {
     val m = implicitly[Monoid[A]]
     xs.foldLeft(m.mzero)(m.mappend)
   }
   //> sum: [A](xs: List[A])(m: scalaz.learn.ex2.Monoid[A])A
-  sum(List(1,2,3))// (intMonoid)                       //> res0: Int = 6
-  sum(List("Hello,"," how are you"))//(stringMonoid)  //> res1: String = Hello, how are you
+  sum(List(1, 2, 3)) // (intMonoid)                       //> res0: Int = 6
+  sum(List("Hello,", " how are you")) //(stringMonoid)  //> res1: String = Hello, how are you
 }
 h12
-
 
 /*
 现在调用sum是不是贴切多了？按照scalaz的惯例，我们把implicit放到trait的companion object里：
@@ -126,11 +122,11 @@ object h13 {
     def mzero: A
   }
   object Monoid {
-    implicit object intMonoid extends Monoid[Int]{
+    implicit object intMonoid extends Monoid[Int] {
       def mappend(i1: Int, i2: Int): Int = i1 + i2
       def mzero = 0
     }
-    implicit object stringMonoid extends Monoid[String]{
+    implicit object stringMonoid extends Monoid[String] {
       def mappend(s1: String, s2: String): String = s1 + s2
       def mzero = ""
     }
@@ -150,7 +146,6 @@ object h14 {
   def sum[A](xs: List[A])(implicit m: Monoid[A]): A = listFoldLeft.foldLeft(xs)(m.mzero)(m.mappend)
 }
 
-
 object h15 {
   import h13.Monoid._
   trait FoldLeft[M[_]] {
@@ -163,14 +158,13 @@ object h15 {
     }
   }
 
-/*
+  /*
 现在这个sum[M[_],A]是个全面概括的函数了。上面的sum也可以这样表达：
  */
   def sum[M[_], A](xs: M[A])(implicit m: h13.Monoid[A], fl: FoldLeft[M]): A = fl.foldLeft(xs)(m.mzero)(m.mappend)
 
   sum(List(1, 2, 3, 4))
   sum(List("hello", "how are you"))
-
 
   def sum1[A: h13.Monoid, M[_]: FoldLeft](xs: M[A]): A = {
     val m = implicitly[Monoid[A]]
@@ -179,7 +173,6 @@ object h15 {
   }
   sum1(List(1, 2, 3, 4))
 }
-
 
 /*
 在scalaz里为每个类型提供了足够的操作符号。使用这些符号的方式与普通的操作符号没有两样如 a |+| b，这是infix符号表述形式。scalaz会用方法注入（method injection）方式把这些操作方法集中放在类型名称+后缀op的trait里如，MonoidOp。

@@ -8,8 +8,6 @@ Monoid，我们说过它是一个特殊的范畴（Category），所有数据类
 实际上在设计泛函库组件（combinator）时，我们会尽量避免重复编码，实现方式就是把通用或共性的操作抽取出来形成一些新的高阶类型（higher types)，也就是新的抽象类型（Abstraction）。这样我们可以在不同的组件库中对同类操作共同使用这些通用的类型了。让我们先看看以下的一个抽象过程：
  */
 
-
-
 // 我们在前面讨论过一些数据类型。它们都有一个共同的函数：map
 /*
 def map[A,B](la: List[A])(f: A => B): List[B]
@@ -28,7 +26,7 @@ trait Functor[F[_]] {
 我们在设计unzip时是针对F的。在trait Functor里我们可以肯定F[(A,B)]支持map，所以我们才可以完成unzip函数的实现。这就是抽象的作用。当我们使用unzip时只要确定传入的参数fab是Functor就行了
    */
   def unzip[A, B](fab: F[(A, B)]): (F[A], F[B]) = {
-    (map(fab) {_._1}, map(fab) {_._2})
+    (map(fab) { _._1 }, map(fab) { _._2 })
   }
 }
 /*
@@ -55,11 +53,8 @@ object StreamFunctor extends Functor[Stream] {
 ListFunctor.map(List(1, 2, 3))(_ + 10)
 OptionFunctor.map(Some(1))(_ + 10)
 
-
-
 ListFunctor.unzip(List(1 -> 10, 2 -> 20, 3 -> 30))
 OptionFunctor.unzip(Some((1, 2)))
-
 
 /*
 def map2[A,B,C](la: List[A], lb: List[B])(f: (A,B) => C): List[C] = {
@@ -80,7 +75,6 @@ def map[A,B](pa: Par[A])(f: A => B): Par[B] = {
  flatMap(pa) { a => unit(f(a)) }
 }
  */
-
 
 /*
 在这个trait里unit和flatMap是抽象的。这意味着各类型的Monad实例必须实现unit和flatMap，并且会自动获取map和map2两个组件。
@@ -118,42 +112,41 @@ map2把两个封在高阶类型结构里的元素通过运行f函数结合起来
 因为我们能够用flatMap来实现map2，所以Monad就是Applicative。但反之Applicative不一定是Monad。
    */
   def sequence[A](lm: List[M[A]]): M[List[A]] = {
-    lm.foldRight(unit(Nil: List[A])){(a,b) => map2(a,b){_ :: _} }
+    lm.foldRight(unit(Nil: List[A])) { (a, b) => map2(a, b) { _ :: _ } }
   }
   //递归方式sequence
   def sequence_r[A](lm: List[M[A]]): M[List[A]] = {
     lm match {
-      case Nil => unit(Nil: List[A])
-      case h::t => map2(h,sequence_r(t)){_ :: _}
+      case Nil    => unit(Nil: List[A])
+      case h :: t => map2(h, sequence_r(t)) { _ :: _ }
     }
   }
   //高效点的sequence（可以并行运算Par）
   def bsequence[A](iseq: IndexedSeq[M[A]]): M[IndexedSeq[A]] = {
     if (iseq.isEmpty) unit(Vector())
-    else if (iseq.length == 1) map(iseq.head){Vector(_)}
+    else if (iseq.length == 1) map(iseq.head) { Vector(_) }
     else {
-      val (l,r) = iseq.splitAt(iseq.length / 2)
-      map2(bsequence(l),bsequence(r)) {_ ++ _}
+      val (l, r) = iseq.splitAt(iseq.length / 2)
+      map2(bsequence(l), bsequence(r)) { _ ++ _ }
     }
   }
 
-  def travers[A,B](la: List[A])(f: A => M[B]): M[List[B]] = {
-    la.foldRight(unit(Nil: List[B])){(a,b) => map2(f(a),b){_ :: _}}
+  def travers[A, B](la: List[A])(f: A => M[B]): M[List[B]] = {
+    la.foldRight(unit(Nil: List[B])) { (a, b) => map2(f(a), b) { _ :: _ } }
   }
   def replicateM[A](n: Int, ma: M[A]): M[List[A]] = {
     if (n == 0) unit(Nil)
-    else map2(ma,replicateM(n-1,ma)) {_ :: _}
+    else map2(ma, replicateM(n - 1, ma)) { _ :: _ }
   }
-  def factor[A,B](ma: M[A], mb: M[B]): M[(A,B)] = {
-    map2(ma,mb){(a,b) => (a,b)}
+  def factor[A, B](ma: M[A], mb: M[B]): M[(A, B)] = {
+    map2(ma, mb) { (a, b) => (a, b) }
   }
-  def cofactor[A,B](e: Either[M[A],M[B]]): M[Either[A,B]] = {
+  def cofactor[A, B](e: Either[M[A], M[B]]): M[Either[A, B]] = {
     e match {
-      case Right(b) => map(b){x => Right(x)}
-      case Left(a) => map(a){x => Left(x)}
+      case Right(b) => map(b) { x => Right(x) }
+      case Left(a)  => map(a) { x => Left(x) }
     }
   }
-
 
   /*
   A=>[B]是瑞士数学家Heinrich Kleisli法则的箭头（Kleisli Arrow）。我们可以用Kleisli Arrow来实现一个函数compose:
@@ -164,8 +157,8 @@ map2把两个封在高阶类型结构里的元素通过运行f函数结合起来
     a => flatMap(f(a))(g)
   }
 
-  def flatMapByCompose[A,B](ma: M[A])(f: A => M[B]): M[B] = {
-     compose((_ : Unit) => ma, f)(())
+  def flatMapByCompose[A, B](ma: M[A])(f: A => M[B]): M[B] = {
+    compose((_: Unit) => ma, f)(())
   }
 
   /*
@@ -174,25 +167,22 @@ compose的实现还是通过了flatMap这个主导Monad实例行为的函数。�
 flatMap和compose是互通的，可以相互转换。
    */
 
-
-
   /*
   由于compose是通过flatMap实现的。compose + unit也可以成为Monad最基本组件。实际上还有一组基本组件join + map + unit：
 
 
   仔细观察函数款式（signature），推导并不难。map A=>M[B] >>> M[M[B]]，实际上join是个展平函数M[M[A]] >>> M[A]。
    */
-  def join[A](mma: M[M[A]]): M[A] = flatMap(mma) {ma => ma}
+  def join[A](mma: M[M[A]]): M[A] = flatMap(mma) { ma => ma }
 
-  def flatMapByJoin[A,B](ma: M[A])(f: A => M[B]): M[B] = {
-               join(map(ma)(f))
-           }
+  def flatMapByJoin[A, B](ma: M[A])(f: A => M[B]): M[B] = {
+    join(map(ma)(f))
+  }
 
-   def composeByjoin[A,B,C](f: A => M[B], g: B => M[C]): A => M[C] = {
-               a => join(map(f(a))(g))
-           }
+  def composeByjoin[A, B, C](f: A => M[B], g: B => M[C]): A => M[C] = {
+    a => join(map(f(a))(g))
+  }
 }
-
 
 val listMonad = new Monad[List] {
   override def unit[A](a: A): List[A] = List(a)
@@ -201,10 +191,8 @@ val listMonad = new Monad[List] {
 }
 
 listMonad.map(List(1, 2, 3))(_ + 10)
-listMonad.map2(List(1, 2), List(3, 4)){ (a, b) => List(a, b)}
+listMonad.map2(List(1, 2), List(3, 4)) { (a, b) => List(a, b) }
 // 的确我们从listMonad中自动获得了可用的map和map2.
-
-
 
 val optionMonad = new Monad[Option] {
   override def unit[A](a: A): Option[A] = Some(a)
@@ -212,8 +200,8 @@ val optionMonad = new Monad[Option] {
   override def flatMap[A, B](ma: Option[A])(f: (A) => Option[B]): Option[B] = ma flatMap f
 }
 
-optionMonad.map(Some(1)){ _ + 10}
-optionMonad.map2(Some(1), Some(2)){(a, b) => a + b }
+optionMonad.map(Some(1)) { _ + 10 }
+optionMonad.map2(Some(1), Some(2)) { (a, b) => a + b }
 
 /*
 现在我们似乎可以说任何可以flatMap（具备flatMap函数）的数据类型都是Monad。
@@ -258,11 +246,8 @@ Monoid的结合性操作是这样的：op(a,op(b,c)) == op(op(a,b),c)  对Monad�
 A=>[B]是瑞士数学家Heinrich Kleisli法则的箭头（Kleisli Arrow）。我们可以用Kleisli Arrow来实现一个函数compose:
  */
 
-
-
-optionMonad.flatMap(Some(12)){ a => Some(a + 10)}
-optionMonad.compose((_: Unit) => Some(12), {(a: Int) => Some(a + 10)})()
-
+optionMonad.flatMap(Some(12)) { a => Some(a + 10) }
+optionMonad.compose((_: Unit) => Some(12), { (a: Int) => Some(a + 10) })()
 
 /*
 至于Monad恒等性，我们已经得到了unit这个Monad恒等值：
@@ -274,7 +259,6 @@ def unit[A](a: A): M[A]。通过unit我们可以证明Monad的左右恒等：
 
 由于compose是通过flatMap实现的。compose + unit也可以成为Monad最基本组件。实际上还有一组基本组件join + map + unit：
  */
-
 
 // TODO http://www.cnblogs.com/tiger-xc/p/4479724.html
 
@@ -289,4 +273,4 @@ def unit[A](a: A): M[A]。通过unit我们可以证明Monad的左右恒等：
 2、支持泛函式的循序命令执行流程，即：在高阶类结构内部执行操作流程。flatMap在这里起了关键作用，它确保了流程环节间一个环节的输出值成为另一个环境的输入值
 
 那么我们可不可以说：Monad就是泛函编程中支持泛函方式流程式命令执行的特别编程模式。
- */
+ */ 

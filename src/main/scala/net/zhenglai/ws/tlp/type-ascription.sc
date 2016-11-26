@@ -4,9 +4,8 @@ we just use `val`s or `def`s without "saying the type explicitly in the source"
 This being explicit about the type of something, is called a Type Ascription (sometimes called a "Type Annotation", but this naming convention can easily cause confusion, and is not what is used in Scala’s spec).
  */
 
-
 trait Thing
-def getThing = new Thing { }
+def getThing = new Thing {}
 
 // without Type Ascription, the type is infered to be `Thing`
 val infered = getThing
@@ -32,4 +31,4 @@ In case of doubt you can refer to the below hint-questions to whether or not, in
   Related hint: Including Type Ascriptions speeds up compilation, also it’s generally nice to see the return type of a method.
 
 So we put Type Ascriptions after value names.
- */
+ */ 

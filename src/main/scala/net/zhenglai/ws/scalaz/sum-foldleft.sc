@@ -17,7 +17,6 @@ def sum[A: Monoid](xs: List[A]): A = {
   xs.foldLeft(m.mzero)(m.mappend)
 }
 
-
 // Now we can apply the same abstraction to pull out FoldLeft typeclass.
 
 trait FoldLeft[F[_]] {
@@ -45,5 +44,4 @@ In the above example, the traits Monoid and FoldLeft correspond to Haskell’s t
 
 All this is broken down into just the pieces you need. So, it’s a bit like ultimate ducktyping because you define in your function definition that this is what you need and nothing more.
  */
-
 

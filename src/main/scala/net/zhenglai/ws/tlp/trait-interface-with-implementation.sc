@@ -28,7 +28,6 @@ ba.a
 bc.c
 b1.b
 
-
 // diamond problem
 
 trait A { def common = "A" }

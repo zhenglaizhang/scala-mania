@@ -38,7 +38,6 @@ fromByUnfold(5).take(5).toList
 def fromByUnfold_2(s: Int): Stream[Int] = Stream.unfold(s)(s => scala.Some(s, s + 2))
 fromByUnfold_2(5).take(5).toList
 
-
 def fibByUnfold: Stream[Int] = Stream.unfold((0, 1)) {
   case (a, s) => scala.Some((a, (s, a + s)))
 }
@@ -50,14 +49,14 @@ fibByUnfold.take(10).toList
 
 fibByUnfold.mapByUnfoldInfinite(_ + 10).take(10).toList
 
-(fromByUnfold(1).mapByUnfoldInfinite {_ + 10}).take(5).toList
+(fromByUnfold(1).mapByUnfoldInfinite { _ + 10 }).take(5).toList
 //> res9: List[Int] = List(11, 12, 13, 14, 15)
-(fromByUnfold(1).mapByUnfoldInfinite {_ + 10}).takeByUnfold(5).toList
+(fromByUnfold(1).mapByUnfoldInfinite { _ + 10 }).takeByUnfold(5).toList
 //> res10: List[Int] = List(11, 12, 13, 14, 15)
-(fromByUnfold(1).mapByUnfoldInfinite {_ + 10}).takeWhileByUnfold(_ < 15).toList
+(fromByUnfold(1).mapByUnfoldInfinite { _ + 10 }).takeWhileByUnfold(_ < 15).toList
 //> res11: List[Int] = List(11, 12, 13, 14)
-(fromByUnfold(1).mapByUnfoldInfinite {_ + 10}).filterByUnfold(_ < 15).toList
+(fromByUnfold(1).mapByUnfoldInfinite { _ + 10 }).filterByUnfold(_ < 15).toList
 //> res12: List[Int] = List(11, 12, 13, 14)
-(fromByUnfold(5) zip fromByUnfold(1).mapByUnfoldInfinite {_ + 10}).take(5).toList
+(fromByUnfold(5) zip fromByUnfold(1).mapByUnfoldInfinite { _ + 10 }).take(5).toList
 //> res13: List[(Int, Int)] = List((5,11), (6,12), (7,13), (8,14), (9,15))
 

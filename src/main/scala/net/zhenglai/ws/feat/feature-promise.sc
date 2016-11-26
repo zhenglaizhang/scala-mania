@@ -34,7 +34,6 @@ The returned Future might not be the same object as the Promise, but calling the
  */
 val taxCutF: Future[TaxCut] = taxCut.future
 
-
 /*
 In Scala, you can complete a Promise either with a success or a failure.
 Once you have done this, that Promise instance is no longer writable, and future attempts to do so will lead to an exception.
@@ -45,7 +44,6 @@ completing your Promise like this leads to the successful completion of the asso
  the completion of the Promise and the processing of the completed Future will not happen in the same thread. It’s more likely that you create your Promise, start computing its value in another thread and immediately return the uncompleted Future to the caller.
  */
 taxCut.success(TaxCut(20))
-
 
 object Government {
   def redeemCampaignPledge(): Future[TaxCut] = {
@@ -64,12 +62,11 @@ Please don’t get confused by the usage of the apply method of the Future compa
  */
 
 val fut = Government.redeemCampaignPledge
-fut.foreach{ x =>
+fut.foreach { x =>
   println(s"Got future result $x")
 }
 
-
-import scala.util.{Success, Failure}
+import scala.util.{ Success, Failure }
 val taxCutF2: Future[TaxCut] = Government.redeemCampaignPledge()
 println("Now that they're elected, let's see if they remember their promises...")
 taxCutF2.onComplete {
@@ -79,14 +76,7 @@ taxCutF2.onComplete {
     println(s"They broke their promises! Again! Because of a ${ex.getMessage}")
 }
 
-
 Thread.sleep(9999)
-
-
-
-
-
-
 
 // Future-based programming in practice
 /*
@@ -98,7 +88,6 @@ If you want to make use of the future-based paradigm in order to increase the sc
 
  a service in your application might make multiple calls to your database layer and/or some external web service, receiving multiple futures, and then compose them to return a new Future, all in a very readable for comprehension, such as the one you saw in the previous article. The web layer will turn such a Future into a Future[Response].
  */
-
 
 /*
 Non-blocking IO

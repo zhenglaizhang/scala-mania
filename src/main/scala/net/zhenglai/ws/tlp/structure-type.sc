@@ -6,9 +6,7 @@ Structural Types are often described as "type-safe duck typing"
 does it implement interface X? => "does it have a method with this signature?"
  */
 
-
 type JavaClosable = java.io.Closeable
-
 
 // type alias for structural type
 type OpenerCloser = {
@@ -19,7 +17,7 @@ type OpenerCloser = {
 /*
  It basically says that the only thing we expect from the type is that it should have this method. It could have more methods - so it’s not an exact match but the minimal set of methods a type has to define in order to be valid.
  */
-def closeQuietly(closable: {def close(): Unit}): Unit = {
+def closeQuietly(closable: { def close(): Unit }): Unit = {
   try {
     closable.close()
   } catch {

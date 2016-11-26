@@ -2,14 +2,12 @@
  延后计算（lazy evaluation）是指将一个表达式的值计算向后拖延直到这个表达式真正被使用的时候。在讨论lazy-evaluation之前，先对泛函编程中比较特别的一个语言属性”计算时机“(strict-ness)做些介绍。strict-ness是指系统对一个表达式计算值的时间点模式：即时计算的（strict)，或者延后计算的（non-strict or lazy）。non-strict或者lazy的意思是在使用一个表达式时才对它进行计值。
  */
 
-
 def nonLazyF(x: Int) = {
   println("inside function")
   x + 1
 }
 //nonLazyF(1 / 0)
 // no output here! calculation is done before enter nonLazyF
-
 
 def lazyF(x: => Int) = {
   println("inside function")

@@ -7,17 +7,15 @@ apply a function partially. What this means is that, when applying the function,
 Do not confuse partially applied functions with partially defined functions, which are represented by the PartialFunction type in Scala.
  */
 
-
 // predicate Email => Boolean, which we aliased to the type EmailFilter
 type EmailFilter = Email => Boolean
 
 case class Email(
-  subject: String,
-  text   : String,
-  sender : String,
-  recipient: String)
-
-
+  subject:   String,
+  text:      String,
+  sender:    String,
+  recipient: String
+)
 
 type IntPairPredicate = (Int, Int) => Boolean
 
@@ -30,7 +28,6 @@ val lt: IntPairPredicate = _ < _
 val le: IntPairPredicate = _ <= _
 val eq: IntPairPredicate = _ == _
 
-
 /*
 As you can see, you have to use the placeholder _ for all parameters not bound to an argument value. Unfortunately, you also have to specify the type of those arguments, which makes partial function application in Scala a bit tedious.
 
@@ -39,11 +36,8 @@ The reason is that the Scala compiler cannot infer these types, at least not in 
 val minimumSize: (Int, Email) => Boolean = sizeConstraint(ge, _: Int, _: Email)
 val maximumSize: (Int, Email) => Boolean = sizeConstraint(le, _: Int, _: Email)
 
-
 val constr20: (IntPairPredicate, Email) => Boolean = sizeConstraint(_: IntPairPredicate, 20, _: Email)
 val constr30: (IntPairPredicate, Email) => Boolean = sizeConstraint(_: IntPairPredicate, 30, _: Email)
-
-
 
 /*
 From methods to function objects
@@ -52,7 +46,6 @@ When doing partial application on a method, you can also decide to not bind any 
  */
 
 val sizeConstraintFn: (IntPairPredicate, Int, Email) => Boolean = sizeConstraint _
-
 
 val min20: EmailFilter = minimumSize(20, _: Email)
 val max20: EmailFilter = maximumSize(20, _: Email)

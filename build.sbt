@@ -6,6 +6,17 @@ version in Global := "1.0"
 
 scalaVersion in Global := "2.11.8"
 
+licenses := Seq(("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0")))
+homepage := scmInfo.value map (_.browseUrl)
+scmInfo := Some(ScmInfo(
+  url("https://github.com/zhenglaizhang/scala-mania"),
+  "scm:git:git@github.com:zhenglaizhang/scala-mania.git")
+)
+developers := List(
+  Developer("zhenglaizhang", "Zhenglai Zhang", "zhenglaizhang@hotmail.com", url("http://zhenglaizhang.net"))
+)
+
+
 // deps versions
 val AKKA_VERSION = "2.4.14"
 val AKKA_HTTP_VERSION = "10.0.0"
@@ -46,6 +57,8 @@ lazy val commonScalacOptions = Seq(
     "-deprecation"
     , "-encoding", "UTF-8"
     //    , "-feature" // Emit warning and location for usages of features that should be imported explicitly
+    , "language:_"
+    , "target:jvm-1.8"
     //    , "-unchecked" // Enable additional warnings where generated code depends on assumptions
     ////    , "-Xfatal-warnings"
     //    , "-Xfuture" // Turn on future language features
@@ -160,6 +173,8 @@ ScalariformKeys.preferences := ScalariformKeys.preferences.value
   .setPreference(AlignSingleLineCaseStatements, true)
   .setPreference(DoubleIndentClassDeclaration, true)
   .setPreference(DanglingCloseParenthesis, Force)
+
+includeFilter in scalariformFormat := "*.scala" || "*.sc" || "*.sbt"
 
 libraryDependencies += "org.scala-lang.modules" % "scala-async_2.11" % "0.9.5"
 

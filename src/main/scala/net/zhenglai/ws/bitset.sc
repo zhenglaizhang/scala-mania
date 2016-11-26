@@ -14,7 +14,6 @@ primeBits & evenBits
 
 primeBits & evenSet
 
-
 // add single integers to the lsit
 
 primeBits + 13 + 17
@@ -29,10 +28,7 @@ primeBits - 11
 primeBits -- Seq(2, 7)
 primeBits -- evenBits
 
-
 primeBits &~ evenBits
-
-
 
 /*
 In Scala the BitSet classes are part of the Scala collection framework and give all the great many methods available for other collections

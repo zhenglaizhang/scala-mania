@@ -24,7 +24,6 @@ wordFrequencies.filter {
   case (w, _) => w
 }
 
-
 /*
 Please note that you have to specify the type of the value here, the Scala compiler cannot infer it for pattern matching anonymous functions.
 

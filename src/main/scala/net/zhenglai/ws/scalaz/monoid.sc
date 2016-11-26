@@ -15,15 +15,11 @@ import Scalaz._
 List(1, 2, 3, 4) ++ Nil
 Nil ++ List(1, 2, 3)
 
-
 /*
 It doesn’t matter if we do (3 * 4) * 5 or 3 * (4 * 5). Either way, the result is 60. The same goes for ++. … We call this property associativity. * is associative, and so is ++, but -, for example, is not.
  */
 
 (3 * 2) * (8 * 5) assert_=== 3 * (2 * (8 * 5))
-
-
-
 
 /*
 A monoid is when you have an associative binary function and a value which acts as an identity with respect to that function.
@@ -62,11 +58,8 @@ LYAHFGG also warns that just because it’s named mappend it does not mean it’
 List(1, 2, 3) mappend List(4, 5, 6)
 "one" mappend "two"
 
-
 // I think the idiomatic Scalaz way is to use |+|:
 1 |+| 2
-
-
 
 /*
 zero represents the identity value for a particular monoid.
@@ -74,8 +67,6 @@ zero represents the identity value for a particular monoid.
 
 Monoid[List[Int]].zero
 Monoid[String].zero
-
-
 
 /*
 Tags.Multiplication
@@ -97,16 +88,11 @@ This is where Scalaz 7.1 uses tagged type. The built-in tags are Tags. There are
 
 Tags.Multiplication(10) |+| Monoid[Int @@ Tags.Multiplication].zero
 
-
 /*
 Nice! So we can multiply numbers using |+|. For addition, we use plain Int.
  */
 
 10 |+| Monoid[Int].zero
-
-
-
-
 
 /*
 Another type which can act like a monoid in two distinct but equally valid ways is Bool. The first way is to have the or function || act as the binary function along with False as the identity value. … The other way for Bool to be an instance of Monoid is to kind of do the opposite: have && be the binary function and then make True the identity value.
@@ -121,11 +107,6 @@ Monoid[Boolean @@ Tags.Disjunction].zero |+| Tags.Disjunction(true)
 Monoid[Boolean @@ Tags.Disjunction].zero |+| Monoid[Boolean @@ Tags.Disjunction].zero
 Monoid[Boolean @@ Tags.Conjunction].zero |+| Tags.Conjunction(true)
 Monoid[Boolean @@ Tags.Conjunction].zero |+| Tags.Conjunction(false)
-
-
-
-
-
 
 /*
 With Ordering, we have to look a bit harder to recognize a monoid, but it turns out that its Monoid instance is just as intuitive as the ones we’ve met so far and also quite useful.

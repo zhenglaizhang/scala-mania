@@ -7,7 +7,6 @@ import Scalaz._
 class User
 class Checkin
 
-
 /*
 The really clever thing here is that this whole setup is just at the type-level: the values are just Int in the underlying byte code.
 
@@ -25,14 +24,14 @@ object h11 {
   type @@[T, U] = T with Tagged[U] // Thanks to @retronym for suggesting this type alias
 
   class Tagger[U] {
-    def apply[T](t : T) : T @@ U = t.asInstanceOf[T @@ U]
+    def apply[T](t: T): T @@ U = t.asInstanceOf[T @@ U]
   }
   def tag[U] = new Tagger[U]
 
   // Manual specialization needed here ... specializing apply above doesn't help
-  def tag[U](i : Int) : Int @@ U = i.asInstanceOf[Int @@ U]
-  def tag[U](l : Long) : Long @@ U = l.asInstanceOf[Long @@ U]
-  def tag[U](d : Double) : Double @@ U = d.asInstanceOf[Double @@ U]
+  def tag[U](i: Int): Int @@ U = i.asInstanceOf[Int @@ U]
+  def tag[U](l: Long): Long @@ U = l.asInstanceOf[Long @@ U]
+  def tag[U](d: Double): Double @@ U = d.asInstanceOf[Double @@ U]
 
   def fetch[A](id: Int @@ A): A = null.asInstanceOf[A]
 
@@ -44,26 +43,16 @@ object h11 {
 
   val ids = tag[User](1) :: tag[User](2) :: tag[User](3) :: Nil
 
-  val users : List[(Int @@ User)] = ids       // Compiles
+  val users: List[(Int @@ User)] = ids // Compiles
   //  val checkins : List[Int @@ Checkin] = ids   // Does not compile
   //}
 }
-
-
-
-
-
-
-
-
-
 
 /*
 case class KiloGram(value: Double)
 
 Although it does adds type safety, it’s not fun to use because we have to call x.value every time we need to extract the value out of it. Tagged type to the rescue.
  */
-
 
 /*
 scala> sealed trait KiloGram
@@ -86,8 +75,6 @@ scala> 2 * Tag.unwrap(mass)
 scala> 2 * scalaz.Tag.unsubst[Double, Id, KiloGram](mass)
 res2: Double = 40.0
  */
-
-
 
 /*
 As of scalaz 7.1 we need to explicitly unwrap tags. Previously we could just do 2 * mass. Due to a problem on REPL SI-8871, Tag.unwrap doesn’t work, so I had to use Tag.unsubst. Just to be clear, A @@ KiloGram is an infix notation of scalaz.@@[A, KiloGram]. We can now define a function that calculates relativistic energy.
@@ -117,13 +104,11 @@ scala> energyR(10.0)
 As you can see, passing in plain Double to energyR fails at compile-time. This sounds exactly like newtype except it’s even better because we can define Int @@ KiloGram if we want.
  */
 
-
-
 /*
 One of the really neat things that Scalaz7 makes use of is a very clever trick with types in order to disambiguate typeclass instances for a given type T.
  */
 
-Monoid[Int].append(1, {2})
+Monoid[Int].append(1, { 2 })
 1 |+| 2
 
 /*
@@ -164,8 +149,6 @@ val mass = KiloGram(20.0)
 2 * Tag.unwrap(mass)
 
 2 * scalaz.Tag.unsubst[Double, Id, KiloGram](mass)
-
-
 
 sealed trait JoulePerKiloGram
 

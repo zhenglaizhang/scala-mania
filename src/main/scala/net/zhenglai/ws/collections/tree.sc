@@ -1,4 +1,4 @@
-import net.zhenglai.ds.{Branch, Leaf}
+import net.zhenglai.ds.{ Branch, Leaf }
 
 val tree = Branch(Branch(Leaf(1), Leaf(2)), Branch(Branch(Leaf(10), Leaf(8)), Leaf(3)))
 

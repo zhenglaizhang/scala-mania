@@ -31,11 +31,10 @@ be careful with methods that aren’t transformers. Calls to the following stric
   stream.sum
  */
 
-
 // we call Stream.cons(...) we call the apply method. Written out in full it would be Stream.cons.apply(...)
 def from(start: Int): Stream[Int] = {
   println(s"===> start => $start")
-  Stream.cons(start, from(start+1))
+  Stream.cons(start, from(start + 1))
 }
 
 def from2(start: Int): Stream[Int] = start #:: from(start + 1)

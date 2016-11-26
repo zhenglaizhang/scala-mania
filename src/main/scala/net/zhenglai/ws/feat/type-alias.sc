@@ -17,7 +17,6 @@ object DataType {
   def apply(): ConcreteClass#DataType = Nil
 }
 
-
 val d = ConcreteClass.DataType.empty
 
 type IntSeq = Seq[Int]

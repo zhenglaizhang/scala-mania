@@ -3,7 +3,6 @@
 Self Types are used in order to "require" that, if another class uses this trait, it should also provide implementation of whatever it is that you’re requiring.
  */
 
-
 trait Module {
   lazy val serviceInModule = new ServiceInModule
 }

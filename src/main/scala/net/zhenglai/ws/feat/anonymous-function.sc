@@ -7,7 +7,6 @@ new Function[Int, Int] {
 
 (x: Int, y: Int) => s"($x, $y)"
 
-
 () -> {
   val props = System.getProperties.keys()
   while (props.hasMoreElements) {

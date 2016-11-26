@@ -52,7 +52,6 @@ object NoFuture {
   } yield combine(espresso, foam)
 }
 
-
 import scala.concurrent.future
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -110,9 +109,6 @@ object FutureExplanation {
 The computation of the value to be returned by a Future will start at some non-deterministic time after that Future instance has been created, by some thread assigned to it by the ExecutionContext.
  */
 
-
-
-
 /*
 Callbacks
 
@@ -127,16 +123,12 @@ grind("arabica beans").onFailure {
   case ex => println("This grinder needs a replacement, seriously!")
 }
 
-import scala.util.{Success, Failure}
+import scala.util.{ Success, Failure }
 
 grind("baked beans").onComplete {
   case Success(ground) => println(s"got my $ground")
-  case Failure(ex) => println("This grinder needs a replacement, seriously!")
+  case Failure(ex)     => println("This grinder needs a replacement, seriously!")
 }
-
-
-
-
 
 /*
 The real power of the Scala futures is that they are composable.
@@ -172,19 +164,12 @@ val flatFuture: Future[Boolean] = heatWater(Water(25)).flatMap {
   water => temperatureOk(water)
 }
 
-
 "-" * 20
 
 val acceptable: Future[Boolean] = for {
   heatedWater <- heatWater(Water(25))
   okay <- temperatureOk(heatedWater)
 } yield okay
-
-
-
-
-
-
 
 "*" * 30
 
@@ -203,7 +188,6 @@ def prepareCappuccinoSequentially(): Future[Cappuccino] = {
 }
 
 prepareCappuccinoSequentially
-
 
 /*
 Hence, make sure to instantiate all your independent futures before the for comprehension:

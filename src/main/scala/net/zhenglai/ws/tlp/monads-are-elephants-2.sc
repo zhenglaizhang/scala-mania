@@ -65,7 +65,6 @@ Not all monads can be filtered. Using the container analogy, filtering might rem
 The Scala spec actually specifies that "for" expands using pattern matching. Basically, the real spec expands the rules I present here to allow patterns on the left side of the <-.
  */
 
-
 val ns = List(1, 2)
 val os = List(4, 5)
 val ps = List(3, 4)
@@ -73,24 +72,19 @@ val qs =
   for (n <- ns; o <- os; p <- ps)
     yield n * o * p
 
-
-
 val qs2 = ns flatMap { n =>
-  os flatMap { o => {
-    ps map { p => n * o * p }
-  }
+  os flatMap { o =>
+    {
+      ps map { p => n * o * p }
+    }
   }
 }
-
-
-
 
 for (n <- ns; o <- os) println(n * o)
 ns foreach { n => os foreach { o => println(n * o) } }
 
 class M[A](v: A) {
   def flatMap[B](f: A => M[B]): M[B] = ???
-
 
   /*
   foreach can just call map and throw away the results. That might not be the most runtime efficient way of doing things, though, so Scala allows you to define foreach your own way.

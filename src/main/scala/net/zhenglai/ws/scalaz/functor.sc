@@ -77,7 +77,6 @@ final class FunctorOps[F[_],A] private[syntax](val self: F[A])(implicit val F: F
 }
 */
 
-
 /*
 Functor必须遵循一些定律：
   1、map(fa)(x => x) === fa
@@ -98,7 +97,6 @@ trait FunctorLaw extends InvariantFunctorLaw {
 import scalaz.Functor
 import scalaz.Scalaz._
 
-
 // identity law => map(fa)(x => x) === fa
 assert(List(1, 2, 3).map(x => x) === List(1, 2, 3))
 
@@ -115,7 +113,6 @@ assert(x === y)
 val z = List(1, 2, 3).map(((i: Int) => i + 1) compose ((i: Int) => i * 3))
 
 //assert(x === z)
-
 
 /*
 针对我们自定义的类型，我们只要实现map函数就可以得到这个类型的Functor实例。一旦实现了这个类型的Functor实例，我们就可以使用以上scalaz提供的所有Functor组件函数了。
@@ -158,8 +155,6 @@ scala> functor.laws[Item3].check
 + functor.composite: OK, passed 100 tests.
  */
 
-
-
 /*
 Item3的Functor实例是合理的。
 
@@ -175,7 +170,7 @@ F.map(Item3("Morning", "Noon", "Night"))(_.length)
 F.apply(Item3("Morning", "Noon", "Night"))(_.length)
 F(Item3("Morning", "Noon", "Night"))(_.length)
 /** Lift `f` into `F`. */
-F.lift((s: String) => s.length)(Item3("Morning","Noon","Night"))
+F.lift((s: String) => s.length)(Item3("Morning", "Noon", "Night"))
 
 /*
 虽然函数升格（function lifting (A => B) => (F[A] => F[B])是Functor的主要功能，但我们说过：一旦能够获取Item3类型的Functor实例我们就能免费使用所有的注入方法：
@@ -187,16 +182,13 @@ val f1 = (_: Int) + 1
 val f1a = f1 map (_ * 3)
 f1a(2) // andThen
 
-(((_: Int) + 1) map((k: Int) => k * 3))(2)
+(((_: Int) + 1) map ((k: Int) => k * 3))(2)
 
-(((_: Int) + 1) map((_: Int) * 3))(2)
+(((_: Int) + 1) map ((_: Int) * 3))(2)
 
 (((_: Int) + 1) andThen ((_: Int) * 3))(2)
 
 (((_: Int) * 3) compose ((_: Int) + 1))(2)
-
-
-
 
 /*
 我们也可以对Functor进行compose：
@@ -204,14 +196,12 @@ f1a(2) // andThen
 */
 
 val f = Functor[List] compose F
-val item3 = Item3("Morning","Noon","Night")
+val item3 = Item3("Morning", "Noon", "Night")
 
 f.map(List(item3, item3))(_.length)
 
-
 val rf = F compose Functor[List]
-rf.map(Item3(List("1"),List("22"),List("333")))(_.length)
-
+rf.map(Item3(List("1"), List("22"), List("333")))(_.length)
 
 /*
 我们再试着在Item3类型上调用那些免费的注入方法：
@@ -249,11 +239,6 @@ item3.void
 我现在还没有想到这些函数的具体用处。不过从运算结果来看，用这些函数来产生一些数据模型用在游戏或者测试的模拟（simulation）倒是可能的。
 */
 
-
-
-
-
-
 /*
 scalaz提供了许多现成的Functor实例。我们先看看一些简单直接的实例：
 */
@@ -263,26 +248,22 @@ Functor[java.util.concurrent.Callable]
 Functor[Stream]
 Functor[Vector]
 
-
-
-
 /*
 对那些多个类型变量的类型我们可以采用部分施用方式：即type lambda来表示。一个典型的类型：Either[E,A]，我们可以把Left[E]固定下来: Either[String, A]，我们可以用type lambda来这样表述：
 */
 
-Functor[({type l[x] = Either[String, x]})#l].map(Right(3))(_ + 3)
+Functor[({ type l[x] = Either[String, x] })#l].map(Right(3))(_ + 3)
 /*
 如此这般我可以对Either类型进行map操作了。
 
 函数类型的Functor是针对返回类型的：
 */
 
-Functor[({type l[x] = String => x})#l].map((s: String) => s + "!")(_.length)("Hello")
+Functor[({ type l[x] = String => x })#l].map((s: String) => s + "!")(_.length)("Hello")
 
-Functor[({type l[x] = (String,Int) => x})#l].map((s: String, i: Int) => s.length + i)(_ * 10)("Hello",5)
+Functor[({ type l[x] = (String, Int) => x })#l].map((s: String, i: Int) => s.length + i)(_ * 10)("Hello", 5)
 
-Functor[({type l[x] = (String,Int,Boolean) => x})#l].map((s: String,i: Int, b: Boolean)=> s + i.toString + b.toString)(_.toUpperCase)("Hello",3,true)
-
+Functor[({ type l[x] = (String, Int, Boolean) => x })#l].map((s: String, i: Int, b: Boolean) => s + i.toString + b.toString)(_.toUpperCase)("Hello", 3, true)
 
 /*
 tuple类型的Functor是针对最后一个元素类型的：
@@ -297,18 +278,15 @@ scala> (1, 2, 3) map {_ + 1}
 res28: (Int, Int, Int) = (1,2,4)
 Note that the operation is only applied to the last value in the Tuple,
  */
-Functor[({type l[x] = (String, x)})#l].map(("a", 1))(_ + 2)
+Functor[({ type l[x] = (String, x) })#l].map(("a", 1))(_ + 2)
 
-Functor[({type l[x] = (String,Int,x)})#l].map(("a",1,"b"))(_.toUpperCase)
+Functor[({ type l[x] = (String, Int, x) })#l].map(("a", 1, "b"))(_.toUpperCase)
 
+Functor[({ type l[x] = (String, Int, Boolean, x) })#l].map(("a", 1, true, Item3("a", "b", "c")))(i => i.map(_.toUpperCase))
 
-Functor[({type l[x] = (String,Int,Boolean,x)})#l].map(("a",1,true,Item3("a","b","c")))(i => i.map(_.toUpperCase))
+(1, 2, 3) map { _ + 1 }
 
-(1, 2, 3) map { _ + 1}
-
-List(1, 2, 3) map { _ + 1}
-
-
+List(1, 2, 3) map { _ + 1 }
 
 /*
 Function as Functors
@@ -334,12 +312,11 @@ fff(4)
 This is interesting. Basically map gives us a way to compose functions, except the order is in reverse from f compose g. No wonder Scalaz provides ∘ as an alias of map. Another way of looking at Function1 is that it’s an infinite map from the domain to the range. Now let’s skip the input and output stuff and go to
  */
 
-
 /*
 In Haskell, the fmap seems to be working as the same order as f compose g. Let’s check in Scala using the same numbers:
  */
 
-(((_: Int) * 3) map { _ + 100 }) (1)
+(((_: Int) * 3) map { _ + 100 })(1)
 
 /*
  Scalaz:
@@ -349,18 +326,17 @@ So the order is completely different. Since map here’s an injected method of F
  */
 
 // TODO how is this working?
-List(1, 2, 3) map {4*}
-List(1, 2, 3) map {4*_}
+List(1, 2, 3) map { 4* }
+List(1, 2, 3) map { 4 * _ }
 
 // (a => b) map (b => c) ===> (a => c)
 val f4 = ((x: Int) => s"hello $x") map { _.length }
 f4(1)
 f4(1000)
 
-
 /*
 [We can think of fmap as] a function that takes a function and returns a new function that’s just like the old one, only it takes a functor as a parameter and returns a functor as the result. It takes an a -> b function and returns a function f a -> f b. This is called lifting a function.
 */
 
-val f5 = Functor[List].lift{(_: Int) * 2}
+val f5 = Functor[List].lift { (_: Int) * 2 }
 f5(List(1, 2, 3, 4))

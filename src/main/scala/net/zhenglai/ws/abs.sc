@@ -11,7 +11,6 @@ object H1 {
 
 }
 
-
 object H2 {
 
   val b = new Building(100)
@@ -46,9 +45,7 @@ Note the new is no longer necessary to create an object, the same form that Pyth
   println(h.feet)
 }
 
-
 H3
-
 
 object H4 {
 

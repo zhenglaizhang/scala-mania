@@ -17,7 +17,6 @@ val fe = new AnyRef with ((List[Int]) => AnyRef) {
   def m(xs: List[Int]): AnyRef = ???
 }
 
-
 // When we define a method we see that we cannot assign it to a val.
 def add1(n: Int): Int = n + 1
 // type: (n: Int)Int, not a function type
@@ -34,7 +33,6 @@ val g = new Function[Int, Int] {
 }
 g(12)
 
-
 // Automatic Expansion
 // In contexts where the compiler expects a function type, the desired expansion is inferred and the underscore is not needed:
 Seq(1, 2, 3).map(add1 _)
@@ -44,9 +42,6 @@ Seq(1, 2, 3).map(add1)
 val z: Int => Int = add1
 val y = add1: Int => Int
 
-
-
-
 // Effect of Overloading
 // In the presence of overloading you must provide enough type information to disambiguate:
 //"foo".substring _
@@ -54,10 +49,7 @@ val y = add1: Int => Int
 val sub = "foo".substring _: (Int => String)
 sub(1)
 
-
-
 // Scala actually has a lot of ways to specify parameters, but they all work with η-expansion. Let’s look at each case.
-
 
 // Parameterless Methods
 def x = println("hi")
@@ -71,7 +63,6 @@ val z2 = x // assign the result of invocation of x()
 z1()
 z1
 
-
 /*
 Multiple Parameters
 
@@ -80,7 +71,6 @@ Methods with multiple parameters expand to equivalent multi-parameter functions:
 def plus(a: Int, b: Int): Int = a + b
 plus _
 
-
 // Methods with multiple parameter lists become curried functions:
 def plus2(a: Int)(b: Int): Int = a + b
 val p = plus2 _
@@ -88,12 +78,9 @@ val p = plus2 _
 // Perhaps surprisingly, such methods also need explicit η-expansion when partially applied:
 plus2(2) _
 
-
 // However curried functions do not.
 val foo = plus2 _
 foo(1) // no underscore needed
-
-
 
 /*
 Type Parameters
@@ -106,7 +93,6 @@ val x1 = id _
 val y1 = id[Int] _
 y1(10)
 
-
 /*
 Implicit Parameters
 
@@ -118,8 +104,6 @@ bar[Int] _
 
 def baz[N](n: N)(implicit ev: Numeric[N]): N = n
 baz[Int] _
-
-
 
 /*
 By-Name Parameters
@@ -135,7 +119,6 @@ byName(println("hi"))
 val byNameFn = byName _
 byNameFn(println("hi again"))
 
-
 /*
 Also note that η-expansion can capture a by-name argument and delay its evaluation:
  */
@@ -145,7 +128,6 @@ def meow(a: => Unit): () => Unit = a _
 val xx = meow(println("hi meow"))
 
 xx()
-
 
 /*
 Sequence Parameters
@@ -163,8 +145,6 @@ def yy = wow _
 yy(Seq(1, 2, 3))
 wow(1, 2, 3)
 
-
-
 /*
 Default arguments are ignored for the purposes of η-expansion; it is not possible to use named arguments to simulate partial application.
  */
@@ -173,9 +153,6 @@ def mhm(n: Int = 3, s: String) = s * n
 val zz = mhm _
 
 //mhm(42) _
-
-
-
 
 // Way to automatically convert class method to function taking explicit class argument in Scala?
 
@@ -191,8 +168,6 @@ af(ains)(4)
 
 // val af = ains.f _
 // val af = A(4).f _
-
-
 
 // aMethod 与 aFunction 在类型上是不同的。
 def aMethod(x: Int) = x + 10
@@ -220,10 +195,6 @@ aMethod转换成函数toFunctions后具备了函数的特性。
 Scala的编译器能针对需要函数的地方把方法转换成函数!!!
 */
 
-
-
-
-
 /*
 函数就是普通的对象
  */
@@ -238,14 +209,12 @@ val addThem = new Function2[Int, Int, Int] {
 add(1, 2) == addThem.apply(1, 2)
 add(1, 2) == addThem(1, 2)
 
-
-
 // 多态函数
 def findFirstInt(arr: Array[Int], target: Int): Int = {
   def loop(idx: Int): Int = idx match {
-    case l if (l > arr.length) => -1
+    case l if (l > arr.length)   => -1
     case i if (arr(i) == target) => idx
-    case _ => loop(idx + 1)
+    case _                       => loop(idx + 1)
   }
   loop(0)
 }
@@ -255,32 +224,31 @@ findFirstInt((2 to 1000).toArray, 200)
 
 def findFirstString(arr: Array[String], target: String): Int = {
   def loop(idx: Int): Int = idx match {
-    case l if (l >= arr.length) => -1        //indicate not found
+    case l if (l >= arr.length)  => -1 //indicate not found
     case i if (arr(i) == target) => idx
-    case _ => loop(idx + 1)
+    case _                       => loop(idx + 1)
   }
   loop(0)
-}                                               //> findFirstString: (arr: Array[String], target: String)Int
-findFirstString(Array("Hello","My","World"),"My")
+} //> findFirstString: (arr: Array[String], target: String)Int
+findFirstString(Array("Hello", "My", "World"), "My")
 //> res55: Int = 1
-findFirstString(Array("Hello","My","World"),"Yours")
+findFirstString(Array("Hello", "My", "World"), "Yours")
 //> res56: Int = -1
 
-
 // 可以通过多态函数把共通点抽象出来
-def findFirstA[A](arr: Array[A], target: A)(eq: (A,A) => Boolean): Int = {
+def findFirstA[A](arr: Array[A], target: A)(eq: (A, A) => Boolean): Int = {
   def loop(idx: Int): Int = idx match {
-    case l if l >= arr.length => -1
+    case l if l >= arr.length    => -1
     case i if eq(arr(i), target) => idx
-    case _ => loop(idx + 1)
+    case _                       => loop(idx + 1)
   }
 
   loop(0)
 }
 
-findFirstA[Int](Array(2,4,3,9,0),3)((x,y) => x == y)
+findFirstA[Int](Array(2, 4, 3, 9, 0), 3)((x, y) => x == y)
 //> res57: Int = 2
-findFirstA[String](Array("Hello","My","World"),"My")((x,y) => x == y)
+findFirstA[String](Array("Hello", "My", "World"), "My")((x, y) => x == y)
 //> res58: Int = 1
 
 /*

@@ -87,4 +87,4 @@ scala> Functor[List[Int]].lift((_: Int) + 2)
 scala> Functor[List].lift((_: Int) + 2)
 res13: List[Int] => List[Int] = <function1>
 In the cheat sheet I started I originally had type parameters for Equal written as Equal[F], which is the same as Scalaz 7’s source code. Adam Rosien pointed out to me that it should be Equal[A].
- */
+ */ 

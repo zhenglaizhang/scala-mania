@@ -6,7 +6,6 @@ Scala does not allow two such implicit conversions taking place, however, so one
 Scala has a restriction on automatic conversions to add a method, which is that it won’t apply more than one conversion in trying to find methods.
  */
 
-
 class A(val n: Int)
 
 class B(val m: Int, val n: Int)
@@ -37,7 +36,6 @@ object T1 {
 
 T1
 
-
 /*
 However, if an implicit definition requires an implicit parameter itself, Scala will look for additional implicit values for as long as needed.
  */
@@ -59,7 +57,6 @@ object T2 {
 }
 
 T2
-
 
 object T1Translated {
   implicit def toA(n: Int): A = new A(n)
@@ -101,8 +98,6 @@ object T2Translated {
 So, while bToC is being used as an implicit conversion, aToB and toA are being passed as implicit parameters, instead of being chained as implicit conversions.
  */
 
-
-
 class T {
   val t = "T"
 }
@@ -139,7 +134,6 @@ object Test {
   import U._
   import V._
 
-
   def run = {
     "good": T
 
@@ -156,9 +150,6 @@ object Test {
 }
 
 Test.run
-
-
-
 
 /*
 Context bounds were introduced in Scala 2.8.0, and are typically used with the so-called type class pattern, a pattern of code that emulates the functionality provided by Haskell type classes, though in a more verbose manner.
@@ -177,7 +168,7 @@ An Array initialization on a parameterized type requires a ClassManifest to be a
 Another very common example in the library is a bit more complex:
  */
 
-def f[A : ClassManifest](n: Int) = new Array[A](n)
+def f[A: ClassManifest](n: Int) = new Array[A](n)
 
 def g[A: Ordering](a: A, b: A) = implicitly[Ordering[A]].compare(a, b)
 
@@ -202,7 +193,6 @@ So, naturally, one can write them in their full syntax, which is specially usefu
  */
 
 def h[A](a: A, b: A)(implicit ev: Ordering[A]) = ev.compare(a, b)
-
 
 /*
 What are View Bounds used for?
@@ -257,13 +247,9 @@ It'd be better if the context bound section can indicates further the ad hoc pol
 I know view bounds may be deprecated soon
  */
 
-
-
-
 /*
 Well looks like most of the view bounds (<%) can be converted to context bounds. Lets see different strategies that can help us do the same. Suppose we have:
  */
-
 
 def foo[T <% Int](x: T) = x
 
@@ -274,20 +260,17 @@ implicit def a[T](n: T) = n match {
 
 foo("123")
 
-
 type L[X] = X => Int
 
 def goo[T: L](x: T): Int = x
 goo("23")
 
 // We could combine the type declaration with the function definition as:
-def goo1[T : ({type L[X] = X => Int})#L](x: T):Int = x
+def goo1[T: ({ type L[X] = X => Int })#L](x: T): Int = x
 
-def goo2[T](x: T)(implicit ev: T => Int):Int = x
+def goo2[T](x: T)(implicit ev: T => Int): Int = x
 
 goo2("123")
-
-
 
 /*More generalized version
 
@@ -302,4 +285,4 @@ res10: String = 1000
 
 scala> goo2("1000")
 res11: String = 1000
- */
+ */ 

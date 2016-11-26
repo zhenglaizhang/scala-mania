@@ -9,9 +9,6 @@ for {
 
 List(1, 2) map (_ + 2)
 
-
-
-
 val first = List(1, 2)
 val next = List(3, 4)
 
@@ -24,11 +21,13 @@ for {
 // is resolved by compiler as
 
 first flatMap {
-  i => next flatMap {
-    j => List(5, 6) map {
-      k => s"$i -> $j -> $k"
+  i =>
+    next flatMap {
+      j =>
+        List(5, 6) map {
+          k => s"$i -> $j -> $k"
+        }
     }
-  }
 }
 /*
 The key abstraction is the flatMap, which binds the computation through chaining. Each invocation of flatMap returns the same data structure type (but of different value), that serves as the input to the next command in chain. In the above snippet, flatMap takes as input a closure (SomeType) => List[AnotherType] and returns a List[AnotherType]. The important point to note is that all flatMaps take the same closure type as input and return the same type as output. This is what "binds" the computation thread - every item of the sequence in the for-comprehension has to honor this same type constraint.
@@ -60,11 +59,13 @@ for {
 } yield product.name
 
 maybeOrder flatMap {
-  order => order.lineItem flatMap {
-    lineItem => lineItem.product map {
-      product => product.name
+  order =>
+    order.lineItem flatMap {
+      lineItem =>
+        lineItem.product map {
+          product => product.name
+        }
     }
-  }
 }
 
 /*
@@ -83,15 +84,14 @@ val capitals =
 
 for {
   i <- list
-  j <- capitals get(i) orElse(Some("None"))
-} yield(j)
-
-
+  j <- capitals get (i) orElse (Some("None"))
+} yield (j)
 
 list flatMap {
-  i => capitals.get(i).orElse(Some("None")) map {
-    j => j
-  }
+  i =>
+    capitals.get(i).orElse(Some("None")) map {
+      j => j
+    }
 }
 
 /*
@@ -105,4 +105,4 @@ other models of computation are arrows and applicative functors
 
 Scala has binding syntax for monads, but not (yet) for arrows [ for applicative functors extra syntax makes less sense ]
 
- */
+ */ 

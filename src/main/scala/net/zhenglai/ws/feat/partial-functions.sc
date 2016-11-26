@@ -24,20 +24,16 @@ val pf: PartialFunction[(String, Int), String] = {
   case (word, freq) if freq > 3 && freq < 25 => word
 }
 
-
 val pf2 = new PartialFunction[(String, Int), String] {
-  override
-  def apply(wordFrequency: (String, Int)): String = wordFrequency match {
+  override def apply(wordFrequency: (String, Int)): String = wordFrequency match {
     case (word, freq) if freq > 3 && freq < 25 => word
   }
 
-  override
-  def isDefinedAt(x: (String, Int)): Boolean = x match {
+  override def isDefinedAt(x: (String, Int)): Boolean = x match {
     case (word, freq) if freq > 3 && freq < 25 => true
     case _                                     => false
   }
 }
-
 
 /*
 map
@@ -69,13 +65,12 @@ Map over the collection, safely destructuring and then transforming each element
 
 safe destructuring semantics, the most concise solution is to explicitly type your collection to prevent unintended widening and use explicit pattern matching
  */
-val xs = List((1,2)->3,(4,5)->6,(7,8)->9)
+val xs = List((1, 2) -> 3, (4, 5) -> 6, (7, 8) -> 9)
 
 xs map { case ((x, y), u) => ((y, x), u) }
 (xs: List[((Int, Int), Int)]) map {
   case ((x, y), u) => ((y, x), u)
 }
-
 
 /*
 Partial function provide the means to be chained, allowing for a neat functional alternative to the chain of responsibility pattern known from object-oriented programming.
@@ -92,16 +87,15 @@ b map {
   case 2 => "two"
 }
 
-b map {x =>
+b map { x =>
   x match {
     case 1 => "one"
     case 2 => "two"
   }
 }
 
-xs map { case (a,b) => (a.swap, b) }
-xs map { case ((a, b), c) => (b, a) -> c}
-
+xs map { case (a, b) => (a.swap, b) }
+xs map { case ((a, b), c) => (b, a) -> c }
 
 val matchMe = "Foo"
 
@@ -109,19 +103,15 @@ val matchMe = "Foo"
 Use anonymous function with foreach
  */
 Seq("Hello", "Foo") foreach {
-  case `matchMe` => "Do something special with" + `matchMe`
+  case `matchMe`     => "Do something special with" + `matchMe`
   case nonSpecialKey => s"Do something with non special $nonSpecialKey"
 }
-
-
 
 /*
 he expression { case (a, b) => a + b } is interpreted differently based on the expected type. In your definition of f1 it created a PartialFunction[(Int, Int), Int] which was cast to a Function1[(Int, Int), Int], i.e. ((Int, Int)) => Int whereas in the definition of f2 it created a Function2[Int, Int, Int], i.e. (Int, Int) => Int
  */
 val f1: ((Int, Int)) => Int = { case (a, b) => a + b }
 val f2: (Int, Int) => Int = { case (a, b) => a + b }
-
-
 
 /*
 纯函数是可以部分作用（partially apply）的：对一个多入参函数可以分多次每次作用（apply）一个参数
@@ -132,12 +122,11 @@ val f2: (Int, Int) => Int = { case (a, b) => a + b }
  */
 
 // 我们知道partialApply的结果是一个入参B返回C的函数。所以想办法从匹配类型款式上着手。可以直接用一个函数文本表达这个结果：给我一个B=b，我返回给你一个C=f(a,b)；一个典型的lambda表达式。
-def partialApply[A,B,C](a: A, f: (A, B) => C): B => C = (b: B) => f(a, b)
+def partialApply[A, B, C](a: A, f: (A, B) => C): B => C = (b: B) => f(a, b)
 def addTwoParams(a: Int, b: Int) = a + b
 addTwoParams(2, 5)
 val applyOnce = partialApply(2, addTwoParams)
 applyOnce(5)
-
 
 /*
 函数变形在泛函编程中是常用的技巧。下面的Curry function就是把一个N个输入参数的函数变成一个参数的N次作用：

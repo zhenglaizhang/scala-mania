@@ -32,17 +32,9 @@ Let's do some counting.
 
  */
 
-
-
-
-
-
-
 // Product types! This and That
 type Person = (String, Int)
 case class Person2(name: String, age: Int)
-
-
 
 /*
   How many of type Byte or Boolean? → 2 + 256 = 258
@@ -70,7 +62,6 @@ Boolean = true | false
 Int = 1 | 2 | 3 | ...
  */
 
-
 // Sum types => Encoded by Subclassing
 sealed trait Pet
 case class Color()
@@ -87,27 +78,24 @@ val bob: Pet = Cat("Bob")
 //    <console>:14: warning: match may not be exhaustive.
 
 def sayHi(p: Pet): String = p match {
-  case Cat(n) => s"Meow $n!"
-  case Fish(n, _) => s"Hello fishy $n!"
+  case Cat(n)      => s"Meow $n!"
+  case Fish(n, _)  => s"Hello fishy $n!"
   case Squid(n, _) => s"Hi $n"
 }
 
 sayHi(Cat("cat"))
 sayHi(Squid("squid", 12))
 
-
 object hide {
   // Intuition: computations that may fail to return a value
   sealed trait Option[+A]
   case object None extends Option[Nothing]
-  case class  Some[A](a: A) extends Option[A]
-
+  case class Some[A](a: A) extends Option[A]
 
   // Intuition: computations that may return this or that
   sealed trait Either[+A, +B]
-  case class Left[A](a: A)  extends Either[A, Nothing]
+  case class Left[A](a: A) extends Either[A, Nothing]
   case class Right[B](b: B) extends Either[Nothing, B]
-
 
   // Intuition: computations that may fail with an exception
   sealed trait Try[+A]
@@ -139,9 +127,6 @@ import util._ // it's scala.util.Try
 
 def safeDiv2(a: Int, b: Int): Try[Int] =
   Try(a / b)
-
-
-
 
 /*
 Because Scala is a hybrid OO – functional Language, it doesn’t support algebraic datatypes in a direct way (like in Haskell)

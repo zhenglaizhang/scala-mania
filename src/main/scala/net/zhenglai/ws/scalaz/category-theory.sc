@@ -14,15 +14,12 @@ Before giving a precise definition of ‘category’, we should become familiar 
 There are two ways that I can think of to express this in Scala. One is by using a value a: Set[Person]:
  */
 
-
 sealed trait Person {}
 case object John extends Person {}
 case object Mary extends Person {}
 case object Sam extends Person {}
 
 val a: Set[Person] = Set[Person](John, Mary, Sam)
-
-
 
 /*
 Another way of looking at it, is that Person as the type is a finite set already without Set. Note: In CM, Lawvere and Schanuel use the term “map”, but I’m going to change to arrow like Mac Lane and other books.
@@ -69,7 +66,6 @@ val favoritePerson: Person => Person = {
   case Sam  => Mary
 }
 
-
 /*
 An arrow, in which the domain and codomain are the same set A, and for each of a in A, f(a) = a, is called an identity arrow.
 
@@ -79,8 +75,6 @@ Again, identity is an arrow, so it works on an element in the set, not the set i
  */
 identity(John)
 
-
-
 /*
 in the category of finite sets, the “objects” translate to types like Person and Breakfast, and arrows translate to functions like Person => Person. The external diagram looks a lot like the type-level signatures like Person => Person.
 
@@ -89,8 +83,6 @@ The final basic ingredient, which is what lends all the dynamics to the notion o
 ’f ∘ g’ is read ’f following g‘, or sometimes ’f of g‘.
  */
 val favoritePersonBreakfast = favoriteBreakfast compose favoritePerson
-
-
 
 /*
 Data for a category consists of the four ingredients:
@@ -108,4 +100,4 @@ The identity laws:
 
 The associative law:
   If f: A => B, g: B => C, h: C => D, then h ∘ (g ∘ f) = (h ∘ g) ∘ f
- */
+ */ 

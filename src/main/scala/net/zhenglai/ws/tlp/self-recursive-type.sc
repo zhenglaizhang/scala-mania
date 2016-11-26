@@ -8,10 +8,9 @@ the subtype constraint itself is parametrized by one of the binders occurring on
 recursive type
  */
 
-
 object NotGood {
 
-  val apple  = new Apple
+  val apple = new Apple
   val orange = new Orange
 
   /*
@@ -43,7 +42,7 @@ val orange = new Orange
 
 //orange compareTo apple
 
-object `りんご`  extends Apple
+object `りんご` extends Apple
 object Jabłuszko extends Apple
 
 `りんご` compareTo Jabłuszko
@@ -52,7 +51,6 @@ object Jabłuszko extends Apple
 /*
 	You could get the same type-safety using more fancy tricks, like path dependent types or implicit parameters and type classes. But the simplest thing that does-the-job here would be this.
  */
-
 
 /*
 F-Bounded Type Polymorphism
@@ -96,7 +94,7 @@ which states that the values of the list are of some consistent subtype of T.
 
 The existential types clutter up our codebase and sometimes give the type inferencer headaches, but it's not intractable. The ability to state these existential type bounds does
    */
-  def debitAll(amount: BigDecimal, accounts: List[T forSome { type T <: Account[T]}]): List[T forSome { type T <: Account[T]}] = {
+  def debitAll(amount: BigDecimal, accounts: List[T forSome { type T <: Account[T] }]): List[T forSome { type T <: Account[T] }] = {
     accounts map { _.addFunds(-amount) }
   }
 

@@ -5,85 +5,84 @@ List就像一个管子，里面可以装载一长条任何类型的东西。如�
 object h1 {
 
   sealed trait List[+A] {
-    def sum: Int  = this match {
-      case Nil => 0
+    def sum: Int = this match {
+      case Nil                        => 0
       case Cons(h: Int, t: List[Int]) => h + t.sum
     }
 
     def head: A = this match {
-      case Nil => sys.error("Empty List!")
+      case Nil        => sys.error("Empty List!")
       case Cons(h, t) => h
     }
 
     def tail: List[A] = this match {
-      case Nil => sys.error("Empty List!")
+      case Nil        => sys.error("Empty List!")
       case Cons(h, t) => t
     }
 
     def take(n: Int): List[A] = n match {
       case k if k < 0 => sys.error("index < 0")
-      case 0 => Nil
+      case 0          => Nil
       case _ => this match {
-        case Nil => Nil
+        case Nil        => Nil
         case Cons(h, t) => Cons(h, t.take(n - 1))
       }
     }
 
     def takeWhile(f: A => Boolean): List[A] = this match {
-      case Nil => Nil
+      case Nil        => Nil
       case Cons(h, t) => if (f(h)) Cons(h, t.takeWhile(f)) else Nil
     }
 
     def drop(n: Int): List[A] = n match {
       case k if k < 0 => sys.error("index < 0")
-      case 0 => this
+      case 0          => this
       case _ => this match {
-        case Nil => Nil
-        case Cons(h, t) => t.drop(n-1)
+        case Nil        => Nil
+        case Cons(h, t) => t.drop(n - 1)
       }
     }
 
     def dropWhile(f: A => Boolean): List[A] = this match {
-      case Nil => Nil
+      case Nil        => Nil
       case Cons(h, t) => if (f(h)) t.dropWhile(f) else this
     }
 
     def sum[B >: A](z: B)(f: (B, B) => B): B = this match {
-      case Nil => z
-//      case Cons(h: Int, t: List[Int]) => f(h, t.sum(z)(f))
+      case Nil        => z
+      //      case Cons(h: Int, t: List[Int]) => f(h, t.sum(z)(f))
       case Cons(h, t) => f(h, t.sum(z)(f))
     }
 
     def ++[B >: A](xs: List[B]): List[B] = this match {
-      case Nil => xs
+      case Nil        => xs
       case Cons(h, t) => Cons(h, t.++(xs))
     }
 
     def init: List[A] = this match {
-      case Nil => sys.error("Empty list")
+      case Nil          => sys.error("Empty list")
       case Cons(_, Nil) => Nil
-      case Cons(h, t) => Cons(h, t.init)
+      case Cons(h, t)   => Cons(h, t.init)
     }
 
     def length: Int = this match {
-      case Nil => 0
+      case Nil        => 0
       case Cons(h, t) => 1 + t.length
     }
 
-
     // map flatMap filter => for comprehension (Functor, Applicative, Monad)
     def map[B](f: A => B): List[B] = this match {
-      case Nil => Nil
+      case Nil        => Nil
       case Cons(h, t) => Cons(f(h), (t map f))
     }
 
     def flatMap[B](f: A => List[B]): List[B] = this match {
-      case Nil => Nil
+      case Nil        => Nil
       case Cons(h, t) => f(h) ++ (t flatMap f)
     }
 
     def filter(f: A => Boolean): List[A] = this match {
-      case Nil => Nil
+      case Nil        => Nil
       case Cons(h, t) => if (f(h)) Cons(h, t.filter(f)) else t.filter(f)
     }
 
@@ -102,10 +101,9 @@ foldRight不是一个尾递归算法（tail recursive）
 6  // 1 + (2 + (3 + 0)) = 6
      */
     def foldRight[B](z: B)(op: (A, B) => B): B = this match {
-      case Nil => z
+      case Nil        => z
       case Cons(h, t) => op(h, t.foldRight(z)(op))
     }
-
 
     /*
 左折叠算法就是所有List元素对z的操作op。从图二可见，op对z,a操作后op的结果再作为z与b再进行op操作，如此循环。看来又是一个递归算法，而z就是一个用op累积的值了：op(op(op(z,a),b),c)。左折叠算法的括号是从左边开始的。
@@ -114,7 +112,7 @@ foldRight不是一个尾递归算法（tail recursive）
     def foldLeft[B](z: B)(op: (B, A) => B): B = {
       @annotation.tailrec
       def foldL[B](l: List[A], z: B)(op: (B, A) => B): B = l match {
-        case Nil => z
+        case Nil        => z
         case Cons(h, t) => foldL(t, op(z, h))(op)
       }
 
@@ -128,14 +126,14 @@ foldRight不是一个尾递归算法（tail recursive）
      */
     // notice the B >: A bounds!!
     def reduceLeft[B >: A](op: (B, A) => B): B = this match {
-      case Nil => sys.error("Empty list")
+      case Nil        => sys.error("Empty list")
       case Cons(h, t) => t.foldLeft[B](h)(op)
     }
 
-    def reduceRight[B >: A](op: (A, B) => B) : B = this match {
-      case Nil => throw new UnsupportedOperationException("empty.reduceLeft")
+    def reduceRight[B >: A](op: (A, B) => B): B = this match {
+      case Nil          => throw new UnsupportedOperationException("empty.reduceLeft")
       case Cons(h, Nil) => h
-      case Cons(h, t) => op(h, t.reduceRight(op))
+      case Cons(h, t)   => op(h, t.reduceRight(op))
     }
 
     /*
@@ -143,10 +141,10 @@ foldRight不是一个尾递归算法（tail recursive）
      */
 
     // TODO
-//    def scanLeft[B >: A](z: B)(op: (B, A) => B): List[B] = this match {
-//      case Nil => Cons(z, Nil)
-//      case Cons(h, t) => Cons(z, t.scanLeft(op(z, h)(op)))
-//    }
+    //    def scanLeft[B >: A](z: B)(op: (B, A) => B): List[B] = this match {
+    //      case Nil => Cons(z, Nil)
+    //      case Cons(h, t) => Cons(z, t.scanLeft(op(z, h)(op)))
+    //    }
   }
 
   case class Cons[+A](override val head: A, override val tail: List[A]) extends List[A]
@@ -188,8 +186,6 @@ object h2 {
 
 }
 
-
-
 var xs = Array(1, 2, 3)
 xs.head
 xs.tail
@@ -212,41 +208,36 @@ li.take(0)
 
 "-" * 20
 
-List(1,2,3).head                                  //> res0: Int = 1
-List(1,2,3).tail                                  //> res1: ch3.list.List[Int] = Cons(2,Cons(3,Nil))
-List(1,2,3).take(2)                               //> res2: ch3.list.List[Int] = Cons(1,Cons(2,Nil))
-List(1,2,3).takeWhile(x => x < 3)                 //> res3: ch3.list.List[Int] = Cons(1,Cons(2,Nil))
-List(1,2,3) takeWhile {_ < 3}                     //> res4: ch3.list.List[Int] = Cons(1,Cons(2,Nil))
-List(1,2,3).drop(2)                               //> res5: ch3.list.List[Int] = Cons(3,Nil)
-List(1,2,3).dropWhile(x => x < 3)                 //> res6: ch3.list.List[Int] = Cons(3,Nil)
-List(1,2,3) dropWhile {_ < 3}                     //> res7: ch3.list.List[Int] = Cons(3,Nil)
-
+List(1, 2, 3).head //> res0: Int = 1
+List(1, 2, 3).tail //> res1: ch3.list.List[Int] = Cons(2,Cons(3,Nil))
+List(1, 2, 3).take(2) //> res2: ch3.list.List[Int] = Cons(1,Cons(2,Nil))
+List(1, 2, 3).takeWhile(x => x < 3) //> res3: ch3.list.List[Int] = Cons(1,Cons(2,Nil))
+List(1, 2, 3) takeWhile { _ < 3 } //> res4: ch3.list.List[Int] = Cons(1,Cons(2,Nil))
+List(1, 2, 3).drop(2) //> res5: ch3.list.List[Int] = Cons(3,Nil)
+List(1, 2, 3).dropWhile(x => x < 3) //> res6: ch3.list.List[Int] = Cons(3,Nil)
+List(1, 2, 3) dropWhile { _ < 3 } //> res7: ch3.list.List[Int] = Cons(3,Nil)
 
 List(1, 2, 3) ++ List(4, 5, 6)
 
 List(1, 2, 3).length
 List(1, 2, 3).init
 
-
-
 List(1, 2, 3).map(_ + 10)
 List(1, 2, 3).flatMap(x => List(x + 10))
 List(1, 2, 3).filter(_ != 2)
 
-
 List(1, 2, 3).foldRight(0)(_ + _)
-List(1, 2, 3).foldRight(1){_ * _}
+List(1, 2, 3).foldRight(1) { _ * _ }
 
-List(1, 2, 3).foldRight(Nil:List[Int]) { (a, z) => Cons(a + 10, z)}
+List(1, 2, 3).foldRight(Nil: List[Int]) { (a, z) => Cons(a + 10, z) }
 /*
 注意以上的起始值1和Nil:List[Int]。z的类型可以不是A，所以op的结果也有可能不是A类型，但在以上的加法和乘法的例子里z都是Int类型的。但在List重构例子里z是List[Int]类型，所以op的结果也是List[Int]类型的，这点要特别注意。
  */
 List(1, 2, 3).foldLeft(0)(_ + _)
-List(1, 2, 3).foldLeft(1){_ * _}
+List(1, 2, 3).foldLeft(1) { _ * _ }
 
 // res29: h1.List[Int] = Cons(13,Cons(12,Cons(11,Nil)))
-List(1, 2, 3).foldLeft(Nil:List[Int]) { (z, a) => Cons(a + 10, z)}
-
+List(1, 2, 3).foldLeft(Nil: List[Int]) { (z, a) => Cons(a + 10, z) }
 
 collection.immutable.List(1, 2, 3).scanLeft(0)(_ + _)
 collection.immutable.List(1, 2, 3).scanRight(0)(_ + _)

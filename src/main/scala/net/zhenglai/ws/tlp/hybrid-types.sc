@@ -21,7 +21,6 @@ Ok, the range of possible different (read disjointed) sort of shapes is given by
 
 val rect = Rectangle(width = 20.0F, height = 10.0F)
 
-
 /*
 Type cosmetics (type synonyms/alias)
 
@@ -43,7 +42,6 @@ we also saw some obstacles while the compiler only checks for the underlying, ma
 the compiler won’t complain, since it only checks the underlying type Double, which is ok for both constructor parameters (no matter the type synonyms they exhibit).
  */
 val bad = Rectangle2(10.0F: Height, 20.0F: Width)
-
 
 // nested type composition
 case class Point(x: Int, y: Int)

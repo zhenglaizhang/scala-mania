@@ -24,8 +24,6 @@ Context bound A: Semigroup says that A must support |+|. The rest is pattern mat
 (none: Option[String]) |+| "andy".some
 (Ordering.LT: Ordering).some |+| none
 
-
-
 /*
 But if we don’t know if the contents are monoids, we can’t use mappend between them, so what are we to do? Well, one thing we can do is to just discard the second value and keep the first one. For this, the First a type exists.
 
@@ -36,7 +34,6 @@ Haskell is using newtype to implement First type constructor. Scalaz 7 does it u
 Tags.First('a'.some) |+| Tags.First('b'.some)
 Tags.First(none: Option[Char]) |+| Tags.First('b'.some)
 Tags.First('a'.some) |+| Tags.First(none: Option[Char])
-
 
 /*
 If we want a monoid on Maybe a such that the second parameter is kept if both parameters of mappend are Just values, Data.Monoid provides a the Last a type.

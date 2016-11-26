@@ -29,10 +29,8 @@ val l2: List[Fruit] = Orange() :: l1
 
 val l3: List[AnyRef] = "" :: l2
 
-
 // won't compile
 // val a: Array[Any] = Array[Int](1, 2, 3)
 // Array’s invariance
-
 
 // Set[A] is invariant

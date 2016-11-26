@@ -30,10 +30,7 @@ val favoritePerson: Person => Person = {
   case Sam  => Mary
 }
 
-
-
 val johnPoint: Unit => Person = { case () => John }
-
 
 johnPoint()
 johnPoint(())
@@ -42,12 +39,9 @@ val johnsFavouriteBreakfast = favoriteBreakfast compose johnPoint
 johnsFavouriteBreakfast()
 johnsFavouriteBreakfast(())
 
-
 /*
 First-class functions in programming languages that support fp treat functions as values, which allows higher-order functions. Category theory unifies on the other direction by treating values as functions.
  */
-
-
 
 /*
 Equality of arrows of sets
@@ -65,9 +59,8 @@ Because of 1, we can test for equality of arrows of sets f: A => B and g: A => B
     If for each point a: 1 => A, f ∘ a = g ∘ a, then f = g.
  */
 
-
 val favoritePersonsBreakfast = favoriteBreakfast compose favoritePerson
-import org.scalacheck.{Arbitrary, Gen, Prop}
+import org.scalacheck.{ Arbitrary, Gen, Prop }
 
 import scalaz._
 
@@ -78,17 +71,13 @@ implicit val arbPerson: Arbitrary[Person] = Arbitrary {
 }
 
 import scalaz.Scalaz._
-def arrowEqualsProp(f: Person => Breakfast, g: Person => Breakfast)
-  (implicit ev1: Equal[Breakfast], ev2: Arbitrary[Person]): Prop =
+def arrowEqualsProp(f: Person => Breakfast, g: Person => Breakfast)(implicit ev1: Equal[Breakfast], ev2: Arbitrary[Person]): Prop =
   Prop.forAll { a: Person =>
     f(a) === g(a)
   }
 
-
-
 val res = arrowEqualsProp(favoriteBreakfast, favoritePersonsBreakfast)
 res.check
-
 
 /*
 We can generalize arrowEqualsProp a bit:

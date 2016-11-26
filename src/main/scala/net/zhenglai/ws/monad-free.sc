@@ -26,7 +26,8 @@ case class Tell(msg: String) extends Interact[Unit]
 val prg = Seq(
   Ask("What's your first name?"),
   Ask("What's your last name?"),
-  Tell("Hello ??? ???"))
+  Tell("Hello ??? ???")
+)
 
 /*
 这个程序prg是有缺陷的：无法实现交互。好像如果能把Ask指令存放到一个临时变量里就可以达到目的了。那么如果我们把这个prg改写成下面这样：

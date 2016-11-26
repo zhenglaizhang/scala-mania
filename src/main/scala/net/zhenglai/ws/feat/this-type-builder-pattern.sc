@@ -6,7 +6,6 @@ Generally, x.type is the type of any stable identifier x.
 
  */
 
-
 val x = "x"
 val y = x
 
@@ -17,15 +16,7 @@ The static type of y was inferred as String, not as x.type.
  */
 y: y.type
 
-
 val c: x.type = x // explicitly type c with x.type
-
-
-
-
-
-
-
 
 /*
 Composable Builder Pattern using this.type in Scala
@@ -34,7 +25,6 @@ Composable Builder Pattern using this.type in Scala
 trait Buildable[T] {
   def build: T
 }
-
 
 trait HeadBuilder extends Buildable[String] {
   var eyeColor = "brown"
@@ -64,7 +54,6 @@ trait BodyBuilder extends Buildable[String] {
 
   def build = s"limb: $limbCount"
 }
-
 
 class PersonBuilder extends BodyBuilder with HeadBuilder with Buildable[String] {
   override def build: String =

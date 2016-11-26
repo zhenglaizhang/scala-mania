@@ -69,7 +69,6 @@ class M[A](value: A) {
   private def flatten[B](x: M[M[B]]): M[B] = ???
 }
 
-
 class M2[A](value: A) {
   private def unit[B](value: B) = new M2(value)
 

@@ -15,4 +15,3 @@ Monoid的二元操作函数具有结合特性（associativity），与恒等值�
 
 // TODO http://www.cnblogs.com/tiger-xc/p/4447548.html
 
-

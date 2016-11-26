@@ -14,7 +14,6 @@ for {
 
 1 |--> (2, 10) // step to
 
-
 /*
 The MonadPlus type class is for monads that can also act as monoids.
 
@@ -26,7 +25,6 @@ Plus introduces <+> operator to append two containers:
 
 MonadPlus introduces filter operation.
 */
-
 
 List(1, 2, 3) <+> List(4, 5, 6)
 List(1, 2, 3).empty

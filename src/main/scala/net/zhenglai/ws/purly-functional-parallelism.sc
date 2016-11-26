@@ -12,7 +12,6 @@ def sum(xs: IndexedSeq[Int]): Int = {
 
 sum(Array(1, 2, 3, 4))
 
-
 /*
 container type for our result, Par[A] (for parallel ),
  */

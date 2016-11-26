@@ -20,9 +20,7 @@ val b = implicitly[String]
 // failed
 //val c = implicitly[Int]
 
-
 // retrieve an implicit parameter introduced by a Context Bound
 def foo[A: Ordering](a1: A, a2: A) = implicitly[Ordering[A]].compare(a1, a2)
 
-
-implicitly[Ordering[(Int, String)]].compare( (1, "b"), (1, "a") )
+implicitly[Ordering[(Int, String)]].compare((1, "b"), (1, "a"))

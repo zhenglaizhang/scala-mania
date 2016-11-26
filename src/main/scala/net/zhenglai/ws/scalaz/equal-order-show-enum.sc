@@ -33,8 +33,7 @@ object BuiltinEqual {
   override def equals(obj: scala.Any): Boolean = super.equals(obj)
 }
 
-
-trait MyEqual[F] {self =>
+trait MyEqual[F] { self =>
   def equal(a1: F, a2: F): Boolean
 
   /*
@@ -72,8 +71,6 @@ at scala.sys.package$.error(equal-order-show-enum.sc:23)
 at scalaz.syntax.EqualOps.assert_$eq$eq$eq(equal-order-show-enum.sc:12)
 at #worksheet#.#worksheet#(equal-order-show-enum.sc:33)
 */
-
-
 
 /*
 Normally comparison operators like != have lower higher precedence than &&, all letters, etc. Due to special precedence rule /== is recognized as an assignment operator because it ends with = and does not start with =, which drops to the bottom of the precedence:
@@ -196,11 +193,10 @@ import scalaz.Scalaz._
 
 case class Person(name: String, age: Int)
 
-implicit val personEqual: scalaz.Equal[Person] = scalaz.Equal.equal[Person]{(a, b) => a.name == b.name && a.age == b.age }
+implicit val personEqual: scalaz.Equal[Person] = scalaz.Equal.equal[Person] { (a, b) => a.name == b.name && a.age == b.age }
 
 Person("Zhenglai", 23) === Person("Zhenglai", 23)
-Person("Jone",23) === Person("Jone",22)
-
+Person("Jone", 23) === Person("Jone", 22)
 
 /*当然我们也可以通过实现抽象函数equal(a1,a2)函数的方式来构建Equal实例*/
 /*
@@ -208,8 +204,6 @@ implicit val personEqual2 = new Equal[Person] {
   override def equal(a1: Person, a2: Person): Boolean = a1.name == a2.name && a1.age == a2.age
 }
 */
-
-
 
 case class MoneyCents(cents: Int)
 
@@ -225,13 +219,6 @@ MoneyCents(100) === MoneyCents(100)
 /*
 我们知道如何等比Int，我们又可以提供MoneyCents和Int之间的转换关系，那么我们就可以构建Equal[MoneyCents]实例。
 */
-
-
-
-
-
-
-
 
 /*
 Ord is for types that have an ordering. Ord covers all the standard comparing functions such as >, <, >= and <=.
@@ -302,7 +289,6 @@ scala> 1 lt 1.0
 
 1 lt 2
 
-
 /*
 与Equal typeclass 同样，如果我们需要在自定义的类型T上使用Order typeclass的话，有几种方法可以构建Order[T]:
 
@@ -351,11 +337,6 @@ Person("Zhenglai", 21) ?|? Person("test", 21)
 Person("Zhenglai", 21) lt Person("test", 21)
 Person("Zhenglai", 21) gt Person("test", 21)
 
-
-
-
-
-
 /*
 Members of Show can be presented as strings.
 
@@ -381,12 +362,10 @@ implicit val personShow: Show[Person] = Show.show { p => s"${p.name}, ${p.age} y
 Person("Zhenglai", 24).show
 Person("Zhenglai", 24).println
 
-
 3.show
 3.shows
 "hello".print
 "hello".println
-
 
 /*
 Enum members are sequentially ordered types — they can be enumerated. The main advantage of the Enum typeclass is that we can use its types in list ranges. They also have defined successors and predecessors, which you can get with the succ and pred functions.
@@ -452,7 +431,6 @@ Instead of the standard to, Enum enables |-> that returns a List by declaring pr
 'a' -+- 2
 
 'd' --- 2
-
 
 /*
 Enum实例需要实现抽象函数succ,pred。下面是char裂隙Enum实例Enum[Char]的实现：在scalaz/std/AnyVal.scala里的char object

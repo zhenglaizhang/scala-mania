@@ -8,4 +8,4 @@ g ∘ f = 1A and f ∘ g = 1B.
 Awodey names the above definition to be an abstract notion as it does make use only of category theoric notion.
 
 Extending this to Scalaz, learning the nature of an abtract typeclass has the advantage of it applying in all concrete data structures that support it.
- */
+ */ 

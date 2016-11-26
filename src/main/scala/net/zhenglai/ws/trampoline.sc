@@ -25,7 +25,6 @@ foldR((1 to 100).toList, 0, { (a: Int, b: Int) => a + b })
 // foldR((1 to 10000).toList, 0, {(a: Int, b: Int) => a + b})
 // 以上的右折叠算法中自引用部分不在最尾部，Scala compiler无法进行TCE，所以处理一个10000元素的List就发生了StackOverflow。
 
-
 @annotation.tailrec
 def foldL[A, B](xs: List[A], b: B, f: (B, A) => B): B = xs match {
   case Nil    => b
@@ -40,7 +39,7 @@ def foldL2[A, B](xs: List[A], b: B, f: (B, A) => B): B = {
   var az = xs
   while (true) {
     az match {
-      case Nil     => return z
+      case Nil => return z
       case x :: xs => {
         z = f(z, x)
         az = xs
@@ -55,7 +54,6 @@ def foldL2[A, B](xs: List[A], b: B, f: (B, A) => B): B = {
 
 但在实际编程中，统统把递归算法编写成尾递归是不现实的。有些复杂些的算法是无法用尾递归方式来实现的，加上JVM实现TCE的能力有局限性，只能对本地（Local）尾递归进行优化。
  */
-
 
 def even[A](xs: List[A]): Boolean = xs match {
   case Nil    => true
@@ -99,14 +97,13 @@ trait Trampoline[+A] { // Bounce
 case class Done[+A](a: A) extends Trampoline[A]
 case class More[+A](thunk: () => Trampoline[A]) extends Trampoline[A]
 
-
 def even2[A](xs: List[A]): Trampoline[Boolean] = xs match {
-  case Nil => Done(true)
+  case Nil    => Done(true)
   case h :: t => More(() => odd2(t))
 }
 
 def odd2[A](xs: List[A]): Trampoline[Boolean] = xs match {
-  case Nil => Done(false)
+  case Nil    => Done(false)
   case h :: t => More(() => even2(t))
 }
 

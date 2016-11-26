@@ -15,7 +15,7 @@ destructure an instance of a case class in a pattern, and how to write your own 
 case class User(firstName: String, lastName: String, score: Int)
 
 def advance(xs: List[User]) = xs match {
-  case User(_, _, score1) :: User(_,_, score2) :: _ => score1 - score2
+  case User(_, _, score1) :: User(_, _, score2) :: _ => score1 - score2
   case _ => 0
 }
 
@@ -25,7 +25,7 @@ object Twice {
   /*
   an extractor has the opposite role of a constructor:
    */
-  def unapply(z: Int): Option[Int] = if (z%2 == 0) Some(z/2) else None
+  def unapply(z: Int): Option[Int] = if (z % 2 == 0) Some(z / 2) else None
 }
 
 val x = Twice(21)
@@ -65,8 +65,8 @@ If the result of calling unapply is Some[T], this means that the pattern matches
 
 val user: h1.User = new h1.PremiumUser("Zhenglai")
 user match {
-  case h1.FreeUser(name) => s"Hello $name"
-    /*
+  case h1.FreeUser(name)    => s"Hello $name"
+  /*
     the user value is now passed to the unapply method of the PremiumUser companion object, as that extractor is used in the second pattern. This pattern will match, and the returned value is bound to the name parameter.
      */
   case h1.PremiumUser(name) => s"Welcome back, der $name"
@@ -102,14 +102,14 @@ object h2 {
     user match {
       case FreeUser(name, _, p) =>
         if (p > 0.75) s"$name, what can we do for you today?" else s"Hello $name"
-//      case PremiumUser(name, _) => s"Welcome back ,dear $name"
-        // infix operation pattern
+      //      case PremiumUser(name, _) => s"Welcome back ,dear $name"
+      // infix operation pattern
       case name PremiumUser _ => s"Welcome back, dear $name"
     }
 
     val user2: User = new FreeUser("Daniel", 2500, 0.8d)
     user2 match {
-        /*
+      /*
 a boolean extractor is used by just passing it an empty parameter list, which makes sense because it doesn’t really extract any parameters to be bound to variables.
 
 
@@ -117,21 +117,19 @@ Scala’s pattern matching allows to bind the value that is matched to a variabl
 This is done using the @ operator. Since our premiumCandidate extractor expects an instance of FreeUser, we have therefore bound the matched value to a variable freeUser of type FreeUser.
          */
       case freeUser @ premiumCandicate() => s"initing spam program for $freeUser"
-      case _ => "Sending regular news letter to $user2"
+      case _                             => "Sending regular news letter to $user2"
     }
   }
 }
 
 h2.app
 
-
-
 object infixOperationPattern {
-  val xs = 44 #:: 12 #:: 39 #::100 #::11 #:: Stream.empty
+  val xs = 44 #:: 12 #:: 39 #:: 100 #:: 11 #:: Stream.empty
 
   def app = {
     xs match {
-        /*
+      /*
         Scala also allows extractors to be used in an infix notation. So, instead of writing e(p1, p2), where e is the extractor and p1 and p2 are the parameters to be extracted from a given data structure, it’s always possible to write p1 e p2
 
         infix operation pattern head #:: tail could also be written as #::(head, tail)
@@ -141,9 +139,9 @@ object infixOperationPattern {
 
         case head #:: tail will match for a stream of one or more elements. If it has only one element, tail will be bound to the empty stream.
          */
-//      case #::(first, #::(second, _)) => first - second
+      //      case #::(first, #::(second, _)) => first - second
       case first #:: second #:: _ => first - second
-      case _ => -1
+      case _                      => -1
     }
   }
 }
@@ -164,18 +162,17 @@ object extractingSequence {
 
   def app = {
     val r = xs match {
-      case List(a, b) => a * b
+      case List(a, b)    => a * b
       case List(a, b, c) => a + b + c
-      case _ => 0
+      case _             => 0
     }
     println(r)
 
     val r1 = xs match {
       case List(a, b, _*) => a * b
-      case _ => 0
+      case _              => 0
     }
     println(r1)
-
 
     println(greetWithFirstName("Zhenglai"))
     println(greetWithFirstName("Zhenglai Zhang"))
@@ -186,7 +183,6 @@ object extractingSequence {
     println(greet("Zhenglai Zhang"))
     println(greet("Zhenglai Midname Zhang"))
   }
-
 
   /*
   implement and use extractors that return variable-length sequences of extracted values. Extractors are a pretty powerful mechanism. They can often be re-used in flexible ways and provide a powerful way to extend the kinds of patterns you can match against.
@@ -200,12 +196,12 @@ object extractingSequence {
 
   def greetWithFirstName(name: String) = name match {
     case GivenNames(firstName, _*) => s"Good morning, $firstName!"
-    case _ => "Welcom! please make sure to fill in your name!"
+    case _                         => "Welcom! please make sure to fill in your name!"
   }
 
   def greet(fullName: String) = fullName match {
     case Names(first, last, _*) => s"Good morning, $first $last!"
-    case _ => "Welcome! please make sure to fill in your name!"
+    case _                      => "Welcome! please make sure to fill in your name!"
   }
 
   /*
@@ -222,12 +218,7 @@ object extractingSequence {
 
 extractingSequence.app
 
-
 /*
 def unapplySeq(object: S): Option[Seq[T]]
  */
-
-
-
-
 

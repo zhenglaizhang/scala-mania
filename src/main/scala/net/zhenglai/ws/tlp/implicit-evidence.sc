@@ -21,13 +21,10 @@ Note that making the ServiceState trait sealed assures that no-one can suddenly 
   def create() = new Service[Stopped]
 }
 
-
-
-
 /*
 As you see, Phantom Types are yet another great facility to make our code even more type-safe (or shall I say "state-safe"!?).
  */
-class Service[State <: Service.ServiceState] private() {
+class Service[State <: Service.ServiceState] private () {
   import Service._
 
   @implicitNotFound("The service is already stopped")
@@ -38,8 +35,8 @@ class Service[State <: Service.ServiceState] private() {
   /*
   This makes the compiler look for an implicit value of type =:= parameterized with the proper types.
    */
-//  def start(msg: String)(implicit ev: State =:= Stopped): Service[Started]= {
-  def start(msg: String)(implicit ev: IsStopped[State]): Service[Started]= {
+  //  def start(msg: String)(implicit ev: State =:= Stopped): Service[Started]= {
+  def start(msg: String)(implicit ev: IsStopped[State]): Service[Started] = {
     println(s"Starting $msg ...")
     this.asInstanceOf[Service[Started]]
   }

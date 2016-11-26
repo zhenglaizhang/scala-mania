@@ -9,4 +9,4 @@ So then the question is whether to use GenSeq or Seq. The problem with GenSeq is
 
 The Scala collection library avoids code duplication and achieves the "same-result-type" principle by using generic builders and traversals over collections in so-called implementation traits. These traits are named with a Like suffix; for instance, IndexedSeqLike is the implementation trait for IndexedSeq, and similarly,  TraversableLike is the implementation trait for Traversable. Collection classes such as Traversable or IndexedSeq inherit all their concrete method implementations from these traits. Implementation traits have two type parameters instead of one for normal collections. They parameterize not only over the collection's element type, but also over the collection's representation type, i.e., the type of the underlying collection, such as Seq[I] or List[T]...
 
- */
+ */ 

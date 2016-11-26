@@ -3,7 +3,6 @@
 To use recursion, define a trait with a type declaration. A type declaration is an abstract type that can have type parameters and bounds. Then, define a subtrait that implements the type declaration. Recursion is allowed in this implementation, with restrictions that are discussed later.
  */
 
-
 // defne abstract type and bounds
 trait Recurse {
   type Next <: Recurse

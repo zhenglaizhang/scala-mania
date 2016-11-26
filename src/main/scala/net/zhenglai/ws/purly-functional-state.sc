@@ -8,13 +8,11 @@ rand.nextInt(10)
 
 (1 to 100).map(x => rollDie).groupBy(x => x).mapValues(x => x.size).foreach(println)
 
-
 /* 0 to 5 off-by-one error */
 def rollDie: Int = {
   val rand = new scala.util.Random
   rand.nextInt(6)
 }
-
 
 trait RNG {
   def nextInt: (Int, RNG)
@@ -53,7 +51,6 @@ abstract class FooNew {
   def bar: (Bar, FooNew)
   def baz: (Int, FooNew)
 }
-
 
 // a state action
 type Rand[+A] = RNG => (A, RNG)
