@@ -22,7 +22,7 @@ class AkkademyDb extends Actor with ActorLogging with Stash {
     case x: GetRequest  =>
       stash()
     case CheckConnected => throw new ConnectTimeoutException("dummy")
-    case Connected      =>
+    case ConnectedState      =>
       context.become(online)
       unstashAll()
     case unknown        => {
@@ -49,7 +49,7 @@ class AkkademyDb extends Actor with ActorLogging with Stash {
       }
     }
 
-    case _: Disconnected => context.unbecome()
+    case _: DisconnectedState => context.unbecome()
   }
 
   override def preStart(): Unit = {

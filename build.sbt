@@ -1,40 +1,99 @@
-name := "scala-mania"
+name in Global := "scala-mania"
 
-version := "1.0"
+organization in Global := "net.zhengla"
 
-scalaVersion := "2.11.8"
+version in Global := "1.0"
 
-val scalazVersion = "7.2.5"
+scalaVersion in Global := "2.11.8"
 
 
-resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
+// deps versions
+val AKKA_VERSION = "2.4.14"
+val AKKA_HTTP_VERSION = "10.0.0"
+val SCALAZ_VERSION = "7.2.5"
+val CATS_VERSION = "0.7.0"
 
-libraryDependencies ++= Seq(
-  "org.scalaz" %% "scalaz-core" % scalazVersion,
-  "org.scalaz" %% "scalaz-effect" % scalazVersion,
-  //  "org.scalaz" %% "scalaz-typelevel" % scalazVersion,
-  "org.scalaz" %% "scalaz-scalacheck-binding" % scalazVersion //% "test"
+lazy val root = project.in(file("."))
+  .settings(name := (name in Global).value)
+  .settings(akkaActorDeps)
+  .settings(akkaHttpDeps)
+  .settings(scalazDeps)
+
+// https://mvnrepository.com/artifact/org.scala-lang.modules/scala-async_2.11
+
+resolvers in Global ++= Seq(
+  Resolver.mavenLocal,
+  "twitter-repo" at "http://maven.twttr.com",
+  "typesafe-repo" at "http://repo.typesafe.com/typesafe/releases/"
 )
 
-libraryDependencies += "org.typelevel" %% "cats" % "0.7.0"
 
-libraryDependencies ++= Seq(
+lazy val catsDependencySettings = libraryDependencies ++= Seq(
+  "org.typelevel" %% "cats" % CATS_VERSION
+)
+
+lazy val shapelessDependencySettings = libraryDependencies ++= Seq(
   "com.chuusai" %% "shapeless" % "2.3.1"
 )
 
-// https://mvnrepository.com/artifact/org.scala-lang.modules/scala-async_2.11
-val akkaVersion = "2.4.9"
+lazy val scalazDeps = libraryDependencies ++= Seq(
+  "org.scalaz" %% "scalaz-core" % SCALAZ_VERSION,
+  "org.scalaz" %% "scalaz-effect" % SCALAZ_VERSION,
+  //  "org.scalaz" %% "scalaz-typelevel" % scalazVersion,
+  "org.scalaz" %% "scalaz-scalacheck-binding" % SCALAZ_VERSION //% "test"
+)
+
+
+lazy val akkaActorDeps = Seq(
+  libraryDependencies ++= {
+    Seq(
+      "com.typesafe.akka"
+    ).flatMap { group =>
+      Seq(
+        "akka-actor",
+        "akka-agent",
+        "akka-camel",
+        "akka-cluster",
+        "akka-cluster-metrics",
+        "akka-cluster-sharding",
+        "akka-cluster-tools",
+        "akka-contrib",
+        "akka-multi-node-testkit",
+        "akka-osgi",
+        "akka-persistence",
+        "akka-persistence-tck",
+        "akka-remote",
+        "akka-slf4j",
+        "akka-stream",
+        "akka-stream-testkit",
+        "akka-testkit",
+        "akka-distributed-data-experimental",
+        "akka-typed-experimental",
+        "akka-persistence-query-experimental"
+      ).map(group %% _ % AKKA_VERSION)
+    }
+  }
+)
+
+lazy val akkaHttpDeps = Seq(
+  libraryDependencies ++= Seq(
+    "com.typesafe.akka"
+  ) flatMap { group =>
+    Seq(
+      "akka-http-core",
+      "akka-http",
+      "akka-http-testkit",
+      "akka-http-spray-json",
+      "akka-http-jackson",
+      "akka-http-xml"
+    ).map(group %% _ % AKKA_HTTP_VERSION)
+  }
+)
+
+// finagle
+lazy val finageDeps = Nil
 
 libraryDependencies += "org.scala-lang.modules" % "scala-async_2.11" % "0.9.5"
-
-libraryDependencies += "com.typesafe.akka" % "akka-actor_2.11" % "2.4.9"
-
-libraryDependencies += "com.typesafe.akka" % "akka-slf4j_2.11" % "2.4.9"
-
-libraryDependencies += "com.typesafe.akka" % "akka-testkit_2.11" % "2.4.9"
-
-libraryDependencies += "com.typesafe.akka" % "akka-remote_2.11" % akkaVersion
-
 
 libraryDependencies += "com.typesafe" % "config" % "1.3.0"
 
@@ -44,10 +103,6 @@ libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.3"
 Akka provides a logger for SL4FJ. This module is available in the 'akka-slf4j.jar'. It has one single dependency; the slf4j-api jar. In runtime you also need a SLF4J backend, we recommend Logback:
  */
 //lazy val logback = "ch.qos.logback" % "logback-classic" % "1.0.13"
-
-
-// akka persistence module
-libraryDependencies += "com.typesafe.akka" %% "akka-persistence" % "2.4.9"
 
 libraryDependencies += "org.iq80.leveldb" % "leveldb" % "0.7"
 

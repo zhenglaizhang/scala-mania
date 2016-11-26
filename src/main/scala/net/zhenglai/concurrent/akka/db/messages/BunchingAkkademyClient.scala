@@ -5,7 +5,7 @@ import net.zhenglai.concurrent.akka.db.messages.StateContainerTypes.RequestQueue
 
 class BunchingAkkademyClient extends FSM[State, RequestQueue] {
 
-  startWith(Disconnected, null)
+//  startWith(DisconnectedState, null)
 
 //  when(Disconnected) {
 //    case (_: Connected, container: RequestQueue)  =>

@@ -11,13 +11,11 @@ package net.zhenglai.concurrent.akka.db.messages
   */
 sealed trait State {
 
-
-
 }
 
-case object Disconnected extends State
+case object DisconnectedState extends State
 
-case object Connected extends State
+case object ConnectedState extends State
 
 case object ConnectedAndPending extends State
 
