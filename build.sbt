@@ -20,6 +20,14 @@ developers := List(
   Developer("zhenglaizhang", "Zhenglai Zhang", "zhenglaizhang@hotmail.com", url("http://zhenglaizhang.net"))
 )
 
+// if you have more than one main method, you can specify which is used when typing 'run' in sbt
+mainClass := Some("net.zhenglai.Main")
+
+// disable using the Scala version in output paths and artifacts as no cross compiilation plan
+crossPaths := false
+
+// fork a new JVM for 'run' and 'test:run'
+fork := true
 
 // deps versions
 val AKKA_VERSION = "2.4.14"
