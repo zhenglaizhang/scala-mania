@@ -2,6 +2,7 @@
 //  to support various projects the build file is so huge
 //  in future, I would like to use this file as template and start from portion of it
 import scalariform.formatter.preferences._
+
 import com.typesafe.sbt.SbtScalariform
 import com.typesafe.sbt.SbtScalariform.ScalariformKeys
 
@@ -38,8 +39,29 @@ developers := List(
 // disable using the Scala version in output paths and artifacts as no cross compiilation plan
 crossPaths := false
 
+// only use a single thread for building
+parallelExecution := false
+
 // fork a new JVM for 'run' and 'test:run'
 fork := true
+
+// set the location of the JDK to use for compiling Java code.
+// if 'fork' is true, this is used for 'run' as well
+// javaHome := Some(file("/usr/lib/jvm/sun-jdk-1.6"))
+
+// Use Scala from a directory on the filesystem instead of retrieving from a repository
+// scalaHome := Some(file("/home/user/scala/trunk/"))
+
+// fork a new JVM for 'test:run', but not 'run'
+// fork in Test := true
+
+// Execute tests in the current project serially
+//   Tests from other projects may still run concurrently.
+// parallelExecution in Test := false
+
+// add a JVM option to use when forking a JVM for 'run'
+// javaOptions += "-Xmx2G"
+
 
 // max error scalac stops (or sbt logger silently ignore more errors?)
 // set maxErrors := 1
@@ -48,6 +70,45 @@ maxErrors := 30
 
 // time between polling for file changes when using continuous execution
 pollInterval := 1000
+
+// don't aggregate clean (See FullConfiguration for aggregation details)
+// aggregate in clean := false
+
+// only show warnings and errors on the screen for compilations.
+//  this applies to both test:compile and compile and is Info by default
+// logLevel in compile := Level.Info
+
+// only show warnings and errors on the screen for all tasks (the default is Info)
+//  individual tasks can then be more verbose using the previous setting
+logLevel := Level.Info
+
+// only store messages at info and above (the default is Debug)
+//   this is the logging level for replaying logging with 'last'
+// persistLogLevel := Level.Debug
+
+// only show 10 lines of stack traces
+// traceLevel := 10
+
+// only show stack traces up to the first sbt stack frame
+// traceLevel := 0
+
+// add SWT to the unmanaged classpath
+// unmanagedJars in Compile += file("/usr/share/java/swt.jar")
+
+// publish test jar, sources, and docs
+// publishArtifact in Test := true
+
+// disable publishing of main docs
+// publishArtifact in (Compile, packageDoc) := false
+
+// change the classifier for the docs artifact
+// artifactClassifier in packageDoc := Some("doc")
+
+// Copy all managed dependencies to <build-root>/lib_managed/
+//   This is essentially a project-local cache and is different
+//   from the lib_managed/ in sbt 0.7.x.  There is only one
+//   lib_managed/ in the build root (not per-project).
+// retrieveManaged := true
 
 // deps versions
 val AKKA_VERSION = "2.4.14"
