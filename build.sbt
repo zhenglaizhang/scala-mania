@@ -115,6 +115,7 @@ val AKKA_VERSION = "2.4.14"
 val AKKA_HTTP_VERSION = "10.0.0"
 val SCALAZ_VERSION = "7.2.5"
 val CATS_VERSION = "0.7.0"
+val SLICK_VERSION = "3.1.1"
 
 lazy val root = project.in(file("."))
   .settings(name := (name in Global).value)
@@ -135,6 +136,11 @@ lazy val ws = project
 
 lazy val crawler = project
   .settings(commonScalacOptions)
+
+lazy val slick = project
+  .settings(commonScalacOptions)
+  .settings(slickDeps)
+  .settings(testCommonDeps)
 
 lazy val doc = project
 
@@ -238,6 +244,14 @@ lazy val akkaHttpDeps = Seq(
       "akka-http-xml"
     ).map(group %% _ % AKKA_HTTP_VERSION)
   }
+)
+
+lazy val slickDeps = Seq(
+  libraryDependencies ++= Seq(
+    "com.typesafe.slick" %% "slick" % SLICK_VERSION,
+    "com.h2database" % "h2" % "1.4.187",
+    "org.slf4j" % "slf4j-nop" % "1.7.10"
+  )
 )
 
 lazy val testAkkaDeps = libraryDependencies ++= {
