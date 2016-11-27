@@ -1,3 +1,6 @@
+// first of all:
+//  to support various projects the build file is so huge
+//  in future, I would like to use this file as template and start from portion of it
 import scalariform.formatter.preferences._
 import com.typesafe.sbt.SbtScalariform
 import com.typesafe.sbt.SbtScalariform.ScalariformKeys
@@ -20,14 +23,31 @@ developers := List(
   Developer("zhenglaizhang", "Zhenglai Zhang", "zhenglaizhang@hotmail.com", url("http://zhenglaizhang.net"))
 )
 
-// if you have more than one main method, you can specify which is used when typing 'run' in sbt
-mainClass := Some("net.zhenglai.Main")
+// set the main class for packaging the main jar
+// 'run' will still auto-detect and prompt
+// change Compile to Test to set it for the test jar
+// mainClass in (Compile, packageBin) := Some("net.zhenglai.web.Main")
+
+// set the main class for the main 'run' task
+// change Compile to Test to set it for 'test:run'
+// mainClass in (Compile, run) := Some("net.zhenglai.web.Main")
+
+// add <base>/input to the files that '~' triggers on
+// watchSources <+= baseDirectory map { _ / "input" }
 
 // disable using the Scala version in output paths and artifacts as no cross compiilation plan
 crossPaths := false
 
 // fork a new JVM for 'run' and 'test:run'
 fork := true
+
+// max error scalac stops (or sbt logger silently ignore more errors?)
+// set maxErrors := 1
+// just before doing ~run
+maxErrors := 30
+
+// time between polling for file changes when using continuous execution
+pollInterval := 1000
 
 // deps versions
 val AKKA_VERSION = "2.4.14"
@@ -70,10 +90,10 @@ resolvers in Global ++= Seq(
 lazy val commonScalacOptions = Seq(
   scalacOptions ++= Seq(
     "-deprecation"
-    , "-feature"
+    , "-feature" // Emit warning and location for usages of features that should be imported explicitly
     , "-encoding", "UTF-8"
     //    , "-feature" // Emit warning and location for usages of features that should be imported explicitly
-    , "language:_"
+    //    , "language:_"
     , "target:jvm-1.8"
     //    , "-unchecked" // Enable additional warnings where generated code depends on assumptions
     ////    , "-Xfatal-warnings"
@@ -91,7 +111,7 @@ lazy val commonScalacOptions = Seq(
     //    , "-Ywarn-unused" // Warn when local and private vals, vars, defs, and types are unused
     //    , "-Ywarn-unused-import" // Warn when imports are unused
     //    , "-Ywarn-value-discard" // Warn when non-Unit expression results are unused
-//    ,s"-P:artima-supersafe:config-file:${baseDirectory.value in Global}/project/supersafe.cfg"
+    //    ,s"-P:artima-supersafe:config-file:${baseDirectory.value in Global}/project/supersafe.cfg"
   )
 )
 
@@ -214,13 +234,52 @@ lazy val jodaDeps = libraryDependencies ++= {
 
 libraryDependencies += "com.syncthemall" % "boilerpipe" % "1.2.2"
 
+// initial stategments when entering 'console', 'console-quick', or 'console-project'
+initialCommands :=
+  """
+    |import System.{ currentTimeMillis => now }
+    |def time[T](f: => T): T = {
+    | val start = now
+    | try { f } finally { println("Elapsed: " + (now - start)/1000.0 + " s") }
+  """.stripMargin
+
+// set initial commands when entering 'console' only
 initialCommands in console := "import scalaz._, Scalaz._"
+
+
 initialCommands in console in Test := "import scalaz._, Scalaz._, scalacheck.ScalazProperties._, scalacheck.ScalazArbitrary._,scalacheck.ScalaCheckBinding._"
 
+// define the repository to publish to
 publishTo := Some(if (isSnapshot.value) sonatypeSnapshots else sonatypeReleases)
+
 publishMavenStyle := true
 publishArtifact in Test := false
 publishArtifact in(Compile, packageSrc) := true
 
 lazy val sonatypeSnapshots = "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 lazy val sonatypeReleases = "Sonatype OSS Releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+
+
+// set Ivy logging to be at the highest level
+// ivyLoggingLevel := UpdateLogging.Full
+
+// disable updating dynamic revisions (including -SNAPSHOT versions)
+// offline := true
+
+// set the prompt (for this build) to include the project id.
+// shellPrompt in ThisBuild := { state => Project.extract(state).currentRef.project + "> " }
+
+// set the prompt (for the current project) to include the username
+// shellPrompt := { state => System.getProperty("user.name") + "> " }
+
+// disable printing timing information, but still print [success]
+// showTiming := false
+
+// disable printing a message indicating the success or failure of running a task
+// showSuccess := false
+
+// change the format used for printing task completion time
+// timingFormat := {
+// import java.text.DateFormat
+// DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
+// }
