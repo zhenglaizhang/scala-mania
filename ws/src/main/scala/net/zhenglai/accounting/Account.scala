@@ -36,3 +36,14 @@ trait AccountService {
   }
 }
 
+object Main extends App {
+  import AccountService._
+  val a = Account("a1", "Zhenglai", today)
+
+  for {
+    b <- credit(a, 1000)
+    c <- debit(b, 200)
+    d <- debit(c, 300)
+  } yield d
+}
+

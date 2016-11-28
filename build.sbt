@@ -133,6 +133,7 @@ lazy val lib = project
 lazy val ws = project
   .settings(commonScalacOptions)
   .settings(testCommonDeps)
+  .dependsOn(lib)
 
 lazy val crawler = project
   .settings(commonScalacOptions)
