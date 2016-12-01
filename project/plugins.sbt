@@ -8,3 +8,9 @@ addSbtPlugin("com.artima.supersafe" % "sbtplugin" % "1.1.1")
 addSbtPlugin("org.scalariform"    % "sbt-scalariform"     % "1.6.0" )
 
 
+
+/*
+We have already seen build.sbt in the project’s base directory. Other sbt files appear in a project subdirectory.
+
+project can contain .scala files, which are combined with .sbt files to form the complete build definition.
+ */

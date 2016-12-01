@@ -8,7 +8,7 @@ import com.typesafe.sbt.SbtScalariform.ScalariformKeys
 
 name in Global := "scala-mania"
 
-organization in Global := "net.zhengla"
+organization in Global := "net.zhenglai"
 
 version in Global := "1.0"
 
@@ -110,12 +110,25 @@ logLevel := Level.Info
 //   lib_managed/ in the build root (not per-project).
 // retrieveManaged := true
 
+/*
+Generated files (compiled classes, packaged jars, managed files, caches, and documentation) will be written to the target directory by default.
+
+target := "target/"
+ */
+
 // deps versions
 val AKKA_VERSION = "2.4.14"
 val AKKA_HTTP_VERSION = "10.0.0"
 val SCALAZ_VERSION = "7.2.5"
 val CATS_VERSION = "0.7.0"
 val SLICK_VERSION = "3.1.1"
+
+lazy val dummy = (project in file("dummy")).
+  settings(
+    name := "dummy",
+    version := "1.0",
+    scalaVersion := "2.11.8"
+  )
 
 lazy val root = project.in(file("."))
   .settings(name := (name in Global).value)
