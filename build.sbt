@@ -1,6 +1,7 @@
 // first of all:
 //  to support various projects the build file is so huge
 //  in future, I would like to use this file as template and start from portion of it
+import scala.languageFeature.{ higherKinds, implicitConversions }
 import scalariform.formatter.preferences._
 
 import com.typesafe.sbt.SbtScalariform
@@ -179,6 +180,9 @@ lazy val commonScalacOptions = Seq(
     //    , "-unchecked" // Enable additional warnings where generated code depends on assumptions
     ////    , "-Xfatal-warnings"
     //    , "-Xfuture" // Turn on future language features
+      ,"-language:higherKinds"
+      ,"-language:implicitConversions"
+    ,"-Yinline-warnings"
     //    , "-Xlint" // Enable specific warnings (see `scalac -Xlint:help`)
     //    , "-Xcheckinit" // Check init specific warnings
     //    , "-Yno-adapted-args" // Do not adapt an argument list (either by inserting () or creating a tuple) to match the receiver
