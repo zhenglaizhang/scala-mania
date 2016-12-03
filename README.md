@@ -11,3 +11,16 @@
 * `crawler`: a high performance web crawler based on akka actor. 
 * `doc`: personal scala docs
 
+
+
+
+
+### Testing
+I would like to use *FlatSpec for unit and integration testing and FeatureSpec for acceptance testing*
+
+#### Unit Test
+
+#### Acceptance Test
+
+
+#### Integration Test
