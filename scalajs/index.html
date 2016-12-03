@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>The Scala.js Tutorial</title>
+</head>
+<body>
+<!-- Include Scala.js compiled code -->
+<!-- Not managable as follows: -->
+<!--<script type="text/javascript" src="http://cdn.jsdelivr.net/jquery/2.1.1/jquery.js"></script>-->
+
+<!--simply include this file and don’t need to worry about JavaScript libraries anymore-->
+<script type="text/javascript" src="./target/scala-2.11/scala-js-web-app-jsdeps.js"></script>
+
+<script type="text/javascript" src="./target/scala-2.11/scala-js-web-app-fastopt.js"></script>
+<!-- Run net.zhenglai.web.WebApp -->
+<script type="text/javascript">
+    net.zhenglai.web.WebApp().main();
+</script>
+
+<button id="click-me-button" type="button"
+        onclick="net.zhenglai.web.WebApp().addClickedMessage()">Click me!</button>
+</body>
+</html>

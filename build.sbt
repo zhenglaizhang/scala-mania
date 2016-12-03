@@ -174,12 +174,23 @@ lazy val mania = project.in(file("."))
   .settings(scalazDeps)
   .settings(jodaDeps)
   .settings(commonScalacOptions)
-  .aggregate(lib, ws, crawler, doc)
+  .aggregate(lib, ws, crawler, doc, scalajs)
 
 lazy val lib = project
   .settings(commonScalacOptions)
   .settings(java8BackendDeps)
   .settings(testCommonDeps)
+
+lazy val scalajs = project
+  .settings(commonScalacOptions)
+  .settings(java8BackendDeps)
+  .settings(scalaJsDeps)
+  .settings(
+    skip in packageJSDependencies := false,
+    jsDependencies += "org.webjars" % "jquery" % "2.1.4" / "2.1.4/jquery.js"
+  )
+  .settings(testCommonDeps)
+  .enablePlugins(ScalaJSPlugin)
 
 lazy val ws = project
   .settings(commonScalacOptions)
@@ -317,6 +328,13 @@ lazy val slickDeps = Seq(
     "com.typesafe.slick" %% "slick"     % SLICK_VERSION,
     "com.h2database"     % "h2"         % "1.4.187",
     "org.slf4j"          % "slf4j-nop"  % "1.7.10"
+  )
+)
+
+lazy val scalaJsDeps = Seq(
+  libraryDependencies ++= Seq(
+    "org.scala-js"  %%% "scalajs-dom" % "0.9.1",
+    "be.doeraene"   %%% "scalajs-jquery" % "0.9.1"
   )
 )
 
