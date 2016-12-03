@@ -135,6 +135,7 @@ lazy val root = project.in(file("."))
   .settings(name := (name in Global).value)
   .settings(akkaActorDeps)
   .settings(akkaHttpDeps)
+  .settings(java8BackendDeps)
   .settings(scalazDeps)
   .settings(jodaDeps)
   .settings(commonScalacOptions)
@@ -142,19 +143,23 @@ lazy val root = project.in(file("."))
 
 lazy val lib = project
   .settings(commonScalacOptions)
+  .settings(java8BackendDeps)
   .settings(testCommonDeps)
 
 lazy val ws = project
   .settings(commonScalacOptions)
+  .settings(java8BackendDeps)
   .settings(testCommonDeps)
   .dependsOn(lib)
 
 lazy val crawler = project
   .settings(commonScalacOptions)
+  .settings(java8BackendDeps)
 
 lazy val slick = project
   .settings(commonScalacOptions)
   .settings(slickDeps)
+  .settings(java8BackendDeps)
   .settings(testCommonDeps)
 
 lazy val doc = project
@@ -176,7 +181,10 @@ lazy val commonScalacOptions = Seq(
     , "-encoding", "UTF-8"
     //    , "-feature" // Emit warning and location for usages of features that should be imported explicitly
     //    , "language:_"
-    , "target:jvm-1.8"
+    /* enable java8 backend, reduce bytecode size by 50% and compiletimes by 75% */
+    , "-Ybackend:GenBCode"
+    , "-Ydelambdafy:method"
+    , "-target:jvm-1.8"
     //    , "-unchecked" // Enable additional warnings where generated code depends on assumptions
     ////    , "-Xfatal-warnings"
     //    , "-Xfuture" // Turn on future language features
@@ -286,6 +294,8 @@ lazy val testCommonDeps = libraryDependencies ++= {
     "org.scalactic"  %% "scalactic"   % "3.0.1"   % "test"
   )
 }
+
+lazy val java8BackendDeps = libraryDependencies += "org.scala-lang.modules" %% "scala-java8-compat"  % "0.8.0"
 
 // finagle
 lazy val finageDeps = Nil
