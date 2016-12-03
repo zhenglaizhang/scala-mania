@@ -1,17 +1,23 @@
 // first of all:
 //  to support various projects the build file is so huge
 //  in future, I would like to use this file as template and start from portion of it
+
+// You can place import statements at the top of build.sbt;
 import scala.languageFeature.{ higherKinds, implicitConversions }
 import scalariform.formatter.preferences._
 
 import com.typesafe.sbt.SbtScalariform
 import com.typesafe.sbt.SbtScalariform.ScalariformKeys
 
+// There are some implied default imports:
+import sbt.Keys._
+import sbt._
+
 name in Global := "scala-mania"
 
 organization in Global := "net.zhenglai"
 
-version in Global := "1.0"
+version in Global := "0.0.1"
 
 scalaVersion in Global := "2.11.8"
 
@@ -24,6 +30,16 @@ scmInfo := Some(ScmInfo(
 developers := List(
   Developer("zhenglaizhang", "Zhenglai Zhang", "zhenglaizhang@hotmail.com", url("http://zhenglaizhang.net"))
 )
+
+lazy val commonSettings = Seq(
+  organization := "net.zhenglai",
+  version      := "0.0.1",
+  scalaVersion := "2.11.8"
+)
+
+lazy val helloSettingKey = settingKey[String]("An example setting")
+lazy val helloTaskKey    = taskKey[Unit]("An example task")
+lazy val helloInputKey   = inputKey[String]("An example input")
 
 // set the main class for packaging the main jar
 // 'run' will still auto-detect and prompt
@@ -124,14 +140,32 @@ val SCALAZ_VERSION = "7.2.5"
 val CATS_VERSION = "0.7.0"
 val SLICK_VERSION = "3.1.1"
 
+/*
+Each project is associated with an immutable map (set of key-value pairs) describing the project.
+e.g. one key is name and it maps to a string value, the name of your project.
+
+Build definition files do not affect sbt’s map directly.
+
+Instead, the build definition creates a huge list of objects with type Setting[T] where T is the type of the value in the map. A Setting describes a transformation to the map, such as adding a new key-value pair or appending to an existing value
+
+To create the map, sbt first sorts the list of settings so that all changes to the same key are made together, and values that depend on other keys are processed after the keys they depend on. Then sbt walks over the sorted list of Settings and applies each one to the map in turn.
+
+Summary: A build definition defines Projects with a list of Setting[T], where a Setting[T] is a transformation affecting sbt’s map of key-value pairs and T is the type of each value.
+
+Each Setting is defined with a Scala expression not statements.
+ */
 lazy val dummy = (project in file("dummy")).
   settings(
-    name := "dummy",
+    name := "dummy", // This Setting[String] transforms the map by adding (or replacing) the name key, giving it the value "hello". The transformed map becomes sbt’s new map.
     version := "1.0",
     scalaVersion := "2.11.8"
   )
 
-lazy val root = project.in(file("."))
+lazy val mania = project.in(file("."))
+  .settings(commonSettings:_*)
+  .settings(
+      helloTaskKey := { println("Welcome to scala-mania, run for future!!!") }
+  )
   .settings(name := (name in Global).value)
   .settings(akkaActorDeps)
   .settings(akkaHttpDeps)
@@ -156,7 +190,12 @@ lazy val crawler = project
   .settings(commonScalacOptions)
   .settings(java8BackendDeps)
 
+lazy val derby = "org.apache.derby" % "derby" % "10.4.1.3"
+
 lazy val slick = project
+    .settings(
+      libraryDependencies += derby
+    )
   .settings(commonScalacOptions)
   .settings(slickDeps)
   .settings(java8BackendDeps)
