@@ -211,10 +211,10 @@ lazy val shapelessDependencySettings = libraryDependencies ++= Seq(
 )
 
 lazy val scalazDeps = libraryDependencies ++= Seq(
-  "org.scalaz" %% "scalaz-core" % SCALAZ_VERSION,
-  "org.scalaz" %% "scalaz-effect" % SCALAZ_VERSION,
+  "org.scalaz"     %% "scalaz-core" % SCALAZ_VERSION,
+  "org.scalaz"     %% "scalaz-effect" % SCALAZ_VERSION,
   //  "org.scalaz" %% "scalaz-typelevel" % scalazVersion,
-  "org.scalaz" %% "scalaz-scalacheck-binding" % SCALAZ_VERSION //% "test"
+  "org.scalaz"     %% "scalaz-scalacheck-binding" % SCALAZ_VERSION //% "test"
 )
 
 
@@ -266,24 +266,24 @@ lazy val akkaHttpDeps = Seq(
 
 lazy val slickDeps = Seq(
   libraryDependencies ++= Seq(
-    "com.typesafe.slick" %% "slick" % SLICK_VERSION,
-    "com.h2database" % "h2" % "1.4.187",
-    "org.slf4j" % "slf4j-nop" % "1.7.10"
+    "com.typesafe.slick" %% "slick"     % SLICK_VERSION,
+    "com.h2database"     % "h2"         % "1.4.187",
+    "org.slf4j"          % "slf4j-nop"  % "1.7.10"
   )
 )
 
 lazy val testAkkaDeps = libraryDependencies ++= {
   Seq(
-    "com.typesafe.akka" %% "akka-testkit" % AKKA_VERSION % "test",
-    "com.typesafe.akka" %% "akka-http-testkit" % AKKA_VERSION % "test"
+    "com.typesafe.akka" %% "akka-testkit"       % AKKA_VERSION % "test",
+    "com.typesafe.akka" %% "akka-http-testkit"  % AKKA_VERSION % "test"
   )
 }
 
 lazy val testCommonDeps = libraryDependencies ++= {
   Seq(
-    "org.scalacheck" %% "scalacheck" % "1.13.2" % "test",
-    "org.scalatest" %% "scalatest" % "3.0.1" % "test",
-    "org.scalactic" %% "scalactic" % "3.0.1" % "test"
+    "org.scalacheck" %% "scalacheck"  % "1.13.2"  % "test",
+    "org.scalatest"  %% "scalatest"   % "3.0.1"   % "test",
+    "org.scalactic"  %% "scalactic"   % "3.0.1"   % "test"
   )
 }
 
@@ -304,9 +304,7 @@ ScalariformKeys.preferences := ScalariformKeys.preferences.value
 includeFilter in scalariformFormat := "*.scala" || "*.sc" || "*.sbt"
 
 libraryDependencies += "org.scala-lang.modules" % "scala-async_2.11" % "0.9.5"
-
 libraryDependencies += "com.typesafe" % "config" % "1.3.0"
-
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.1.3"
 
 /*
