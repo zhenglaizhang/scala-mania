@@ -94,7 +94,124 @@ To depend on third-party libraries, there are two options. The first is **to dro
 The `libraryDependencies` key involves two complexities: `+=` rather than `:=`, and the `%` method. `+=` appends to the key’s old value rather than replacing it, this is explained in [more kinds of setting](http://www.scala-sbt.org/0.13/docs/More-About-Settings.html). The `%`method is used to construct an Ivy module ID from strings
 
 
+
+### Scopes
+
+* In truth, each key can have an associated value in more than one context, called a “**scope**.”
+* if you have multiple projects in your build definition, a key can have a different value in each project.
+* the `compile` key may have a different value for your main sources and your test sources, if you want to compile them differently.
+* the `packageOptions` key (which contains options for creating jar packages) may have different values when packaging class files (`packageBin`) or packaging source code (`packageSrc`).
+* *There is no single value for a given key name*, because the value may differ according to scope.However, there is a single value for a given *scoped* key.
+* If you think about sbt processing a list of settings to generate a key-value map describing the project, as[discussed earlier](http://www.scala-sbt.org/0.13/docs/Basic-Def.html), the keys in that key-value map are *scoped* keys. Each setting defined in the build definition (for example in `build.sbt`) applies to a scoped key as well.
+* Often the scope is implied or has a default, but if the defaults are wrong, you’ll need to mention the desired scope in `build.sbt`.
+
+
+
+#### Scope axes
+
+* A *scope axis* is a type, where each instance of the type can define its own scope (that is, each instance can have its own unique values for keys).
+
+There are three scope axes:
+
+- Projects
+
+  - If you [put multiple projects in a single build](http://www.scala-sbt.org/0.13/docs/Multi-Project.html), each project needs its own settings. That is, keys can be scoped according to the project.
+
+    The project axis can also be set to “entire build”, so a setting applies to the entire build rather than a single project. Build-level settings are often used as a fallback when a project doesn’t define a project-specific setting.
+
+- Configurations
+
+  - A *configuration* defines a flavor of build, potentially with its own classpath, sources, generated packages, etc. The configuration concept comes from Ivy, which sbt uses for managed dependencies [Library Dependencies](http://www.scala-sbt.org/0.13/docs/Library-Dependencies.html), and from [MavenScopes](https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#Dependency_Scope).
+
+    Some configurations you’ll see in sbt:
+
+    - `Compile` which defines the main build (`src/main/scala`).
+    - `Test` which defines how to build tests (`src/test/scala`).
+    - `Runtime` which defines the classpath for the `run` task.
+
+    By default, all the keys associated with compiling, packaging, and running are scoped to a configuration and therefore may work differently in each configuration. The most obvious examples are the task keys`compile`, `package`, and `run`; but all the keys which *affect* those keys (such as `sourceDirectories` or `scalacOptions` or `fullClasspath`) are also scoped to the configuration.
+
+- Tasks
+
+  - Settings can affect how a task works. For example, the `packageSrc` task is affected by the `packageOptions` setting.
+
+    To support this, a task key (such as `packageSrc`) can be a scope for another key (such as `packageOptions`).
+
+    The various tasks that build a package (`packageSrc`, `packageBin`, `packageDoc`) can share keys related to packaging, such as `artifactName` and `packageOptions`. Those keys can have distinct values for each packaging task.
+
+### Global scope[ ](http://www.scala-sbt.org/0.13/docs/Scopes.html#Global+scope)
+
+Each scope axis can be filled in with an instance of the axis type (for example the task axis can be filled in with a task), or the axis can be filled in with the special value `Global`.
+
+`Global` means what you would expect: the setting’s value applies to all instances of that axis. For example if the task axis is Global, then the setting would apply to all tasks
+
+
+
+### Delegation[ ](http://www.scala-sbt.org/0.13/docs/Scopes.html#Delegation)
+
+A scoped key may be undefined, if it has no value associated with it in its scope.
+
+For each scope, sbt has a fallback search path made up of other scopes. Typically, if a key has no associated value in a more-specific scope, sbt will try to get a value from a more general scope, such as the`Global` scope or the entire-build scope.
+
+This feature allows you to set a value once in a more general scope, allowing multiple more-specific scopes to inherit the value.
+
+You can see the fallback search path or “delegates” for a key using the `inspect` command, as described below. Read on.
+
+
+
+#### Referring to scoped keys when running sbt[ ](http://www.scala-sbt.org/0.13/docs/Scopes.html#Referring+to+scoped+keys+when+running+sbt)
+
+sbt displays (and parses) scoped keys like this:
+
+```shell
+{<build-uri>}<project-id>/config:intask::key
+```
+
+- `{<build-uri>}/<project-id>` identifies the project axis. The `<project-id>` part will be missing if the project axis has “entire build” scope.
+
+- `config` identifies the configuration axis.
+
+- `intask` identifies the task axis.
+
+- `key` identifies the key being scoped.
+
+- `*` can appear for each axis, referring to the `Global` scope.
+
+  If you omit part of the scoped key, it will be inferred as follows:
+
+  - the current project will be used if you omit the project.
+  - a key-dependent configuration will be auto-detected if you omit the configuration or task.
+
+
+
+Keys have an overloaded method called in used to set the scope. The argument to in can be an instance of any of the scope axes. So for example, though there’s no real reason to do this, you could set the `name`scoped to the `Compile` configuration:
+
+```
+name in Compile := "hello"
+```
+
+or you could set the name scoped to the `packageBin` task (pointless! just an example):
+
+```
+name in packageBin := "hello"
+```
+
+or you could set the `name` with multiple scope axes, for example in the `packageBin` task in the `Compile`configuration:
+
+```
+name in (Compile, packageBin) := "hello"
+```
+
+or you could use `Global` for all axes:
+
+```
+name in Global := "hello"
+```
+
+(`name in Global` implicitly converts the scope axis `Global` to a scope with all axes set to `Global`; the task and configuration are already `Global` by default, so here the effect is to make the project `Global`, that is, define `*/*:name` rather than `{file:/home/hp/checkout/hello/}default-aea33a/*:name`)
+
 ### Tips about Scala REPL
+
 * `CTRL + L` to clear the screen, sbt REPL, also Scala REPL
 * `alias scala="scala -Dscala.color=true"` to enable colorized scala REPL
 * Past repl transcript, e.g `scala> 12+12`, ended with `CTRL + D`

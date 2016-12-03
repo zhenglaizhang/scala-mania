@@ -164,6 +164,7 @@ lazy val dummy = (project in file("dummy")).
 lazy val mania = project.in(file("."))
   .settings(commonSettings:_*)
   .settings(
+    // If you create a setting in build.sbt with a bare key, it will be scoped to the current project, configuration Global and task Global:
       helloTaskKey := { println("Welcome to scala-mania, run for future!!!") }
   )
   .settings(name := (name in Global).value)
