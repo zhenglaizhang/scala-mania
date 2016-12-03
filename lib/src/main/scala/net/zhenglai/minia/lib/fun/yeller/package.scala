@@ -13,7 +13,7 @@ package object yeller {
   }
 
   object YellerMain extends App {
-    import yeller._
-    println("Look out".yell)
+    //    import yeller._
+    //    println("Look out".yell)
   }
 }
